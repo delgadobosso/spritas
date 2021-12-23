@@ -1,0 +1,84 @@
+.PostMain-controls {
+    display: flex;
+    width: 1200px;
+    max-width: 100%;
+    margin: auto;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.PostMain-arrow {
+    cursor: pointer;
+    text-align: center;
+    background-color: lightgreen;
+    padding: 10px 5px;
+    flex-grow: 1;
+}
+
+.PostMain-post, .PostMain-video, .PostMain-image {
+    width: 1200px;
+    max-width: 100%;
+    margin: auto;
+}
+
+.PostMain-video {
+    height: 675px;
+    background-color: black;
+}
+.PostMain-video iframe {
+    border: 0;
+}
+
+.PostMain-image {
+    text-align: center;
+    background-color: black;
+
+    transition: background-color 0.5s;
+}
+
+.PostMain-img {
+    max-width: 100%;
+}
+
+.PostMain-imageControls {
+    display: flex;
+    width: 1200px;
+    max-width: 100%;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    text-align: center;
+}
+
+.PostMain-imageButton {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 10px 0;
+    cursor: pointer;
+
+    transition: background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.PostMain-imageButton:hover {
+    background-color: red;
+}
+
+@media screen and (max-width: 1200px) {
+    .PostMain-video {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+    }
+    .PostMain-video iframe {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+    }
+}

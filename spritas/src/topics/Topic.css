@@ -1,0 +1,73 @@
+a {
+    text-decoration: none;
+    color: black;
+}
+
+
+.Topic {
+    border-left: thick solid lightsalmon;
+    border-radius: 5px;
+    margin-bottom: 10px;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.Topic-link {
+    display: flex;
+    margin: 0 10px;
+    padding: 0px 5px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
+
+    transition: background-color 0.1s, border-radius 0.1s;
+}
+.Topic-link:hover {
+    background-color: lightskyblue;
+    cursor: pointer;
+}
+.Topic-link:active {
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1) inset;
+}
+.Topic-linkopen {
+    border-radius: 10px 10px 0 10px;
+}
+
+.Topic-img {
+    width: 100px;
+    height: 100px;
+    margin: auto 0;
+}
+
+.Topic-info {
+    overflow: hidden;
+}
+
+.Topic-name {
+    color: #ab0f26;
+}
+
+.Subtopic {
+    border-radius: 5px;
+    margin-left: 20px;
+    height: 0px;
+    overflow: hidden;
+    
+    transition: height 0.5s;
+}
+
+.Subtopic > .TopicPortal > .Topic > .Topic-link {
+    background-color: bisque;
+}
+.Subtopic > .TopicPortal > .Topic > .Topic-link:hover {
+    background-color: lightskyblue;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 900px) {
+    .Subtopic {
+        margin-left: 10px;
+    }
+}

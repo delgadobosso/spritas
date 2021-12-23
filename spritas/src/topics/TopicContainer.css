@@ -1,0 +1,38 @@
+.Container {
+    display: flex;
+    flex-direction: column;
+    height: 98vh;
+    width: 1200px;
+    max-width: 100%;
+    margin: 10px auto;
+    border-radius: 10px;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+@media screen and (max-width: 1200px) {
+    .Container {
+        width: initial;
+        margin: 10px 10px;
+    }
+}
+
+.Container-header {
+    background-color: #ab0f26;
+    padding: 10px 20px;
+    text-align: center;
+    box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.3);
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.Container-header:hover {
+    cursor: pointer;
+}
+
+.Container-title {
+    color: white;
+    margin: 0;
+}

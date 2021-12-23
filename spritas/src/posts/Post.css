@@ -1,0 +1,108 @@
+.Post {
+    border-left: thick solid lightsalmon;
+    margin: 0 10px 50px 10px;
+    border-radius: 5px;
+    background-color: moccasin;
+    padding: 5px;
+
+    transition: border-radius 0.5s;
+}
+
+.Post-op {
+    margin: 0;
+    border-radius: 0;
+    border-color: lightskyblue;
+}
+@media screen and (max-width: 1200px) {
+    .Post-op {
+        border-radius: 0;
+    }
+}
+
+.Post-replyop {
+    border-color: lightskyblue;
+}
+.Post-optag {
+    font-size: 0.8em;
+    color: grey;
+}
+
+.Post-main {
+    display: flex;
+}
+
+.Post-user {
+    display: flex;
+    align-items: center;
+    border-right: solid grey;
+    width: 200px;
+}
+
+.Post-user-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+}
+
+.Post-right {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.Post-body {
+    flex-grow: 1;
+}
+
+
+.Post-replies {
+    height: 0px;
+    overflow: hidden;
+
+    transition: height 0.5s;
+}
+
+.Post-replies .Post {
+    margin: 5px 0;
+}
+
+.Post-controls {
+    display: flex;
+    width: 100%;
+    text-align: center;
+}
+
+.Post-load, .Post-collapse, .Post-gap {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 10px 0;
+
+    transition: background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.Post-load:hover {
+    cursor: pointer;
+    background-color: lightgreen;
+}
+
+.Post-collapse:hover {
+    cursor: pointer;
+    background-color: lightsalmon;
+}
+
+
+@media screen and (max-width: 900px) {
+    .Post-main {
+        flex-direction: column;
+    }
+
+    .Post-user {
+        width: initial;
+        border-right: none;
+        border-bottom: solid grey;
+    }
+}

@@ -1,0 +1,197 @@
+import React from 'react';
+import './Topic.css';
+import status from '../images/spritan.png';
+import TopicPortal from './TopicPortal';
+import TopicPost from './TopicPost';
+import he from 'he';
+
+export default class Topic extends React.Component {
+    constructor(props) {
+        super(props);
+        this.topicClick = this.topicClick.bind(this);
+        this.loadPosts = this.loadPosts.bind(this);
+        this.state = {
+            subtopics: false,
+            topics: [],
+            posts: [],
+            controls: [],
+            offset: 0,
+            amount: 5,
+            more: true
+        };
+    }
+
+    topicClick(e) {
+        e.preventDefault();
+        const name = this.props.topic.name;
+
+        if (this.state.subtopics) {
+            this.closeSubtopic(name);
+        } else {
+            const id = this.props.topic.id;
+            const type = this.props.topic.type;
+            const perm = this.props.topic.perm;
+            fetch(`/home/${id}.${this.state.offset}.${this.state.amount}`)
+                .then(res => res.json())
+                .then(data => {
+                    var controls = [];
+                    if (this.props.user) {
+                        if (this.props.user.type === "ADMN") {
+                            controls.push(<a className="TopicPortal-control-item" href={`/create/topic/${id}`} key="1">Create Topic</a>);
+                        }
+                        if (perm === "ADMN" && this.props.user.type === perm) {
+                            controls.push(<a className="TopicPortal-control-item" href={`/create/post/${id}?type=${type}`} key="0">Create Post</a>);
+                        } else if (perm !== "ADMN") {
+                            controls.push(<a className="TopicPortal-control-item" href={`/create/post/${id}?type=${type}`} key="0">Create Post</a>);
+                        }
+                    }
+                    if (data.length > 0) {
+                        var topics = [];
+                        var posts = [];
+                        data.forEach((subtopic, index) => {
+                            if (subtopic.hasOwnProperty('idTopic')) posts.push(
+                                <TopicPost key={index} post={subtopic}
+                                    postClick={this.props.postClick} />);
+                            else topics.push(
+                                <Topic key={index} topic={subtopic}
+                                        user={this.props.user} postClick={this.props.postClick} />);
+                        });
+                        // Check if there are more posts to load
+                        if (posts.length < (this.state.amount + 1)) {
+                            this.setState(state => ({
+                                more: !state.more
+                            }));
+                        } else {
+                            posts.pop();
+                            this.setState(state => ({
+                                offset: state.offset + this.state.amount
+                            }));
+                        }
+                        this.setState({
+                            subtopics: true,
+                            topics: topics,
+                            posts: posts,
+                            controls: controls
+                        }, () => this.openSubtopic(name));
+                    } else if (controls.length > 0) {
+                        this.setState({
+                            subtopics: true,
+                            controls: controls,
+                            more: false
+                        }, () => this.openSubtopic(name));
+                    }
+                });
+        }
+    }
+
+    openSubtopic(name) {
+        var sub = document.getElementById("Subtopic-" + name.replace(" ", ""));
+        if (sub) {
+            let maxHeight = sub.scrollHeight;
+            sub.style.height = maxHeight + "px";
+            const controller = new AbortController();
+            sub.addEventListener('transitionend', (e) => {
+                if (e.currentTarget === e.target) {
+                    sub.style.height = "auto";
+                    controller.abort();
+                }
+            }, {signal: controller.signal});
+        }
+    }
+
+    closeSubtopic(name) {
+        var sub = document.getElementById("Subtopic-" + name.replace(" ", ""));
+        if (sub) {
+            let maxHeight = sub.scrollHeight;
+            sub.style.height = maxHeight + "px";
+            setTimeout(() => sub.style.height = "0px", 10);
+            const controller = new AbortController();
+            sub.addEventListener('transitionend', (e) => {
+                    if (e.currentTarget === e.target) {
+                    this.setState({
+                        subtopics: "",
+                        offset: 0,
+                        more: true
+                    });
+                    controller.abort();
+                }
+            }, {signal: controller.signal});
+        }
+    }
+
+    loadPosts() {
+        const id = this.props.topic.id;
+
+        fetch(`/home/${id}.${this.state.offset}.${this.state.amount}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.length > 0) {
+                    var newPosts = data.slice(0, this.state.amount).map((post, index) =>
+                        <TopicPost key={index + this.state.offset} post={post}
+                            postClick={this.props.postClick} />);
+
+                    if (data.length < (this.state.amount + 1)) {
+                        this.setState(state => ({
+                            more: !state.more
+                        }));
+                    } else {
+                        this.setState(state => ({
+                            offset: state.offset + this.state.amount
+                        }))
+                    }
+                    const name = this.props.topic.name;
+                    var sub = document.getElementById("Subtopic-" + name.replace(" ", ""));
+                    let maxHeight = sub.scrollHeight;
+                    sub.style.height = maxHeight + "px";
+                    this.setState(state => ({
+                        posts: [...state.posts, newPosts]
+                    }), () => this.extendPosts(sub));
+                }
+            })
+    }
+
+    extendPosts(sub) {
+        if (sub) {
+            let maxHeight = sub.scrollHeight;
+            sub.style.height = maxHeight + "px";
+            const controller = new AbortController();
+            sub.addEventListener('transitionend', (e) => {
+                if (e.currentTarget === e.target) {
+                    sub.style.height = "auto";
+                    controller.abort();
+                }
+            }, {signal: controller.signal});
+        }
+    }
+
+    render() {
+        const topic = this.props.topic;
+        const title = he.decode(topic.name);
+
+        const subtopics = (this.state.subtopics) ?
+        <div className="Subtopic" id={"Subtopic-" + topic.name.replace(" ", "")}>
+            <TopicPortal topics={this.state.topics} posts={this.state.posts} controls={this.state.controls}
+            more={this.state.more} load={this.loadPosts} />
+        </div>
+        : null;
+
+        var open = (this.state.subtopics) ? " Topic-linkopen" : "";
+
+        return (
+            <div className="Topic" title={title}>
+                <div className={"Topic-link" + open} onClick={this.topicClick}>
+                    <img className="Topic-img" src={status}
+                        title="No new posts"
+                        alt="Topic icon" />
+                    <div className="Topic-info">
+                        <h1 className="Topic-name" id={"TopicName-" + topic.id}>
+                            {title}
+                        </h1>
+                        <p className="Topic-description">{topic.description}</p>
+                    </div>
+                </div>
+                {subtopics}
+            </div>
+        );
+    }
+}

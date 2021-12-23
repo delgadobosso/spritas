@@ -1,0 +1,85 @@
+.PostContainer-header {
+    position: sticky;
+    position: -webkit-sticky;
+    top: -1px;
+    text-align: center;
+    color: white;
+    background-color: #ab0f26;
+    padding: 8px 20px;
+    overflow: hidden;
+    z-index: 1;
+
+    transition: filter 0.5s;
+}
+.PostContainer-header:hover {
+    cursor: pointer;
+    filter: brightness(1.15);
+}
+
+.PostContainer-title {
+    white-space: nowrap;
+    margin: 0;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.PostContainer-update {
+    display: block;
+    width: 1200px;
+    max-width: 100%;
+    margin: auto;
+    padding: 15px 0;
+    text-align: center;
+    background-color: lightsalmon;
+}
+
+.PostContainer .Reply, .PostContainer .UpdatePost {
+    width: 1200px;
+    max-width: 100%;
+    margin: auto;
+}
+
+.PostContainer-reply-header {
+    text-align: center;
+}
+
+.PostContainer-replies {
+    height: 0px;
+    width: 1200px;
+    max-width: 100%;
+    margin: auto;
+    overflow: hidden;
+
+    transition: height 0.5s;
+}
+
+.PostContainer-load {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+
+    transition: background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.PostContainer-load:hover {
+    cursor: pointer;
+    background-color: lightgreen;
+}
+
+.PostContainer-loaded {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+    background-color: lightgray;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

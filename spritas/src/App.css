@@ -1,0 +1,17 @@
+body {
+    background: antiquewhite;
+}
+
+
+.App {
+    overflow-x: clip;
+}
+
+.Text-scrollBounce {
+    --scroll-diff: 0px;
+    --scroll-time: 0s;
+    
+    position: relative;
+    left: var(--scroll-diff);
+    transition: left var(--scroll-time) linear;
+}

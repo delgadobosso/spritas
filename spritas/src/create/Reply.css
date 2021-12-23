@@ -1,0 +1,63 @@
+.Reply-expand {
+    cursor: pointer;
+    padding: 10px 0;
+    text-align: center;
+
+    transition: background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.Reply-expand:hover {
+    background-color: lightgreen;
+}
+
+.Reply-form {
+    display: flex;
+    width: 100%;
+    height: 0px;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    background-color: white;
+
+    transition: border-radius 0.5s, height 0.5s;
+}
+.Reply-form-open {
+    height: 110px;
+}
+
+.PostContainer > .Reply {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 50px;
+}
+@media screen and (max-width: 1200px) {
+    .PostContainer > .Reply, .PostContainer > .Reply > .Reply-form {
+        border-radius: 0;
+    }
+}
+
+.Reply-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    margin: 5px;
+}
+
+.Reply-text {
+    flex-grow: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    padding: 5px;
+}
+
+.Reply-submit {
+    width: 100px;
+    background-color: lightgoldenrodyellow;
+    border: none;
+}
+.Reply-submit:hover {
+    cursor: pointer;
+}
