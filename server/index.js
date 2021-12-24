@@ -396,6 +396,7 @@ app.post('/create/reply',
 )
 
 app.post('/update/post',
+    uploadTmp.single('file'),
     body('id').notEmpty().isInt(),
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     body('body').trim().isLength({ min: 2 }).escape(),
@@ -417,7 +418,7 @@ app.post('/update/post',
                         // Add link if it's a VIDO
                         if (result[0].type === "VIDO" && req.body.link !== "null") {
                             pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`,link,type) VALUES(?,?,?,?,'UPDT',?,?)",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.body, req.body.link,result[0].type],
+                            [parent.idTopic, parent.id, req.session.user.id, req.body.body, req.body.link, result[0].type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
@@ -428,6 +429,33 @@ app.post('/update/post',
                                     return res.redirect('/');
                                 })
                             })
+                        } else if (result[0].type === "IMG" && req.file.buffer) {
+                            // Upload file to imgur and update
+                            const file64 = req.file.buffer.toString('base64');
+                            imgur.uploadBase64(file64,
+                                    undefined,
+                                    req.body.name,
+                                    req.body.body)
+                                .then((json) => {
+                                    if (json.link) {
+                                        pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`,link,type) VALUES(?,?,?,?,'UPDT',?,?)",
+                                        [parent.idTopic, parent.id, req.session.user.id, req.body.body, json.link, result[0].type],
+                                        (error, result, fields) => {
+                                            if (error) return res.status(500).send(error);
+
+                                            pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
+                                            WHERE id = ?`, parent.id, (error, result, fields) => {
+                                                if (error) return res.status(500).send(error);
+                
+                                                return res.redirect('/');
+                                            })
+                                        })
+                                    } else return res.status(500).json({error: "Issue uploading to imgur."});
+                                })
+                                .catch((err) => {
+                                    console.error(err.message);
+                                    res.redirect('/');
+                                });
                         } else {
                         // No link insert
                             pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`) VALUES(?,?,?,?,'UPDT')",

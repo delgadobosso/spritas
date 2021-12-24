@@ -6,10 +6,24 @@ export default class UpdatePost extends React.Component {
     constructor(props) {
         super(props);
         this.expand = this.expand.bind(this);
-        this.state = ({ open: false });
+        this.handleImg = this.handleImg.bind(this);
+        this.state = ({
+            open: false,
+            imgPreview: null
+        });
     }
 
     expand() { this.setState(state => ({ open: !state.open })); }
+
+    handleImg(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        if (!file.type.startsWith('image/')) return;
+    
+        reader.onload = ((e) => { this.setState({ imgPreview: e.target.result }); });
+        reader.readAsDataURL(file);
+    }
 
     render() {
         const id = (this.props.post) ? this.props.post.id : null;
@@ -26,12 +40,27 @@ export default class UpdatePost extends React.Component {
             <input type="text" name="link" id="link" required pattern={regex_video} />
         </div> : <input type="hidden" name="link" id="link" value="null" />;
 
+        const file = (type === "IMG") ?
+        <div className='CreatePost-item'>
+            <label htmlFor="file">File: </label>
+            <input type="file" name="file" id="file" required
+                onChange={this.handleImg}
+                accept="image/png, image/jpeg, image/gif" />
+        </div> : <input type="hidden" name="file" id="file" value="null" />;
+        const imgPreview = (type === "IMG") ?
+        <img className="CreatePost-imgPreview" src={this.state.imgPreview} alt="Preview" /> : null;
+
+        const enctype = (type === "IMG") ? "multipart/form-data" : null;
+
         return (
             <div className="UpdatePost">
                 {expand}
-                <form action="/update/post/" className={"UpdatePost-form" + open} method="POST">
+                <form action="/update/post/" className={"UpdatePost-form" + open} 
+                    method="POST" encType={enctype}>
                     <input type="hidden" name="id" id="id" value={id} />
                     {link}
+                    {file}
+                    {imgPreview}
                     <textarea className="Reply-text" name="body" id="body" rows="6" cols="100" required />
                     <input className="Reply-submit" type="submit" value="Update" />
                 </form>
