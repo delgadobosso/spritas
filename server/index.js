@@ -25,6 +25,13 @@ const multer = require('multer');
 const storage =  multer.memoryStorage();
 const uploadTmp = multer({ storage: storage });
 
+const imgurLimit = 40;
+var imgurCurrent = 0;
+let resetImgurLimit = setInterval(() => {
+    imgurCurrent = 0;
+    console.log('Reset Imgur upload count to: 0');
+}, 1000 * 60 * 60);
+
 const sessionStore = new MySQLStore({}, pool);
 app.use(session({
     resave: false,
@@ -326,26 +333,32 @@ app.post('/create/post',
                     })
                 // Upload file to Imgur and add that link
                 } else if (result[0].type === "IMG" && req.file.buffer) {
-                    const file64 = req.file.buffer.toString('base64');
-                    imgur.uploadBase64(file64,
-                            undefined,
-                            req.body.name,
-                            req.body.body)
-                        .then((json) => {
-                            if (json.link) {
-                                pool.query(`INSERT INTO posts (idTopic,idUser,title,body,link,type)
-                                VALUES(?,?,?,?,?,?)`,
-                                [req.body.id, req.session.user.id, req.body.name,req.body.body, json.link, result[0].type], (error, result, fields) => {
-                                    if (error) return res.status(500).send(error);
+                    if (imgurCurrent <= imgurLimit) {
+                        imgurCurrent++;
+                        console.log('Current Imgur upload: ' + imgurCurrent);
+                        const file64 = req.file.buffer.toString('base64');
+                        imgur.uploadBase64(file64,
+                                undefined,
+                                req.body.name,
+                                req.body.body)
+                            .then((json) => {
+                                if (json.link) {
+                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,body,link,type)
+                                    VALUES(?,?,?,?,?,?)`,
+                                    [req.body.id, req.session.user.id, req.body.name,req.body.body, json.link, result[0].type], (error, result, fields) => {
+                                        if (error) return res.status(500).send(error);
 
-                                    res.redirect('/');
-                                })
-                            } else return res.status(500).json({error: "Issue uploading to imgur."});
-                        })
-                        .catch((err) => {
-                            console.error(err.message);
-                            res.redirect('/');
-                        });
+                                        res.redirect('/');
+                                    })
+                                } else return res.status(500).json({error: "Issue uploading to imgur."});
+                            })
+                            .catch((err) => {
+                                console.error(err.message);
+                                res.redirect('/');
+                            });
+                    } else {
+                        res.status(503).json({error: "Imgur upload capacity reached. Please try again in one hour."});
+                    }
                 // No link insert otherwise
                 } else {
                     pool.query(`INSERT INTO posts (idTopic,idUser,title,body,type)
@@ -431,31 +444,37 @@ app.post('/update/post',
                             })
                         } else if (result[0].type === "IMG" && req.file.buffer) {
                             // Upload file to imgur and update
-                            const file64 = req.file.buffer.toString('base64');
-                            imgur.uploadBase64(file64,
-                                    undefined,
-                                    result[0].title,
-                                    req.body.body)
-                                .then((json) => {
-                                    if (json.link) {
-                                        pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`,link,type) VALUES(?,?,?,?,'UPDT',?,?)",
-                                        [parent.idTopic, parent.id, req.session.user.id, req.body.body, json.link, result[0].type],
-                                        (error, result, fields) => {
-                                            if (error) return res.status(500).send(error);
-
-                                            pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
-                                            WHERE id = ?`, parent.id, (error, result, fields) => {
+                            if (imgurCurrent <= imgurLimit) {
+                                imgurCurrent++;
+                                console.log('Current Imgur upload: ' + imgurCurrent);
+                                const file64 = req.file.buffer.toString('base64');
+                                imgur.uploadBase64(file64,
+                                        undefined,
+                                        result[0].title,
+                                        req.body.body)
+                                    .then((json) => {
+                                        if (json.link) {
+                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`,link,type) VALUES(?,?,?,?,'UPDT',?,?)",
+                                            [parent.idTopic, parent.id, req.session.user.id, req.body.body, json.link, result[0].type],
+                                            (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
-                
-                                                return res.redirect('/');
+
+                                                pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
+                                                WHERE id = ?`, parent.id, (error, result, fields) => {
+                                                    if (error) return res.status(500).send(error);
+                    
+                                                    return res.redirect('/');
+                                                })
                                             })
-                                        })
-                                    } else return res.status(500).json({error: "Issue uploading to imgur."});
-                                })
-                                .catch((err) => {
-                                    console.error(err.message);
-                                    res.redirect('/');
-                                });
+                                        } else return res.status(500).json({error: "Issue uploading to imgur."});
+                                    })
+                                    .catch((err) => {
+                                        console.error(err.message);
+                                        res.redirect('/');
+                                    });
+                            } else {
+                                res.status(503).json({error: "Imgur upload capacity reached. Please try again in one hour."});
+                            }
                         } else {
                         // No link insert
                             pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`) VALUES(?,?,?,?,'UPDT')",
