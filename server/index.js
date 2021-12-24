@@ -434,7 +434,7 @@ app.post('/update/post',
                             const file64 = req.file.buffer.toString('base64');
                             imgur.uploadBase64(file64,
                                     undefined,
-                                    req.body.name,
+                                    result[0].title,
                                     req.body.body)
                                 .then((json) => {
                                     if (json.link) {
