@@ -12,23 +12,13 @@ export default class PostMain extends React.PureComponent {
         this.toggleSize = this.toggleSize.bind(this);
         this.toggleSharp = this.toggleSharp.bind(this);
         this.toggleBackground = this.toggleBackground.bind(this);
+        this.imageCanvas = React.createRef();
         this.state = ({
             current: props.posts.length,
             imgSize: false,
             imgSharp: true,
-            bgWhite: false,
-            imgDim: null
+            bgWhite: false
         });
-    }
-
-    componentDidMount() {
-        // Determine image width and height
-        const currentPost = this.props.posts[this.state.current - 1];
-        if (currentPost.type === 'IMG' && currentPost.link) {
-            const img = new Image();
-            img.onload = (e) => this.setState({ imgDim: {width: e.target.width, height: e.target.height} });
-            img.src = currentPost.link;
-        }
     }
 
     componentDidUpdate() {
@@ -124,46 +114,16 @@ export default class PostMain extends React.PureComponent {
 
             case "IMG":
                 if (currentPost.link) {
-                    const imgSrc = (this.state.imgDim) ? this.state.imgDim : null;
-                    var imgWidth;
-                    var imgHeight;
-                    var resWidth;
-                    var resHeight;
-                    var sizeLabel = 'Original Size';
-                    if (imgSrc) {
-                        imgWidth = imgSrc.width;
-                        imgHeight = imgSrc.height;
-                        const imgWider = imgWidth >= imgHeight;
-                        if (imgHeight <= 675) {
-                            if (imgWider) {
-                                if (this.state.imgSize) {
-                                    resWidth = '100%';
-                                    resHeight = 'auto';
-                                    sizeLabel = 'Expanded';
-                                } else {
-                                    resHeight = 'auto';
-                                }
-                            } else {
-                                if (this.state.imgSize) {
-                                    resWidth = '1200px';
-                                    resHeight = 'auto';
-                                    sizeLabel = 'Expanded';
-                                } else {
-                                    resWidth = imgWidth + 'px';
-                                    resHeight = 'auto';
-                                }
-                            }
-                        } else {
-                            if (imgWider) {
-                                resWidth = '1200px';
-                                resHeight = 'auto';
-                            } else {
-                                resWidth = 'auto';
-                                resHeight = '675px';
-                            }
+                    const imgElem = new Image();
+                    imgElem.src = currentPost.link;
+                    imgElem.onload = (e) => {
+                        const canvas = this.imageCanvas.current;
+                        if (canvas.getContext) {
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(imgElem, 0, 0);
                         }
-                    }
-
+                    };
+                    
                     var imgRend;
                     var rendLabel;
                     if (this.state.imgSharp) {
@@ -180,8 +140,6 @@ export default class PostMain extends React.PureComponent {
                         backgroundColor: bgColor
                     };
                     const imgStyle = {
-                        width: resWidth,
-                        height: resHeight,
                         imageRendering: imgRend
                     };
 
@@ -189,14 +147,11 @@ export default class PostMain extends React.PureComponent {
                     <div className='PostMain-imageContainer'>
                         <div className='PostMain-image'
                             style={divStyle}>
-                            <img className='PostMain-img'
-                                src={currentPost.link}
-                                alt="Main Post"
+                            <canvas className='PostMain-img'
+                                ref={this.imageCanvas}
                                 style={imgStyle} />
                         </div>
                         <div className='PostMain-imageControls'>
-                                <div className='PostMain-imageButton'
-                                    onClick={this.toggleSize}>{sizeLabel}</div>
                                 <div className='PostMain-imageButton'
                                     onClick={this.toggleSharp}>{rendLabel}</div>
                                 <div className='PostMain-imageButton'
