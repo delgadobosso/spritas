@@ -39,6 +39,7 @@ a {
     width: 100px;
     height: 100px;
     margin: auto 0;
+    image-rendering: pixelated;
 }
 
 .Topic-info {

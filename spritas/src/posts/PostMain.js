@@ -9,16 +9,30 @@ export default class PostMain extends React.PureComponent {
         super(props);
         this.left = this.left.bind(this);
         this.right = this.right.bind(this);
+        this.toggleSize = this.toggleSize.bind(this);
         this.toggleSharp = this.toggleSharp.bind(this);
         this.toggleBackground = this.toggleBackground.bind(this);
         this.state = ({
             current: props.posts.length,
-            imgSharp: false,
-            bgWhite: false
+            imgSize: false,
+            imgSharp: true,
+            bgWhite: false,
+            imgDim: null
         });
     }
 
+    componentDidMount() {
+        // Determine image width and height
+        const currentPost = this.props.posts[this.state.current - 1];
+        if (currentPost.type === 'IMG' && currentPost.link) {
+            const img = new Image();
+            img.onload = (e) => this.setState({ imgDim: {width: e.target.width, height: e.target.height} });
+            img.src = currentPost.link;
+        }
+    }
+
     componentDidUpdate() {
+        // Change video in iframe without messing up on re-render
         const currentPost = this.props.posts[this.state.current - 1];
         var ifram = document.getElementById(`PostMainVideo-${currentPost.id}`);
         if (ifram) {
@@ -41,6 +55,12 @@ export default class PostMain extends React.PureComponent {
                 current: state.current + 1
             }));
         }
+    }
+
+    toggleSize() {
+        this.setState(state => ({
+            imgSize: !state.imgSize
+        }));
     }
 
     toggleSharp() {
@@ -104,11 +124,51 @@ export default class PostMain extends React.PureComponent {
 
             case "IMG":
                 if (currentPost.link) {
+                    const imgSrc = (this.state.imgDim) ? this.state.imgDim : null;
+                    var imgWidth;
+                    var imgHeight;
+                    var resWidth;
+                    var resHeight;
+                    var sizeLabel = 'Original Size';
+                    if (imgSrc) {
+                        imgWidth = imgSrc.width;
+                        imgHeight = imgSrc.height;
+                        const imgWider = imgWidth >= imgHeight;
+                        if (imgHeight <= 675) {
+                            if (imgWider) {
+                                if (this.state.imgSize) {
+                                    resWidth = '100%';
+                                    resHeight = 'auto';
+                                    sizeLabel = 'Expanded';
+                                } else {
+                                    resHeight = 'auto';
+                                }
+                            } else {
+                                if (this.state.imgSize) {
+                                    resWidth = '1200px';
+                                    resHeight = 'auto';
+                                    sizeLabel = 'Expanded';
+                                } else {
+                                    resWidth = imgWidth + 'px';
+                                    resHeight = 'auto';
+                                }
+                            }
+                        } else {
+                            if (imgWider) {
+                                resWidth = '1200px';
+                                resHeight = 'auto';
+                            } else {
+                                resWidth = 'auto';
+                                resHeight = '675px';
+                            }
+                        }
+                    }
+
                     var imgRend;
                     var rendLabel;
                     if (this.state.imgSharp) {
-                        imgRend = 'crisp-edges';
-                        rendLabel = 'Crisp Edges';
+                        imgRend = 'pixelated';
+                        rendLabel = 'Pixelated';
                     } else {
                         imgRend = 'auto';
                         rendLabel = 'Smooth Edges';
@@ -120,6 +180,8 @@ export default class PostMain extends React.PureComponent {
                         backgroundColor: bgColor
                     };
                     const imgStyle = {
+                        width: resWidth,
+                        height: resHeight,
                         imageRendering: imgRend
                     };
 
@@ -133,7 +195,8 @@ export default class PostMain extends React.PureComponent {
                                 style={imgStyle} />
                         </div>
                         <div className='PostMain-imageControls'>
-                                <div className='PostMain-imageButton'>Expand Image</div>
+                                <div className='PostMain-imageButton'
+                                    onClick={this.toggleSize}>{sizeLabel}</div>
                                 <div className='PostMain-imageButton'
                                     onClick={this.toggleSharp}>{rendLabel}</div>
                                 <div className='PostMain-imageButton'

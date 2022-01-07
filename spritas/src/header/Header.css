@@ -42,7 +42,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    image-rendering: crisp-edges;
+    image-rendering: pixelated;
     
     -moz-user-select: none;
     -webkit-user-select: none;
