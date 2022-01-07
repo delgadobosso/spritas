@@ -120,6 +120,7 @@ export default class PostMain extends React.PureComponent {
                         const canvas = this.imageCanvas.current;
                         if (canvas.getContext) {
                             const ctx = canvas.getContext('2d');
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
                             ctx.drawImage(imgElem, 0, 0);
                         }
                     };
@@ -149,7 +150,8 @@ export default class PostMain extends React.PureComponent {
                             style={divStyle}>
                             <canvas className='PostMain-img'
                                 ref={this.imageCanvas}
-                                style={imgStyle} />
+                                style={imgStyle}
+                                onMouseDownCapture={(e) => { console.log(e); }} />
                         </div>
                         <div className='PostMain-imageControls'>
                                 <div className='PostMain-imageButton'
