@@ -3,16 +3,19 @@ import React from 'react';
 import Post from './Post';
 import he from 'he';
 import { regex_video } from '../functions/constants';
+import PostModal from './PostModal';
 
 export default class PostMain extends React.PureComponent {
     constructor(props) {
         super(props);
         this.left = this.left.bind(this);
         this.right = this.right.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
         this.toggleSharp = this.toggleSharp.bind(this);
         this.toggleBackground = this.toggleBackground.bind(this);
         this.state = ({
             current: props.posts.length,
+            modal: false,
             imgSharp: false,
             bgWhite: false
         });
@@ -43,6 +46,12 @@ export default class PostMain extends React.PureComponent {
         }
     }
 
+    toggleModal() {
+        this.setState(state => ({
+            modal: !state.modal
+        }));
+    }
+
     toggleSharp() {
         this.setState(state => ({
             imgSharp: !state.imgSharp
@@ -69,6 +78,7 @@ export default class PostMain extends React.PureComponent {
                 </div>
             )
         }
+        var modal;
         
         var video;
         var image;
@@ -104,6 +114,8 @@ export default class PostMain extends React.PureComponent {
 
             case "IMG":
                 if (currentPost.link) {
+                    modal = (this.state.modal) ? <PostModal link={currentPost.link} /> : null;
+
                     var imgRend;
                     var rendLabel;
                     if (this.state.imgSharp) {
@@ -129,6 +141,7 @@ export default class PostMain extends React.PureComponent {
                             style={divStyle}>
                             <img className='PostMain-img'
                                 src={currentPost.link}
+                                onClick={this.toggleModal}
                                 alt="Main Post"
                                 style={imgStyle} />
                         </div>
@@ -149,6 +162,7 @@ export default class PostMain extends React.PureComponent {
 
         return (
             <div className="PostMain">
+                {modal}
                 {controls}
                 {video}
                 {image}
