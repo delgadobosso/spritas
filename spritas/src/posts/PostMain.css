@@ -15,7 +15,7 @@
     flex-grow: 1;
 }
 
-.PostMain-post, .PostMain-video, .PostMain-image {
+.PostMain-post, .PostMain-video, .PostMain-imageContainer {
     width: 1200px;
     max-width: 100%;
     margin: auto;
@@ -29,16 +29,18 @@
     border: 0;
 }
 
-.PostMain-image {
+.PostMain-imageContainer {
     text-align: center;
     background-color: black;
+    max-height: 675px;
+    overflow: hidden;
+    cursor: pointer;
 
     transition: background-color 0.5s;
 }
 
 .PostMain-img {
     max-width: 100%;
-    cursor: pointer;
 }
 
 .PostMain-imageControls {
@@ -69,7 +71,7 @@
 }
 
 @media screen and (max-width: 1200px) {
-    .PostMain-video {
+    .PostMain-video, .PostMain-imageContainer {
         position: relative;
         width: 100%;
         height: 0;

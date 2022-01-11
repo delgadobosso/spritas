@@ -13,7 +13,7 @@ export default class Navi extends React.Component {
     }
 
     componentDidMount() {
-        window.onhashchange = (e) => this.hashHandle(e);
+        window.addEventListener('hashchange', this.hashHandle);
     }
 
     toggleClick() {
@@ -26,6 +26,10 @@ export default class Navi extends React.Component {
                 window.history.scrollRestoration = 'manual';
             } else if (!this.state.open) window.history.go(-1);
         });
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('hashchange', this.hashHandle);
     }
 
     hashHandle(e) {
