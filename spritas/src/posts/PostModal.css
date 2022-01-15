@@ -42,22 +42,6 @@
     max-height: 100%;
     background-color: black;
 }
-@media (orientation: landscape) {
-    .PostModal-fill-wider {
-        height: 100%;
-    }
-    .PostModal-fill-taller {
-        width: 100%;
-    }
-}
-@media (orientation: portrait) {
-    .PostModal-fill-wider {
-        height: 100%;
-    }
-    .PostModal-fill-taller {
-        width: 100%;
-    }
-}
 
 .PostModal-imageControls {
     display: flex;
