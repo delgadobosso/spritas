@@ -32,7 +32,7 @@
 .PostMain-imageContainer {
     text-align: center;
     background-color: black;
-    max-height: 675px;
+    max-height: 200px;
     overflow: hidden;
     cursor: pointer;
 

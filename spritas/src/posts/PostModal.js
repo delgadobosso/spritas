@@ -12,7 +12,8 @@ export default class PostModal extends React.Component {
             container: null,
             resize: true,
             imgSharp: true,
-            imgZoom: false
+            imgZoom: false,
+            everZoomed: false
         });
     }
 
@@ -52,25 +53,35 @@ export default class PostModal extends React.Component {
     }
 
     toggleZoom() {
-        this.setState(state => ({
-            imgZoom: !state.imgZoom
-        }));
+        if (this.state.everZoomed) {
+            this.setState(state => ({
+                imgZoom: !state.imgZoom
+            }));
+        } else {
+            this.setState(state => ({
+                imgZoom: !state.imgZoom,
+                everZoomed: true
+            }));
+        }
     }
 
     render() {
         var resWidth = 'initial';
         var resHeight = 'initial';
+        var offset = '';
+        var trans = (this.state.everZoomed) ? 'width 0.5s, height 0.5s, transform 0.5s' : 'width 0.5s, height 0.5s';
         if (this.state.image && this.state.container) {
             const image = this.state.image;
             const container = this.state.container;
-            var ratio;
-            if (image.width < (container.clientWidth * 0.5) && image.height < (container.clientHeight * 0.5)) {
-                ratio = Math.min((container.clientWidth * 0.5) / image.width, (container.clientHeight * 0.5) / image.height);
-            } else {
-                ratio = Math.min(container.clientWidth / image.width, container.clientHeight / image.height);
-            }
+            const scale = (this.state.imgZoom) ? 2 : 1;
+            const ratio = (image.width < (container.clientWidth * 0.5) && image.height < (container.clientHeight * 0.5))
+            ? Math.min((container.clientWidth * 0.5 * scale) / image.width, (container.clientHeight * 0.5 * scale) / image.height)
+            : Math.min(container.clientWidth * scale / image.width, container.clientHeight * scale / image.height);
             resWidth = image.width * ratio;
             resHeight =  image.height *  ratio;
+            const offsetX = (resWidth < container.clientWidth) ? container.clientWidth * 0.5 - resWidth * 0.5 : 0;
+            const offsetY = (resHeight < container.clientHeight) ? container.clientHeight * 0.5 - resHeight * 0.5 : 0;
+            offset = `translate(${offsetX}px,${offsetY}px)`;
         }
 
         var imgRend;
@@ -86,7 +97,9 @@ export default class PostModal extends React.Component {
         const imgStyle = {
             width: resWidth,
             height: resHeight,
-            imageRendering: imgRend
+            imageRendering: imgRend,
+            transform: offset,
+            transition: trans
         };
 
         return (
@@ -97,8 +110,11 @@ export default class PostModal extends React.Component {
                         <div className='PostModal-imageButton'
                             onClick={() => window.history.go(-1)}>Close Image</div>
                     </div>
-                    <div id={`PostModal-imageContainer-${this.props.id}`} className={`PostModal-imageContainer`}>
-                        <img id={`PostModal-img-${this.props.id}`} className={`PostModal-img`}
+                    <div id={`PostModal-imageContainer-${this.props.id}`}
+                        className={`PostModal-imageContainer`}
+                        onClick={(e) => { if (e.target === e.currentTarget) window.history.go(-1); }}>
+                        <img id={`PostModal-img-${this.props.id}`}
+                            className={`PostModal-img`}
                             src={this.props.link}
                             alt="Modal"
                             onClick={this.toggleZoom}
