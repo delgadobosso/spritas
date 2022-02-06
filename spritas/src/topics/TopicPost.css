@@ -37,11 +37,15 @@
     margin-left: 5px;
 }
 
-.TopicPost-thumb {
+.TopicPost-thumbContainer {
     position: absolute;
     right: 0;
     top: 0;
-    height: 100%;
+    width: 200px;
+}
+
+.TopicPost-thumb {
+    max-width: 100%;
 
     transition: opacity 0.5s, filter 0.5s;
 }

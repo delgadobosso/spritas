@@ -75,7 +75,9 @@ export default class TopicPost extends React.Component {
                             {post.userName} &middot; {ts}
                         </p>
                     </div>
-                    {thumb}
+                    <div className='TopicPost-thumbContainer'>
+                        {thumb}
+                    </div>
                 </a>
             </div>
         );
