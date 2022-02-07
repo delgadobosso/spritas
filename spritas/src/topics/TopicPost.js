@@ -43,7 +43,8 @@ export default class TopicPost extends React.Component {
                         var embedSrc;
                         if (source === "youtube" || source === "youtu.be") embedSrc = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
                         else if (source === "streamable") embedSrc = `https://thumbs-east.streamable.com/image/${id}.jpg?height=300`;
-                        thumb = <img className="TopicPost-thumb" alt="Thumbnail" src={embedSrc} />;
+                        const style = { backgroundImage: `url(${embedSrc})` };
+                        thumb = <div className="TopicPost-thumb" style={style} />;
                     }
                 }
                 break;
@@ -52,8 +53,9 @@ export default class TopicPost extends React.Component {
                 if (post.link) {
                     const link_img = he.decode(post.link);
                     const dot = post.link.lastIndexOf('.');
-                    const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
-                    thumb = <img className='TopicPost-thumb' alt='Thumbnail' src={embedSrc} />
+                    const embedSrc = link_img.slice(0, dot) + 'l' + link_img.slice(dot);
+                    const style = { backgroundImage: `url(${embedSrc})` };
+                    thumb = <div className='TopicPost-thumb' style={style} />
                 }
                 break;
 
@@ -67,6 +69,7 @@ export default class TopicPost extends React.Component {
                     <h2 className="TopicPost-name" id={"TopicPostName-" + post.id}>
                         {title}
                     </h2>
+                    {thumb}
                     <div className="TopicPost-user">
                         <img className="TopicPost-img" src={pfp}
                             title={post.userName}
@@ -74,9 +77,6 @@ export default class TopicPost extends React.Component {
                         <p className="TopicPost-details">
                             {post.userName} &middot; {ts}
                         </p>
-                    </div>
-                    <div className='TopicPost-thumbContainer'>
-                        {thumb}
                     </div>
                 </a>
             </div>
