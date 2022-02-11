@@ -61,7 +61,7 @@
     padding: 10px;
     border-radius: 10px;
 
-    animation: fadeout 0.5s 2s forwards;
+    animation: fadeout 0.5s 1s forwards;
 }
 @keyframes fadeout {
     from { opacity: 1; }
