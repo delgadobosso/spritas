@@ -30,7 +30,6 @@
 .PostModal-imageContainer {
     position: relative;
     margin: 15px;
-    overflow: auto;
     flex: 1;
 }
 
