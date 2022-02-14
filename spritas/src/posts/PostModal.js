@@ -66,16 +66,22 @@ export default class PostModal extends React.Component {
 
     handleClick(e) {
         if (this.state.imgZoom) {
-            if (e.type === 'mousedown' || e.type === 'touchstart') this.setState({ dragging: true });
+            if ((e.type === 'mousedown' && e.which === 1) || e.type === 'touchstart') this.setState({ dragging: true });
             else this.setState({ dragging: false });
-        } else this.toggleZoom();
+        } else if ((e.type === 'mousedown' && e.which === 1) || e.type === 'touchstart') this.toggleZoom();
     }
 
     handleMove(e) {
         if (this.state.dragging) {
             var transform = this.state.imgElem.style.transform;
+            var current = transform.slice(10, -3).split('px, ');
+            var x, y;
             if (e.type === 'mousemove') {
-                this.state.imgElem.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                x = parseInt(current[0]) + e.movementX;
+                x = Math.min(Math.max(x, -1140), 0); // clamp x
+                y = (current.length > 1) ? parseInt(current[1]) + e.movementY
+                    : e.movementY;
+                this.state.imgElem.style.transform = `translate(${x}px, ${y}px)`;
             } else if (e.type === 'touchmove') {
                 var touch = e.touches[0] || e.changedTouches[0];
                 this.state.imgElem.style.transform = `translate(${touch.pageX}px, ${touch.pageY}px)`;
@@ -106,8 +112,8 @@ export default class PostModal extends React.Component {
         var resWidth = 'initial';
         var resHeight = 'initial';
         var offset = '';
-        var trans = (this.state.everZoomed) ? 'width 0.5s, height 0.5s, transform 0.5s' : 'width 0.5s, height 0.5s';
-        var cursor = (this.state.imgZoom) ? 'move' : 'initial';
+        var trans = (this.state.everZoomed) ? 'width 0.5s, height 0.5s' : 'width 0.5s, height 0.5s';
+        var cursor = (this.state.imgZoom) ? 'move' : 'select';
         if (this.state.image && this.state.container) {
             const image = this.state.image;
             const container = this.state.container;
