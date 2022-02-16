@@ -37,8 +37,6 @@
     position: absolute;
     background-color: black;
     cursor: pointer;
-
-    transition: width 0.5s, height 0.5s;
 }
 
 .PostModal-imageControls {
