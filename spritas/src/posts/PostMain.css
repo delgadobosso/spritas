@@ -47,12 +47,17 @@
     margin: 15px;
 }
 
-.PostMain-gradient {
+.PostMain-gradientTop, .PostMain-gradientBot {
     position: absolute;
     width: 1200px;
     max-width: 100%;
     height: 40vh;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0, 0, 0, 0) 15% 85%, rgba(0,0,0,0.5));
+}
+.PostMain-gradientTop {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0) 15px);
+}
+.PostMain-gradientBot {
+    background: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0, 0, 0, 0) 15px);
 }
 
 .PostMain-view {

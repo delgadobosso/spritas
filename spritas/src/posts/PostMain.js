@@ -148,8 +148,9 @@ export default class PostMain extends React.PureComponent {
                             <img className='PostMain-img'
                                 src={currentPost.link}
                                 alt="Main Post" />
-                            <div className='PostMain-gradient'></div>
-                            <p className='PostMain-view'>Click To View Full Image</p>
+                            <div className='PostMain-gradientTop'></div>
+                            <div className='PostMain-gradientBot'></div>
+                            <p className='PostMain-view'>Press To View Full Image</p>
                         </div>
                     </div>
                 }

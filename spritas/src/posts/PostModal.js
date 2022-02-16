@@ -16,9 +16,11 @@ export default class PostModal extends React.Component {
             resize: true,
             imgSharp: true,
             imgZoom: false,
-            everZoomed: false,
+            zoomScale: 2,
             dragging: false,
-            dragged: false
+            dragged: false,
+            currentPos: [],
+            clickPos: []
         });
     }
 
@@ -66,11 +68,20 @@ export default class PostModal extends React.Component {
     }
 
     handleClick(e) {
+        e.preventDefault();
         if (this.state.imgZoom) {
             if ((e.type === 'mousedown' && e.which === 1) || e.type === 'touchstart') {
-                this.setState({ dragging: true });
+                if (e.type === 'touchstart') {
+                    var transform = this.state.imgElem.style.transform;
+                    var current = transform.slice(10, -3).split('px, '); // extract translation coords
+                    this.setState({
+                        dragging: true,
+                        currentPos: [parseInt(current[0]), parseInt(current[1])],
+                        clickPos: [e.touches[0].clientX, e.touches[0].clientY]
+                    });
+                } else this.setState({ dragging: true });
                 this.state.imgElem.style.cursor = 'move';
-            } else {
+            } else if ((e.type === 'mouseup' && e.which === 1) || e.type === 'touchend') {
                 if (!this.state.dragged) {
                     this.state.imgElem.style.transition = 'width 0.5s, height 0.5s, transform 0.5s';
                     this.toggleZoom();
@@ -79,22 +90,25 @@ export default class PostModal extends React.Component {
                     dragging: false,
                     dragged: false
                 });
-                this.state.imgElem.style.cursor = 'zoom-out';
+                this.state.imgElem.style.cursor = 'pointer';
             }
         } else if ((e.type === 'mouseup' && e.which === 1) || e.type === 'touchend') {
+            this.state.imgElem.style.transition = 'width 0.5s, height 0.5s, transform 0.5s';
             this.toggleZoom();
         }
     }
 
     handleMove(e) {
+        e.preventDefault();
         if (this.state.dragging && this.state.image && this.state.container) {
-            this.state.imgElem.style.transition = '';
+            if (!this.state.dragged) this.setState({ dragged: true });
+            this.state.imgElem.style.transition = 'none';
             var transform = this.state.imgElem.style.transform;
             var current = transform.slice(10, -3).split('px, '); // extract translation coords
             var x, y;
             const image = this.state.image;
             const container = this.state.container;
-            const scale = (this.state.imgZoom) ? 2 : 1;
+            const scale = (this.state.imgZoom) ? this.state.zoomScale : 1;
             const ratio = (image.width < (container.clientWidth * 0.5) && image.height < (container.clientHeight * 0.5))
             ? Math.min((container.clientWidth * 0.5 * scale) / image.width, (container.clientHeight * 0.5 * scale) / image.height)
             : Math.min(container.clientWidth * scale / image.width, container.clientHeight * scale / image.height);
@@ -109,12 +123,15 @@ export default class PostModal extends React.Component {
                     : e.movementY;
                 y = Math.min(Math.max(y, -(resHeight - container.clientHeight)), offsetY); // clamp y
 
-                if (!this.state.dragged && (e.movementX != 0 || e.movementY != 0)) this.setState({ dragged: true });
-
                 this.state.imgElem.style.transform = `translate(${x}px, ${y}px)`;
             } else if (e.type === 'touchmove') {
                 var touch = e.touches[0] || e.changedTouches[0];
-                this.state.imgElem.style.transform = `translate(${touch.clientX}px, ${touch.clientY}px)`;
+                x = parseInt(this.state.currentPos[0]) - (this.state.clickPos[0] - touch.clientX);
+                x = Math.min(Math.max(x, -(resWidth - container.clientWidth)), offsetX); // clamp x
+                y = parseInt(this.state.currentPos[1]) - (this.state.clickPos[1] - touch.clientY);
+                y = Math.min(Math.max(y, -(resHeight - container.clientHeight)), offsetY); // clamp y
+                
+                this.state.imgElem.style.transform = `translate(${x}px, ${y}px)`;
             }
         }
     }
@@ -126,34 +143,25 @@ export default class PostModal extends React.Component {
     }
 
     toggleZoom() {
-        if (this.state.everZoomed) {
-            this.setState(state => ({
-                imgZoom: !state.imgZoom
-            }));
-        } else {
-            this.setState(state => ({
-                imgZoom: !state.imgZoom,
-                everZoomed: true
-            }));
-        }
+        this.setState(state => ({
+            imgZoom: !state.imgZoom
+        }));
     }
 
     render() {
         var resWidth = 'initial';
         var resHeight = 'initial';
-        var offset = '';
-        var trans = (this.state.everZoomed) ? 'width 0.5s, height 0.5s, transform 0.5s' : 'width 0.5s, height 0.5s';
-        var cursor = (this.state.imgZoom) ? 'zoom-out' : 'zoom-in';
+        var transform = '';
         if (this.state.image && this.state.container) {
             const image = this.state.image;
             const container = this.state.container;
-            const scale = (this.state.imgZoom) ? 2 : 1;
+            const scale = (this.state.imgZoom) ? this.state.zoomScale : 1;
             const ratio = (image.width < (container.clientWidth * 0.5) && image.height < (container.clientHeight * 0.5))
             ? Math.min((container.clientWidth * 0.5 * scale) / image.width, (container.clientHeight * 0.5 * scale) / image.height)
             : Math.min(container.clientWidth * scale / image.width, container.clientHeight * scale / image.height);
             resWidth = image.width * ratio;
             resHeight =  image.height *  ratio;
-            offset = `translate(${-(resWidth - container.clientWidth) * 0.5}px,${-(resHeight - container.clientHeight) * 0.5}px)`;
+            transform = `translate(${-(resWidth - container.clientWidth) * 0.5}px,${-(resHeight - container.clientHeight) * 0.5}px)`;
         }
 
         var imgRend;
@@ -170,9 +178,7 @@ export default class PostModal extends React.Component {
             width: resWidth,
             height: resHeight,
             imageRendering: imgRend,
-            cursor: cursor,
-            transform: offset,
-            transition: trans
+            transform: transform
         };
 
         return (
