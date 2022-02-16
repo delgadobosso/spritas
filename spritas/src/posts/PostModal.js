@@ -122,17 +122,14 @@ export default class PostModal extends React.Component {
                 y = (current.length > 1) ? parseInt(current[1]) + e.movementY
                     : e.movementY;
                 y = Math.min(Math.max(y, -(resHeight - container.clientHeight)), offsetY); // clamp y
-
-                this.state.imgElem.style.transform = `translate(${x}px, ${y}px)`;
             } else if (e.type === 'touchmove') {
                 var touch = e.touches[0] || e.changedTouches[0];
                 x = parseInt(this.state.currentPos[0]) - (this.state.clickPos[0] - touch.clientX);
                 x = Math.min(Math.max(x, -(resWidth - container.clientWidth)), offsetX); // clamp x
                 y = parseInt(this.state.currentPos[1]) - (this.state.clickPos[1] - touch.clientY);
                 y = Math.min(Math.max(y, -(resHeight - container.clientHeight)), offsetY); // clamp y
-                
-                this.state.imgElem.style.transform = `translate(${x}px, ${y}px)`;
             }
+            this.state.imgElem.style.transform = `translate(${x}px, ${y}px)`;
         }
     }
 
