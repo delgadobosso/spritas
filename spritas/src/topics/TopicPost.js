@@ -2,7 +2,7 @@ import './TopicPost.css';
 import pfp from '../images/pfp.png';
 import React from 'react';
 import he from 'he';
-import { regex_video } from '../functions/constants';
+import * as Regex from '../functions/constants';
 
 export default class TopicPost extends React.Component {
     constructor(props) {
@@ -25,28 +25,42 @@ export default class TopicPost extends React.Component {
         ${ts.toDateString()}`;
 
         var thumb;
-        if (post.type === "VIDO") {
-            const re = new RegExp(regex_video);
-            const link = he.decode(post.link);
-            if (post.link && re.test(link)) {
-                const matches = link.match(regex_video).groups;
-                var source;
-                for (const thisSrc in matches) {
-                    if (thisSrc.includes('source') && matches[thisSrc]) source = matches[thisSrc];
+        switch(post.type) {
+            case 'VIDO':
+                const re_vid = new RegExp(Regex.regex_video);
+                const link_vid = he.decode(post.link);
+                if (post.link && re_vid.test(link_vid)) {
+                    const matches = link_vid.match(Regex.regex_video).groups;
+                    var source;
+                    for (const thisSrc in matches) {
+                        if (thisSrc.includes('source') && matches[thisSrc]) source = matches[thisSrc];
+                    }
+                    var id;
+                    for (const thisId in matches) {
+                        if (thisId.includes('id') && matches[thisId]) id = matches[thisId];
+                    }
+                    if (id) {
+                        var embedSrc;
+                        if (source === "youtube" || source === "youtu.be") embedSrc = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+                        else if (source === "streamable") embedSrc = `https://thumbs-east.streamable.com/image/${id}.jpg?height=300`;
+                        const style = { backgroundImage: `url(${embedSrc})` };
+                        thumb = <div className="TopicPost-thumb" style={style} />;
+                    }
                 }
-                var id;
-                for (const thisId in matches) {
-                    if (thisId.includes('id') && matches[thisId]) id = matches[thisId];
+                break;
+
+            case 'IMG':
+                if (post.link) {
+                    const link_img = he.decode(post.link);
+                    const dot = post.link.lastIndexOf('.');
+                    const embedSrc = link_img.slice(0, dot) + 'l' + link_img.slice(dot);
+                    const style = { backgroundImage: `url(${embedSrc})` };
+                    thumb = <div className='TopicPost-thumb' style={style} />
                 }
-                if (id) {
-                    var embedSrc;
-                    if (source === "youtube" || source === "youtu.be") embedSrc = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-                    else if (source === "streamable") embedSrc = `https://thumbs-east.streamable.com/image/${id}.jpg?height=300`;
-                    thumb = 
-                    <img className="TopicPost-thumb" alt="Thumbnail"
-                        src={embedSrc} />;
-                }
-            }
+                break;
+
+            default:
+                break;
         }
 
         return (
@@ -55,6 +69,7 @@ export default class TopicPost extends React.Component {
                     <h2 className="TopicPost-name" id={"TopicPostName-" + post.id}>
                         {title}
                     </h2>
+                    {thumb}
                     <div className="TopicPost-user">
                         <img className="TopicPost-img" src={pfp}
                             title={post.userName}
@@ -63,7 +78,6 @@ export default class TopicPost extends React.Component {
                             {post.userName} &middot; {ts}
                         </p>
                     </div>
-                    {thumb}
                 </a>
             </div>
         );

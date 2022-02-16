@@ -3,19 +3,23 @@ import React from 'react';
 import Post from './Post';
 import he from 'he';
 import { regex_video } from '../functions/constants';
+import PostModal from './PostModal';
 
 export default class PostMain extends React.PureComponent {
     constructor(props) {
         super(props);
+        this.hashHandle = this.hashHandle.bind(this);
         this.left = this.left.bind(this);
         this.right = this.right.bind(this);
-        this.toggleSharp = this.toggleSharp.bind(this);
-        this.toggleBackground = this.toggleBackground.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
         this.state = ({
             current: props.posts.length,
-            imgSharp: false,
-            bgWhite: false
+            modal: false
         });
+    }
+
+    componentDidMount() {
+        window.addEventListener('hashchange', this.hashHandle);
     }
 
     componentDidUpdate() {
@@ -24,6 +28,30 @@ export default class PostMain extends React.PureComponent {
         if (ifram) {
             ifram.remove();
             document.getElementsByClassName('PostMain-video')[0].appendChild(ifram);
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('hashchange', this.hashHandle);
+    }
+
+    hashHandle(e) {
+        if (e.oldURL.split('#')[1] === `image${this.state.current}`) {
+            const modal = document.getElementById('PostModal-' + this.props.posts[this.state.current - 1].id);
+            modal.style.opacity = 0;
+            const controller = new AbortController();
+            modal.addEventListener('transitionend', (e) => {
+                if (e.currentTarget === e.target) {
+                    this.setState({
+                        modal: false
+                    }, () => this.props.naviHide(false));
+                    controller.abort();
+                }
+            }, { signal: controller.signal });
+        } else if (e.newURL.split('#')[1] === `image${this.state.current}`) {
+            this.setState({
+                modal: true
+            }, () => this.props.naviHide(true));
         }
     }
 
@@ -43,16 +71,20 @@ export default class PostMain extends React.PureComponent {
         }
     }
 
-    toggleSharp() {
+    toggleModal() {
         this.setState(state => ({
-            imgSharp: !state.imgSharp
-        }));
-    }
-
-    toggleBackground() {
-        this.setState(state => ({
-            bgWhite: !state.bgWhite
-        }));
+            modal: !state.modal
+        }), () => {
+            if (this.state.modal) {
+                this.props.naviHide(true);
+                var prevState = window.history.state;
+                window.history.pushState(prevState, "", `#image${this.state.current}`);
+                window.history.scrollRestoration = 'manual';
+            } else if (!this.state.modal) {
+                this.props.naviHide(false);
+                window.history.go(-1);
+            }
+        });
     }
 
     render() {
@@ -69,6 +101,7 @@ export default class PostMain extends React.PureComponent {
                 </div>
             )
         }
+        var modal;
         
         var video;
         var image;
@@ -104,40 +137,20 @@ export default class PostMain extends React.PureComponent {
 
             case "IMG":
                 if (currentPost.link) {
-                    var imgRend;
-                    var rendLabel;
-                    if (this.state.imgSharp) {
-                        imgRend = 'crisp-edges';
-                        rendLabel = 'Crisp Edges';
-                    } else {
-                        imgRend = 'auto';
-                        rendLabel = 'Smooth Edges';
-                    }
-
-                    var bgColor = (this.state.bgWhite) ? 'white' : 'black';
-
-                    const divStyle = {
-                        backgroundColor: bgColor
-                    };
-                    const imgStyle = {
-                        imageRendering: imgRend
-                    };
+                    modal = (this.state.modal) ? 
+                        <PostModal link={currentPost.link} id={currentPost.id}/>
+                        : null;
 
                     image =
-                    <div className='PostMain-imageContainer'>
-                        <div className='PostMain-image'
-                            style={divStyle}>
+                    <div className='PostMain-imagePreview'>
+                        <div className='PostMain-imageContainer'
+                            onClick={this.toggleModal}>
                             <img className='PostMain-img'
                                 src={currentPost.link}
-                                alt="Main Post"
-                                style={imgStyle} />
-                        </div>
-                        <div className='PostMain-imageControls'>
-                                <div className='PostMain-imageButton'>Expand Image</div>
-                                <div className='PostMain-imageButton'
-                                    onClick={this.toggleSharp}>{rendLabel}</div>
-                                <div className='PostMain-imageButton'
-                                    onClick={this.toggleBackground}>Toggle Background Color</div>
+                                alt="Main Post" />
+                            <div className='PostMain-gradientTop'></div>
+                            <div className='PostMain-gradientBot'></div>
+                            <p className='PostMain-view'>Press To View Full Image</p>
                         </div>
                     </div>
                 }
@@ -149,6 +162,7 @@ export default class PostMain extends React.PureComponent {
 
         return (
             <div className="PostMain">
+                {modal}
                 {controls}
                 {video}
                 {image}

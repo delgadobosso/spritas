@@ -97,7 +97,7 @@ export default class PostContainer extends React.Component {
                     rep.style.height = "auto";
                     controller.abort();
                 }
-            }, {signal: controller.signal});
+            }, { signal: controller.signal });
         }
     }
 
@@ -105,7 +105,7 @@ export default class PostContainer extends React.Component {
         const id = (this.state.post) ? this.state.post.id : "";
 
         const title = (this.state.post) ? he.decode(this.state.post.title) : "";
-        const main = (this.state.main) ? <PostMain posts={this.state.main} /> : null;
+        const main = (this.state.main) ? <PostMain posts={this.state.main} naviHide={this.props.naviHide} /> : null;
         
         const update = (this.props.user && this.props.user.id === this.state.opid) ?
         <UpdatePost post={this.state.post} /> : null;

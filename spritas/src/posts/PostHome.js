@@ -23,7 +23,7 @@ export default class PostHome extends React.Component {
         return (
             <div className="PostHome" id={"PostHome-" + this.props.id}>
                 <div className="PostHome-back" onClick={ () => { window.history.go(-1); } }>Go Back</div>
-                <PostContainer id={this.props.id} user={this.props.user} />
+                <PostContainer id={this.props.id} user={this.props.user} naviHide={this.props.naviHide} />
             </div>
         )
     }

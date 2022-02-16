@@ -15,7 +15,7 @@
     flex-grow: 1;
 }
 
-.PostMain-post, .PostMain-video, .PostMain-image {
+.PostMain-post, .PostMain-video, .PostMain-imageContainer {
     width: 1200px;
     max-width: 100%;
     margin: auto;
@@ -29,42 +29,49 @@
     border: 0;
 }
 
-.PostMain-image {
-    text-align: center;
+.PostMain-imageContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: black;
+    max-height: 40vh;
+    overflow: hidden;
+    cursor: pointer;
 
     transition: background-color 0.5s;
 }
 
 .PostMain-img {
     max-width: 100%;
+    margin: 15px;
 }
 
-.PostMain-imageControls {
-    display: flex;
+.PostMain-gradientTop, .PostMain-gradientBot {
+    position: absolute;
     width: 1200px;
     max-width: 100%;
-    margin: auto;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    text-align: center;
+    height: 40vh;
+}
+.PostMain-gradientTop {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0) 15px);
+}
+.PostMain-gradientBot {
+    background: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0, 0, 0, 0) 15px);
 }
 
-.PostMain-imageButton {
-    flex-grow: 1;
-    flex-basis: 0;
-    padding: 10px 0;
-    cursor: pointer;
+.PostMain-view {
+    position: absolute;
+    color: white;
+    background-color: rgba(0,0,0,0.75);
+    padding: 10px;
+    border-radius: 10px;
 
-    transition: background-color 0.1s;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    animation: fadeout 0.5s 1s forwards;
 }
-.PostMain-imageButton:hover {
-    background-color: red;
+@keyframes fadeout {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
 
 @media screen and (max-width: 1200px) {

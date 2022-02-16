@@ -44,7 +44,7 @@ export default class App extends React.Component {
 
     // PostHome Control
     window.onpopstate = (e) => {
-      if (this.state.post && !e.state.id) {
+      if (this.state.post && e.state && !e.state.id) {
         const posthome = document.getElementById("PostHome-" + this.state.post.props.id)
         posthome.style.opacity = 0;
         posthome.style.overflow = "hidden";
@@ -103,7 +103,7 @@ export default class App extends React.Component {
             <Route path='/create/topic/:id?' component={CreateTopic} />
             <Route path='/create/post/:id' component={CreatePost} />
             <Route path='/post/:id'
-              render={props => <PostContainer user={this.state.user} {...props} />} />
+              render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/'>
               <TopicContainer postClick={this.postClick} user={this.state.user}
                 naviHide={this.naviHide} />
