@@ -5,8 +5,10 @@
     
     transition: filter 0.5s;
 }
-.Header:hover {
-    filter: brightness(1.15);
+@media (hover: hover) {
+    .Header:hover {
+        filter: brightness(1.15);
+    }
 }
 
 .Header-videoContainer {

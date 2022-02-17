@@ -11,6 +11,7 @@ export default class PostMain extends React.PureComponent {
         this.hashHandle = this.hashHandle.bind(this);
         this.left = this.left.bind(this);
         this.right = this.right.bind(this);
+        this.goToPost = this.goToPost.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.state = ({
             current: props.posts.length,
@@ -71,6 +72,10 @@ export default class PostMain extends React.PureComponent {
         }
     }
 
+    goToPost(index) {
+        this.setState({ current: index });
+    }
+
     toggleModal() {
         this.setState(state => ({
             modal: !state.modal
@@ -92,17 +97,55 @@ export default class PostMain extends React.PureComponent {
         const length = posts.length;
         const currentPost = posts[this.state.current - 1];
         const currentElem = <Post post={currentPost} op={true} />;
+
+        // Update controls
         if (length > 1) {
+            const nodes = posts.map((post, index) => {
+                var fill, r;
+                if (this.state.current - 1 === index) {
+                    fill = 'red';
+                    r = '15';
+                } else {
+                    fill = 'black';
+                    r = '8';
+                }
+
+                var ts = new Date(post.ts);
+                ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+
+                return (
+                    <g key={index} className='PostMain-nodeHit'
+                        onClick={() => this.goToPost(index + 1)}>
+                        <circle cx={60 * index} cy='50%' r='25' fillOpacity='0' />
+                        <circle className='PostMain-node'
+                            cx={60 * index} cy='50%' r={r} fill={fill} />
+                        <title>{ts}</title>
+                    </g>
+                )
+            });
+
+            const style = {
+                transform: `translate(-${60 * (this.state.current - 1)}px)`
+            }
+
             var controls = (
                 <div className="PostMain-controls">
                     <div className="PostMain-arrow" onClick={this.left}>&lt;--</div>
-                    <div className="PostMain-current">{`Update ${this.state.current}`}</div>
+                    <svg className='PostMain-update' xmlns="http://www.w3.org/2000/svg">
+                        <svg overflow='visible' x='50%'>
+                            <g className='PostMain-nodeContainer' style={style}>
+                                <line x1='0' y1='50%' x2={60 * (length - 1)} y2='50%'
+                                    stroke='black' strokeWidth='3px' />
+                                {nodes}
+                            </g>
+                        </svg>
+                    </svg>
                     <div className="PostMain-arrow" onClick={this.right}>--&gt;</div>
                 </div>
             )
         }
+
         var modal;
-        
         var video;
         var image;
         switch(currentPost.type) {

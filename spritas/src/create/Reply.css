@@ -9,8 +9,10 @@
     -ms-user-select: none;
     user-select: none;
 }
-.Reply-expand:hover {
-    background-color: lightgreen;
+@media (hover: hover) {
+    .Reply-expand:hover {
+        background-color: lightgreen;
+    }
 }
 
 .Reply-form {
@@ -58,6 +60,8 @@
     background-color: lightgoldenrodyellow;
     border: none;
 }
-.Reply-submit:hover {
-    cursor: pointer;
+@media (hover: hover) {
+    .Reply-submit:hover {
+        cursor: pointer;
+    }
 }

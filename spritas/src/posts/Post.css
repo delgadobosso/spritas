@@ -84,14 +84,18 @@
     user-select: none;
 }
 
-.Post-load:hover {
-    cursor: pointer;
-    background-color: lightgreen;
+@media (hover: hover) {
+    .Post-load:hover {
+        cursor: pointer;
+        background-color: lightgreen;
+    }
 }
 
-.Post-collapse:hover {
-    cursor: pointer;
-    background-color: lightsalmon;
+@media (hover: hover) {
+    .Post-collapse:hover {
+        cursor: pointer;
+        background-color: lightsalmon;
+    }
 }
 
 

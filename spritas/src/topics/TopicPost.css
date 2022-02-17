@@ -9,9 +9,11 @@
 
     transition: background-color 0.1s;
 }
-.TopicPost-link:hover {
-    background-color: lightskyblue;
-    cursor: pointer;
+@media (hover: hover) {
+    .TopicPost-link:hover {
+        background-color: lightskyblue;
+        cursor: pointer;
+    }
 }
 .TopicPost-link:active {
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1) inset;
@@ -50,8 +52,10 @@
 
     transition: filter 0.5s;
 }
-.TopicPost-link:hover .TopicPost-thumb {
-    filter: brightness(1.1);
+@media (hover: hover) {
+    .TopicPost-link:hover .TopicPost-thumb {
+        filter: brightness(1.1);
+    }
 }
 
 @media screen and (max-width: 700px) {

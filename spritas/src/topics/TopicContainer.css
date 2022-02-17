@@ -28,8 +28,10 @@
     user-select: none;
 }
 
-.Container-header:hover {
-    cursor: pointer;
+@media (hover: hover) {
+    .Container-header:hover {
+        cursor: pointer;
+    }
 }
 
 .Container-title {

@@ -23,7 +23,9 @@
     user-select: none;
 }
 
-.PostHome-back:hover {
-    cursor: pointer;
-    background-color: lightsalmon;
+@media (hover: hover) {
+    .PostHome-back:hover {
+        cursor: pointer;
+        background-color: lightsalmon;
+    }
 }

@@ -11,9 +11,11 @@
 
     transition: filter 0.5s;
 }
-.PostContainer-header:hover {
-    cursor: pointer;
-    filter: brightness(1.15);
+@media (hover: hover) {
+    .PostContainer-header:hover {
+        cursor: pointer;
+        filter: brightness(1.15);
+    }
 }
 
 .PostContainer-title {
@@ -67,9 +69,11 @@
     -ms-user-select: none;
     user-select: none;
 }
-.PostContainer-load:hover {
-    cursor: pointer;
-    background-color: lightgreen;
+@media (hover: hover) {
+    .PostContainer-load:hover {
+        cursor: pointer;
+        background-color: lightgreen;
+    }
 }
 
 .PostContainer-loaded {

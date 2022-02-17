@@ -61,6 +61,8 @@
     -ms-user-select: none;
     user-select: none;
 }
-.PostModal-imageButton:hover {
-    background-color: red;
+@media (hover: hover) {
+    .PostModal-imageButton:hover {
+        background-color: red;
+    }
 }

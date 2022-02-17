@@ -44,9 +44,11 @@
 
     transition: filter 0.5s;
 }
-.Navi-toggle:hover {
-    cursor: pointer;
-    filter: brightness(1.15);
+@media (hover: hover) {
+    .Navi-toggle:hover {
+        cursor: pointer;
+        filter: brightness(1.15);
+    }
 }
 
 .Navi-img {
@@ -67,8 +69,10 @@
 
     transition: background-color 0.1s;
 }
-.Navi-item:hover {
-    background-color: blanchedalmond;
+@media (hover: hover) {
+    .Navi-item:hover {
+        background-color: blanchedalmond;
+    }
 }
 
 
