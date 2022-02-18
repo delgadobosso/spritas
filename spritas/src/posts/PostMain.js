@@ -130,7 +130,12 @@ export default class PostMain extends React.PureComponent {
 
             var controls = (
                 <div className="PostMain-controls">
-                    <div className="PostMain-arrow" onClick={this.left}>&lt;--</div>
+                    <svg className="PostMain-arrowContainer" viewBox='0 0 80 40' onClick={this.left}>
+                        <path className='PostMain-arrowL' d='M 40 10 L 30 20 L 40 30'
+                            stroke='white' strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
+                            fill='none' />
+                    </svg>
+
                     <svg className='PostMain-update' xmlns="http://www.w3.org/2000/svg">
                         <svg overflow='visible' x='50%'>
                             <g className='PostMain-nodeContainer' style={style}>
@@ -140,7 +145,12 @@ export default class PostMain extends React.PureComponent {
                             </g>
                         </svg>
                     </svg>
-                    <div className="PostMain-arrow" onClick={this.right}>--&gt;</div>
+
+                    <svg className="PostMain-arrowContainer" viewBox='0 0 80 40' onClick={this.right}>
+                        <path className='PostMain-arrowR' d='M 35 10 L 45 20 L 35 30'
+                            stroke='white' strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
+                            fill='none' />
+                    </svg>
                 </div>
             )
         }

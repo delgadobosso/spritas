@@ -7,11 +7,21 @@
     justify-content: space-between;
 }
 
-.PostMain-arrow {
+.PostMain-arrowContainer {
     cursor: pointer;
-    text-align: center;
-    background-color: lightgreen;
-    padding: 10px 5px;
+    background-color: #ab0f26;
+    width: 80px;
+    height: 40px;
+}
+
+.PostMain-arrowL, .PostMain-arrowR {
+    transition: transform 0.1s;
+}
+.PostMain-arrowContainer:active .PostMain-arrowL {
+    transform: translate(-15px);
+}
+.PostMain-arrowContainer:active .PostMain-arrowR {
+    transform: translate(15px);
 }
 
 .PostMain-update {
