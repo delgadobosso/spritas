@@ -124,13 +124,17 @@ export default class PostMain extends React.PureComponent {
                 )
             });
 
-            const style = {
-                transform: `translate(-${60 * (this.state.current - 1)}px)`
-            }
+            const nodeStyle = { transform: `translate(-${60 * (this.state.current - 1)}px)` };
+            const leftArrow = (this.state.current === 1)
+            ? { backgroundColor: 'grey' } : { backgroundColor: '#ab0f26' };
+            const rightArrow = (this.state.current === length)
+            ? { backgroundColor: 'grey' } : { backgroundColor: '#ab0f26' };
 
             var controls = (
                 <div className="PostMain-controls">
-                    <svg className="PostMain-arrowContainer" viewBox='0 0 80 40' onClick={this.left}>
+                    <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
+                        viewBox='0 0 80 40' onClick={this.left} style={leftArrow}>
+                        <title>Previous Update</title>
                         <path className='PostMain-arrowL' d='M 40 10 L 30 20 L 40 30'
                             stroke='white' strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
                             fill='none' />
@@ -138,7 +142,7 @@ export default class PostMain extends React.PureComponent {
 
                     <svg className='PostMain-update' xmlns="http://www.w3.org/2000/svg">
                         <svg overflow='visible' x='50%'>
-                            <g className='PostMain-nodeContainer' style={style}>
+                            <g className='PostMain-nodeContainer' style={nodeStyle}>
                                 <line x1='0' y1='50%' x2={60 * (length - 1)} y2='50%'
                                     stroke='black' strokeWidth='3px' />
                                 {nodes}
@@ -146,7 +150,9 @@ export default class PostMain extends React.PureComponent {
                         </svg>
                     </svg>
 
-                    <svg className="PostMain-arrowContainer" viewBox='0 0 80 40' onClick={this.right}>
+                    <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
+                        viewBox='0 0 80 40' onClick={this.right} style={rightArrow}>
+                        <title>Next Update</title>
                         <path className='PostMain-arrowR' d='M 35 10 L 45 20 L 35 30'
                             stroke='white' strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
                             fill='none' />
