@@ -110,16 +110,13 @@ export default class PostMain extends React.PureComponent {
                     r = '8';
                 }
 
-                var ts = new Date(post.ts);
-                ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-
                 return (
                     <g key={index} className='PostMain-nodeHit'
                         onClick={() => this.goToPost(index + 1)}>
                         <circle cx={60 * index} cy='50%' r='25' fillOpacity='0' />
                         <circle className='PostMain-node'
                             cx={60 * index} cy='50%' r={r} fill={fill} />
-                        <title>{ts}</title>
+                        <title>{post.subtitle}</title>
                     </g>
                 )
             });
@@ -219,15 +216,19 @@ export default class PostMain extends React.PureComponent {
                 break;
         }
 
+        const subtitle = (currentPost.subtitle) ?
+        <div className='PostMain-subtitleContainer'>
+            <h3 className='PostMain-subtitle'>{currentPost.subtitle}</h3>
+        </div> : null;
+
         return (
             <div className="PostMain">
                 {modal}
                 {controls}
                 {video}
                 {image}
-                <div className="PostMain-post">
-                    {currentElem}
-                </div>
+                {subtitle}
+                <div className="PostMain-post">{currentElem}</div>
             </div>
         )
     }
