@@ -307,6 +307,7 @@ app.post('/create/post',
     body('id').isInt(),
     body('type').notEmpty().isIn(["TEXT", "BLOG", "VIDO", "IMG"]),
     body('name').trim().isLength({ min: 2 }).escape(),
+    body('subtitle').trim().isLength({ max: 30 }).escape(),
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
@@ -324,9 +325,9 @@ app.post('/create/post',
 
                 // Add link if it's a VIDO
                 if (result[0].type === "VIDO" && req.body.link !== "null") {
-                    pool.query(`INSERT INTO posts (idTopic,idUser,title,body,link,type)
-                    VALUES(?,?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.name, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
+                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
+                    VALUES(?,?,?,?,?,?,?)`,
+                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
                         res.redirect('/');
@@ -343,9 +344,9 @@ app.post('/create/post',
                                 req.body.body)
                             .then((json) => {
                                 if (json.link) {
-                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,body,link,type)
-                                    VALUES(?,?,?,?,?,?)`,
-                                    [req.body.id, req.session.user.id, req.body.name,req.body.body, json.link, result[0].type], (error, result, fields) => {
+                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
+                                    VALUES(?,?,?,?,?,?,?)`,
+                                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, result[0].type], (error, result, fields) => {
                                         if (error) return res.status(500).send(error);
 
                                         res.redirect('/');
@@ -361,9 +362,9 @@ app.post('/create/post',
                     }
                 // No link insert otherwise
                 } else {
-                    pool.query(`INSERT INTO posts (idTopic,idUser,title,body,type)
-                    VALUES(?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.name, req.body.body, result[0].type], (error, result, fields) => {
+                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,type)
+                    VALUES(?,?,?,?,?,?)`,
+                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, result[0].type], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
                         res.redirect('/');
@@ -411,6 +412,7 @@ app.post('/create/reply',
 app.post('/update/post',
     uploadTmp.single('file'),
     body('id').notEmpty().isInt(),
+    body('subtitle').trim().isLength({ max: 30 }).escape(),
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
@@ -430,8 +432,8 @@ app.post('/update/post',
                     if (req.session.user.id === parent.idUser) {
                         // Add link if it's a VIDO
                         if (result[0].type === "VIDO" && req.body.link !== "null") {
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`,link,type) VALUES(?,?,?,?,'UPDT',?,?)",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.body, req.body.link, result[0].type],
+                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
+                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, req.body.link, result[0].type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
@@ -454,8 +456,8 @@ app.post('/update/post',
                                         req.body.body)
                                     .then((json) => {
                                         if (json.link) {
-                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`,link,type) VALUES(?,?,?,?,'UPDT',?,?)",
-                                            [parent.idTopic, parent.id, req.session.user.id, req.body.body, json.link, result[0].type],
+                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
+                                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, json.link, result[0].type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
@@ -477,8 +479,8 @@ app.post('/update/post',
                             }
                         } else {
                         // No link insert
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`) VALUES(?,?,?,?,'UPDT')",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.body],
+                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`) VALUES(?,?,?,?,?,'UPDT')",
+                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 

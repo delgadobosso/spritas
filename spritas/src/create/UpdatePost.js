@@ -61,6 +61,10 @@ export default class UpdatePost extends React.Component {
                     {link}
                     {file}
                     {imgPreview}
+                    <div className="CreatePost-item">
+                        <label htmlFor="subtitle">Subtitle: </label>
+                        <input type="text" name="subtitle" id="subtitle" maxLength="30" />
+                    </div>
                     <textarea className="Reply-text" name="body" id="body" rows="6" cols="100" required />
                     <input className="Reply-submit" type="submit" value="Update" />
                 </form>
