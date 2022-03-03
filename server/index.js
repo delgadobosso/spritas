@@ -114,13 +114,39 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                 else {
                     final = result;
 
-                    pool.query(`SELECT posts.*, users.name AS userName
-                        FROM posts
-                        LEFT JOIN users ON posts.idUser = users.id
-                        WHERE posts.idTopic = ? AND posts.idParent IS NULL
-                        ORDER BY posts.lastTs DESC
+                    pool.query(`
+                        SELECT 
+                            p1.id,
+                            p1.idTopic,
+                            p1.idParent,
+                            p1.idUser,
+                            p1.title,
+                            IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
+                            IFNULL(t1.body, p1.body) AS body,
+                            IFNULL(t1.update, p1.update) AS 'update',
+                            IFNULL(t1.link, p1.link) AS link,
+                            IFNULL(t1.type, p1.type) AS type,
+                            p1.perm,
+                            p1.ts,
+                            IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
+                            users.name AS userName
+                        FROM posts AS p1
+                        LEFT JOIN users
+                        ON p1.idUser = users.id
+                        LEFT JOIN (
+                            SELECT *
+                            FROM posts AS p
+                            INNER JOIN (
+                                SELECT MAX(id) AS id
+                                FROM posts
+                                WHERE idTopic = ? AND posts.update = 'UPDT'
+                                GROUP BY idParent) AS t
+                            USING (id)) AS t1
+                        ON p1.id = t1.idParent
+                        WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                        ORDER BY p1.lastTs DESC
                         LIMIT ?,?`,
-                    [id, offset, limit], (error, result, fields) => {
+                    [id, id, offset, limit], (error, result, fields) => {
                         if (error) res.status(500).send(error);
 
                         else {
@@ -131,13 +157,39 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                 }
             })
         } else {
-            pool.query(`SELECT posts.*, users.name AS userName
-                FROM posts
-                LEFT JOIN users ON posts.idUser = users.id
-                WHERE posts.idTopic = ? AND posts.idParent IS NULL
-                ORDER BY posts.lastTs DESC
+            pool.query(`
+                SELECT 
+                    p1.id,
+                    p1.idTopic,
+                    p1.idParent,
+                    p1.idUser,
+                    p1.title,
+                    IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
+                    IFNULL(t1.body, p1.body) AS body,
+                    IFNULL(t1.update, p1.update) AS 'update',
+                    IFNULL(t1.link, p1.link) AS link,
+                    IFNULL(t1.type, p1.type) AS type,
+                    p1.perm,
+                    p1.ts,
+                    IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
+                    users.name AS userName
+                FROM posts AS p1
+                LEFT JOIN users
+                ON p1.idUser = users.id
+                LEFT JOIN (
+                    SELECT *
+                    FROM posts AS p
+                    INNER JOIN (
+                        SELECT MAX(id) AS id
+                        FROM posts
+                        WHERE idTopic = ? AND posts.update = 'UPDT'
+                        GROUP BY idParent) AS t
+                    USING (id)) AS t1
+                ON p1.id = t1.idParent
+                WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                ORDER BY p1.lastTs DESC
                 LIMIT ?,?`,
-            [id, offset, limit], (error, result, fields) => {
+            [id, id, offset, limit], (error, result, fields) => {
                 if (error) res.status(500).send(error);
 
                 else res.send(result);

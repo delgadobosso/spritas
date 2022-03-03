@@ -24,6 +24,11 @@
     margin: 10px 0 0 0;
 }
 
+.TopicPost-subName {
+    color: #ab0f26;
+    margin: 0;
+}
+
 .TopicPost-user {
     display: flex;
     align-items: center;

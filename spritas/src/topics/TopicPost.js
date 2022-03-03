@@ -19,10 +19,16 @@ export default class TopicPost extends React.Component {
     render() {
         const post = this.props.post;
         const title = he.decode(post.title);
+        const subtitle = (post.subtitle) ?
+            <h3 className="TopicPost-subName">Update: {he.decode(post.subtitle)}</h3>
+            : null;
 
         var ts = new Date(post.ts);
         ts = `Created ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on
         ${ts.toDateString()}`;
+        var lastTs = new Date(post.lastTs);
+        lastTs = (post.update === 'UPDT') ? `UPDATED ${('0' + lastTs.getHours()).slice(-2)}:${('0' + lastTs.getMinutes()).slice(-2)} on
+        ${lastTs.toDateString()}` : null;
 
         var thumb;
         switch(post.type) {
@@ -66,16 +72,15 @@ export default class TopicPost extends React.Component {
         return (
             <div className="TopicPost" title={title}>
                 <a className="TopicPost-link" href={'/post/' + post.id} onClick={this.handleClick}>
-                    <h2 className="TopicPost-name" id={"TopicPostName-" + post.id}>
-                        {title}
-                    </h2>
+                    <h2 className="TopicPost-name" id={"TopicPostName-" + post.id}>{title}</h2>
+                    {subtitle}
                     {thumb}
                     <div className="TopicPost-user">
                         <img className="TopicPost-img" src={pfp}
                             title={post.userName}
                             alt="Topic icon" />
                         <p className="TopicPost-details">
-                            {post.userName} &middot; {ts}
+                            {post.userName} &middot; {ts} &middot; {lastTs}
                         </p>
                     </div>
                 </a>
