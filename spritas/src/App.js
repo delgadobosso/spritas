@@ -13,6 +13,7 @@ import PostContainer from './posts/PostContainer';
 import CreateTopic from './create/CreateTopic';
 import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
+import Featured from "./featured/Featured";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -105,6 +106,7 @@ export default class App extends React.Component {
             <Route path='/post/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/'>
+              <Featured />
               <TopicContainer postClick={this.postClick} user={this.state.user}
                 naviHide={this.naviHide} />
               {this.state.post}

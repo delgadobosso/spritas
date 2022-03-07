@@ -19,14 +19,24 @@
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1) inset;
 }
 
+.TopicPost-titles {
+    display: flex;
+    align-items: center;
+    margin: 10px 0 0 0;
+    flex-wrap: wrap;
+}
+
 .TopicPost-name {
     color: #ab0f26;
-    margin: 10px 0 0 0;
+    margin: 0 5px 0 0;
 }
 
 .TopicPost-subName {
-    color: #ab0f26;
+    color: white;
+    background-color: #ab0f26;
+    border-radius: 5px;
     margin: 0;
+    padding: 0 10px;
 }
 
 .TopicPost-user {
