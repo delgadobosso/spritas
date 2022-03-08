@@ -9,17 +9,34 @@
 
     transition: background-color 0.1s;
 }
-.TopicPost-link:hover {
-    background-color: lightskyblue;
-    cursor: pointer;
+@media (hover: hover) {
+    .TopicPost-link:hover {
+        background-color: lightskyblue;
+        cursor: pointer;
+    }
 }
 .TopicPost-link:active {
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1) inset;
 }
 
+.TopicPost-titles {
+    display: flex;
+    align-items: center;
+    margin: 10px 0 0 0;
+    flex-wrap: wrap;
+}
+
 .TopicPost-name {
     color: #ab0f26;
-    margin: 10px 0 0 0;
+    margin: 0 5px 0 0;
+}
+
+.TopicPost-subName {
+    color: white;
+    background-color: #ab0f26;
+    border-radius: 5px;
+    margin: 0;
+    padding: 0 10px;
 }
 
 .TopicPost-user {
@@ -50,8 +67,10 @@
 
     transition: filter 0.5s;
 }
-.TopicPost-link:hover .TopicPost-thumb {
-    filter: brightness(1.1);
+@media (hover: hover) {
+    .TopicPost-link:hover .TopicPost-thumb {
+        filter: brightness(1.1);
+    }
 }
 
 @media screen and (max-width: 700px) {

@@ -9,8 +9,10 @@
     -ms-user-select: none;
     user-select: none;
 }
-.UpdatePost-expand:hover {
-    background-color: lightgreen;
+@media (hover: hover) {
+    .UpdatePost-expand:hover {
+        background-color: lightgreen;
+    }
 }
 
 .UpdatePost-form {

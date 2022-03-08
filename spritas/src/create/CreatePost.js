@@ -53,6 +53,10 @@ export default class CreatePost extends React.Component {
                         <label htmlFor="name">Post Title: </label>
                         <input type="text" name="name" id="name" required />
                     </div>
+                    <div className="CreatePost-item">
+                        <label htmlFor="subtitle">Subtitle: </label>
+                        <input type="text" name="subtitle" id="subtitle" maxLength="30" />
+                    </div>
                     {link}
                     {file}
                     {imgPreview}

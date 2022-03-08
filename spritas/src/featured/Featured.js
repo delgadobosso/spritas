@@ -1,8 +1,18 @@
 import React from 'react';
 import './Featured.css';
 
-class Featured extends React.Component {
+export default class Featured extends React.Component {
+    constructor(props) {
+        super(props);
+    }
 
+    render() {
+        return (
+            <div className='Featured'>
+                <div className='Featured-header'>
+                    <h1 className='Featured-title'>Featured</h1>
+                </div>
+            </div>
+        );
+    }
 }
-
-export default Featured;

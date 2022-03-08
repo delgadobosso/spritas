@@ -24,9 +24,11 @@ a {
 
     transition: background-color 0.1s, border-radius 0.1s;
 }
-.Topic-link:hover {
-    background-color: lightskyblue;
-    cursor: pointer;
+@media (hover: hover) {
+    .Topic-link:hover {
+        background-color: lightskyblue;
+        cursor: pointer;
+    }
 }
 .Topic-link:active {
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1) inset;
@@ -61,9 +63,11 @@ a {
 .Subtopic > .TopicPortal > .Topic > .Topic-link {
     background-color: bisque;
 }
-.Subtopic > .TopicPortal > .Topic > .Topic-link:hover {
-    background-color: lightskyblue;
-    cursor: pointer;
+@media (hover: hover) {
+    .Subtopic > .TopicPortal > .Topic > .Topic-link:hover {
+        background-color: lightskyblue;
+        cursor: pointer;
+    }
 }
 
 @media screen and (max-width: 900px) {

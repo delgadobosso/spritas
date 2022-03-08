@@ -114,13 +114,39 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                 else {
                     final = result;
 
-                    pool.query(`SELECT posts.*, users.name AS userName
-                        FROM posts
-                        LEFT JOIN users ON posts.idUser = users.id
-                        WHERE posts.idTopic = ? AND posts.idParent IS NULL
-                        ORDER BY posts.lastTs DESC
+                    pool.query(`
+                        SELECT 
+                            p1.id,
+                            p1.idTopic,
+                            p1.idParent,
+                            p1.idUser,
+                            p1.title,
+                            IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
+                            IFNULL(t1.body, p1.body) AS body,
+                            IFNULL(t1.update, p1.update) AS 'update',
+                            IFNULL(t1.link, p1.link) AS link,
+                            IFNULL(t1.type, p1.type) AS type,
+                            p1.perm,
+                            p1.ts,
+                            IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
+                            users.name AS userName
+                        FROM posts AS p1
+                        LEFT JOIN users
+                        ON p1.idUser = users.id
+                        LEFT JOIN (
+                            SELECT *
+                            FROM posts AS p
+                            INNER JOIN (
+                                SELECT MAX(id) AS id
+                                FROM posts
+                                WHERE idTopic = ? AND posts.update = 'UPDT'
+                                GROUP BY idParent) AS t
+                            USING (id)) AS t1
+                        ON p1.id = t1.idParent
+                        WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                        ORDER BY p1.lastTs DESC
                         LIMIT ?,?`,
-                    [id, offset, limit], (error, result, fields) => {
+                    [id, id, offset, limit], (error, result, fields) => {
                         if (error) res.status(500).send(error);
 
                         else {
@@ -131,13 +157,39 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                 }
             })
         } else {
-            pool.query(`SELECT posts.*, users.name AS userName
-                FROM posts
-                LEFT JOIN users ON posts.idUser = users.id
-                WHERE posts.idTopic = ? AND posts.idParent IS NULL
-                ORDER BY posts.lastTs DESC
+            pool.query(`
+                SELECT 
+                    p1.id,
+                    p1.idTopic,
+                    p1.idParent,
+                    p1.idUser,
+                    p1.title,
+                    IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
+                    IFNULL(t1.body, p1.body) AS body,
+                    IFNULL(t1.update, p1.update) AS 'update',
+                    IFNULL(t1.link, p1.link) AS link,
+                    IFNULL(t1.type, p1.type) AS type,
+                    p1.perm,
+                    p1.ts,
+                    IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
+                    users.name AS userName
+                FROM posts AS p1
+                LEFT JOIN users
+                ON p1.idUser = users.id
+                LEFT JOIN (
+                    SELECT *
+                    FROM posts AS p
+                    INNER JOIN (
+                        SELECT MAX(id) AS id
+                        FROM posts
+                        WHERE idTopic = ? AND posts.update = 'UPDT'
+                        GROUP BY idParent) AS t
+                    USING (id)) AS t1
+                ON p1.id = t1.idParent
+                WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                ORDER BY p1.lastTs DESC
                 LIMIT ?,?`,
-            [id, offset, limit], (error, result, fields) => {
+            [id, id, offset, limit], (error, result, fields) => {
                 if (error) res.status(500).send(error);
 
                 else res.send(result);
@@ -307,6 +359,7 @@ app.post('/create/post',
     body('id').isInt(),
     body('type').notEmpty().isIn(["TEXT", "BLOG", "VIDO", "IMG"]),
     body('name').trim().isLength({ min: 2 }).escape(),
+    body('subtitle').trim().isLength({ max: 30 }).escape(),
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
@@ -324,9 +377,9 @@ app.post('/create/post',
 
                 // Add link if it's a VIDO
                 if (result[0].type === "VIDO" && req.body.link !== "null") {
-                    pool.query(`INSERT INTO posts (idTopic,idUser,title,body,link,type)
-                    VALUES(?,?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.name, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
+                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
+                    VALUES(?,?,?,?,?,?,?)`,
+                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
                         res.redirect('/');
@@ -343,9 +396,9 @@ app.post('/create/post',
                                 req.body.body)
                             .then((json) => {
                                 if (json.link) {
-                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,body,link,type)
-                                    VALUES(?,?,?,?,?,?)`,
-                                    [req.body.id, req.session.user.id, req.body.name,req.body.body, json.link, result[0].type], (error, result, fields) => {
+                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
+                                    VALUES(?,?,?,?,?,?,?)`,
+                                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, result[0].type], (error, result, fields) => {
                                         if (error) return res.status(500).send(error);
 
                                         res.redirect('/');
@@ -361,9 +414,9 @@ app.post('/create/post',
                     }
                 // No link insert otherwise
                 } else {
-                    pool.query(`INSERT INTO posts (idTopic,idUser,title,body,type)
-                    VALUES(?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.name, req.body.body, result[0].type], (error, result, fields) => {
+                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,type)
+                    VALUES(?,?,?,?,?,?)`,
+                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, result[0].type], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
                         res.redirect('/');
@@ -411,6 +464,7 @@ app.post('/create/reply',
 app.post('/update/post',
     uploadTmp.single('file'),
     body('id').notEmpty().isInt(),
+    body('subtitle').trim().isLength({ max: 30 }).escape(),
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
@@ -430,8 +484,8 @@ app.post('/update/post',
                     if (req.session.user.id === parent.idUser) {
                         // Add link if it's a VIDO
                         if (result[0].type === "VIDO" && req.body.link !== "null") {
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`,link,type) VALUES(?,?,?,?,'UPDT',?,?)",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.body, req.body.link, result[0].type],
+                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
+                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, req.body.link, result[0].type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
@@ -454,8 +508,8 @@ app.post('/update/post',
                                         req.body.body)
                                     .then((json) => {
                                         if (json.link) {
-                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`,link,type) VALUES(?,?,?,?,'UPDT',?,?)",
-                                            [parent.idTopic, parent.id, req.session.user.id, req.body.body, json.link, result[0].type],
+                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
+                                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, json.link, result[0].type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
@@ -477,8 +531,8 @@ app.post('/update/post',
                             }
                         } else {
                         // No link insert
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,body,`update`) VALUES(?,?,?,?,'UPDT')",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.body],
+                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`) VALUES(?,?,?,?,?,'UPDT')",
+                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
