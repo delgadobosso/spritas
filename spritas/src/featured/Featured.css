@@ -1,11 +1,12 @@
 .Featured {
-
+    margin-bottom: 30px;
 }
 
 .Featured-header {
     background-color: #ab0f26;
     padding: 10px 20px;
     text-align: center;
+    cursor: pointer;
 
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -16,4 +17,33 @@
 .Featured-title {
     color: white;
     margin: 0;
+}
+
+.Featured-videoContainer {
+    background-color: black;
+}
+
+.Featured-video {
+    max-width: 1200px;
+    height: 675px;
+    margin: auto;
+}
+.Featured-video iframe {
+    border: 0;
+}
+
+@media screen and (max-width: 1200px) {
+    .Featured-video {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+    }
+    .Featured-video iframe {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+    }
 }
