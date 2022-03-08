@@ -1,0 +1,19 @@
+.Featured {
+
+}
+
+.Featured-header {
+    background-color: #ab0f26;
+    padding: 10px 20px;
+    text-align: center;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.Featured-title {
+    color: white;
+    margin: 0;
+}

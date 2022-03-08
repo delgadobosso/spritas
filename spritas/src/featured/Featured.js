@@ -8,7 +8,11 @@ export default class Featured extends React.Component {
 
     render() {
         return (
-            <div className='Featured'></div>
+            <div className='Featured'>
+                <div className='Featured-header'>
+                    <h1 className='Featured-title'>Featured</h1>
+                </div>
+            </div>
         );
     }
 }
