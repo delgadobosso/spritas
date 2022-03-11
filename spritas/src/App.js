@@ -66,7 +66,7 @@ export default class App extends React.Component {
 
     // Get User Data
     fetch('/session/user')
-        .then(res => res.json())
+        .then(res => console.log(res.json()))
         .then(data => { this.setState({ user: data }); });
   }
 
@@ -106,7 +106,7 @@ export default class App extends React.Component {
             <Route path='/post/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/'>
-              <Featured />
+              <Featured user={this.state.user} />
               <TopicContainer postClick={this.postClick} user={this.state.user}
                 naviHide={this.naviHide} />
               {this.state.post}
