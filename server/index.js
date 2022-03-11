@@ -550,6 +550,34 @@ app.post('/update/post',
     }
 )
 
+app.get('/featured', (req, res) => {
+    if (req.headers.referer) {
+        pool.query(`SELECT * FROM featured
+        WHERE id = 1`, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            else res.send(result);
+        })
+    } else res.redirect('/');
+})
+
+
+app.post('/update/featured',
+    body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
+    (req, res) => {
+        if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user.type != "ADMN") return res.sendStatus(403);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        pool.query(`UPDATE featured SET link = ? WHERE id = 1`, req.body.link, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            return res.redirect('/');
+        })
+    }
+)
+
 app.listen(port, () => {
     console.log(`Spritas Server listening at http://localhost:${port}`);
 });
