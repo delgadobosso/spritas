@@ -66,8 +66,9 @@ export default class App extends React.Component {
 
     // Get User Data
     fetch('/session/user')
-        .then(res => console.log(res.json()))
-        .then(data => { this.setState({ user: data }); });
+        .then(res => res.json())
+        .then(data => { this.setState({ user: data }); })
+        .catch((error) => { console.error('Error:', error); });
   }
 
   postClick(id, push = true) {
