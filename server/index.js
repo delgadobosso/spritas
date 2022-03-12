@@ -561,7 +561,6 @@ app.get('/featured', (req, res) => {
     } else res.redirect('/');
 })
 
-
 app.post('/update/featured',
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     (req, res) => {
@@ -574,6 +573,19 @@ app.post('/update/featured',
             if (error) return res.status(500).send(error);
 
             return res.redirect('/');
+        })
+    }
+)
+
+app.post('/delete/post',
+    body('id').isInt(),
+    (req, res) => {
+        if (!req.session.user) return res.sendStatus(401);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        pool.query(`SELECT * FROM posts WHERE id = ?`, req.body.id, (error, result, fields) => {
+            
         })
     }
 )
