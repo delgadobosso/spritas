@@ -322,11 +322,6 @@ app.get('/r/:id.:offset.:limit', (req, res) => {
     } else res.redirect('/post/' + req.params.id);
 })
 
-// Redirect to regular post URL if trying to access
-app.get('/p/:id', (req, res) => {
-    res.redirect('/post/' + req.params.id);
-})
-
 app.post('/create/topic',
     body('id').isInt().optional({checkFalsy: true}),
     body('name').trim().isLength({ min: 2 }).escape(),
@@ -396,9 +391,9 @@ app.post('/create/post',
                                 req.body.body)
                             .then((json) => {
                                 if (json.link) {
-                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
-                                    VALUES(?,?,?,?,?,?,?)`,
-                                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, result[0].type], (error, result, fields) => {
+                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,deletehash,type)
+                                    VALUES(?,?,?,?,?,?,?,?)`,
+                                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type], (error, result, fields) => {
                                         if (error) return res.status(500).send(error);
 
                                         res.redirect('/');
@@ -508,8 +503,8 @@ app.post('/update/post',
                                         req.body.body)
                                     .then((json) => {
                                         if (json.link) {
-                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
-                                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, json.link, result[0].type],
+                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,'UPDT',?,?,?)",
+                                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
@@ -578,14 +573,54 @@ app.post('/update/featured',
 )
 
 app.post('/delete/post',
-    body('id').isInt(),
+    body('ogid').notEmpty().isInt(),
+    body('currentid').notEmpty().isInt(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-        pool.query(`SELECT * FROM posts WHERE id = ?`, req.body.id, (error, result, fields) => {
-            
+        pool.query(`SELECT *
+        FROM posts AS p
+        WHERE id = ? OR (idParent = ? AND p.update = 'UPDT')
+        ORDER BY p.id, p.ts`,
+        [req.body.ogid, req.body.ogid], (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
+                var deletehash = result[0].deletehash
+                var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
+                // Post has no updates
+                if (result.length === 1) {
+                    pool.query(`UPDATE posts AS p
+                    SET subtitle = NULL, body = ?, p.update = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
+                    WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
+                        if (error) return res.status(500).send(error);
+
+                        if (deletehash) {
+                            imgur.deleteImage(deletehash)
+                                .then(() => { return res.redirect(200, '/') })
+                                .catch((err) => {
+                                    console.error(err.message);
+                                    return res.redirect('/');
+                                });
+                        } else return res.redirect(200, '/');
+                    })
+                }
+
+                // Post is first and has updates
+                else if (result.length > 1 && req.body.ogid === req.body.currentid) {
+
+                }
+
+                // Post is not first and has updates
+                else if (result.length > 1 && req.body.ogid !== req.body.currentid) {
+
+                }
+
+                else return res.sendStatus(400);
+            }
+            else return res.sendStatus(403);
         })
     }
 )

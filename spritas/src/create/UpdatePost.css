@@ -1,6 +1,11 @@
-.UpdatePost-expand {
+.UpdatePost-controls {
+    display: flex;
+}
+
+.UpdatePost-controlItem {
     cursor: pointer;
     padding: 10px 0;
+    flex: 1;
     text-align: center;
 
     transition: background-color 0.1s;
@@ -10,8 +15,12 @@
     user-select: none;
 }
 @media (hover: hover) {
-    .UpdatePost-expand:hover {
+    .UpdatePost-controlItem:hover {
         background-color: lightgreen;
+    }
+
+    .UpdatePost-delete:hover {
+        background-color: salmon;
     }
 }
 

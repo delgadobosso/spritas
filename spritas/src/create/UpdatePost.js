@@ -7,6 +7,7 @@ export default class UpdatePost extends React.Component {
         super(props);
         this.expand = this.expand.bind(this);
         this.handleImg = this.handleImg.bind(this);
+        this.delete = this.delete.bind(this);
         this.state = ({
             open: false,
             imgPreview: null
@@ -25,14 +26,30 @@ export default class UpdatePost extends React.Component {
         reader.readAsDataURL(file);
     }
 
+    delete() {
+        const post = (this.props.currentPost) ? this.props.currentPost : null;
+        var answer = prompt(`Are you sure you want to delete this post?\nType "${this.props.post.title}" to confirm:`, '');
+        if (answer === this.props.post.title) {
+            var myBody = new URLSearchParams();
+            myBody.append('ogid', this.props.post.id);
+            myBody.append('currentid', post.id);
+
+            fetch('/delete/post', {
+                method: 'POST',
+                body: myBody
+            });
+        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+    }
+
     render() {
         const id = (this.props.post) ? this.props.post.id : null;
         const type = (this.props.post) ? this.props.post.type : null;
 
-        const expand = (this.state.open) ?
-        <div className="UpdatePost-expand" onClick={this.expand}>Close</div> :
-        <div className="UpdatePost-expand" onClick={this.expand}>Update Post</div>;
+        var controls = [];
         var open = (this.state.open) ? " UpdatePost-form-open" : "";
+        if (this.state.open) controls.push(<div className="UpdatePost-controlItem" onClick={this.expand} key='0'>Close</div>);
+        else controls.push(<div className="UpdatePost-controlItem" onClick={this.expand} key='0'>Update Post</div>);
+        controls.push(<div className='UpdatePost-controlItem UpdatePost-delete' onClick={this.delete} key='1'>Delete Post</div>);
 
         const link = (type === "VIDO") ?
         <div className="CreatePost-item">
@@ -54,7 +71,7 @@ export default class UpdatePost extends React.Component {
 
         return (
             <div className="UpdatePost">
-                {expand}
+                <div className='UpdatePost-controls'>{controls}</div>
                 <form action="/update/post/" className={"UpdatePost-form" + open} 
                     method="POST" encType={enctype}>
                     <input type="hidden" name="id" id="id" value={id} />
