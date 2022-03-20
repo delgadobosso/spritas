@@ -116,6 +116,10 @@ export default class PostContainer extends React.Component {
             fetch('/delete/post', {
                 method: 'POST',
                 body: myBody
+            })
+            .then((resp) => {
+                if (resp.ok) window.location.href = '/';
+                else console.error('Post deletion error');
             });
         }
         else alert(`Post not deleted.`);
