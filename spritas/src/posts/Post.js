@@ -145,6 +145,8 @@ export default class Post extends React.Component {
         const opreply = (this.props.opid === post.idUser) ? " Post-replyop" : "";
         const optag = (op || opreply) ? <span className="Post-optag" title="Original Poster"> OP</span> : null;
 
+        const deleted = (post.update === 'DELE') ? ' Post-bodyDel' : '';
+
         return (
             <div className={"Post" + op + opreply} id={"p" + post.id}>
                 <div className="Post-main">
@@ -156,7 +158,7 @@ export default class Post extends React.Component {
                         </div>
                     </div>
                     <div className="Post-right">
-                        <div className="Post-body">{he.decode(post.body)}</div>
+                        <div className={"Post-body" + deleted}>{he.decode(post.body)}</div>
                         <div className="Post-footer">{ts}</div>
                     </div>
                 </div>

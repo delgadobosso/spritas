@@ -131,14 +131,16 @@ export default class PostContainer extends React.Component {
         const title = (this.state.post) ? he.decode(this.state.post.title) : "";
         const main = (this.state.main) ? <PostMain posts={this.state.main} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} /> : null;
 
-        var update;
-        if (this.props.user && this.props.user.id === this.state.opid) {
-            update = <UpdatePost post={this.state.post} user={this.props.user} currentPost={this.state.main[this.state.current - 1]} />;
-        } else if (this.props.user && this.props.user.type === 'ADMN') {
-            update = (
-                <div className='PostContainer-controls'>
-                    <div className='UpdatePost-controlItem UpdatePost-delete' onClick={this.delete}>Delete Post As Admin</div>
-                </div>);
+        if (this.state.post) {
+            var update;
+            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update != 'DELE') {
+                update = <UpdatePost post={this.state.post} user={this.props.user} currentPost={this.state.main[this.state.current - 1]} />;
+            } else if (this.props.user && this.props.user.type === 'ADMN' && this.state.post.update != 'DELE') {
+                update = (
+                    <div className='PostContainer-controls'>
+                        <div className='UpdatePost-controlItem UpdatePost-delete' onClick={this.delete}>Delete Post As Admin</div>
+                    </div>);
+            }
         }
 
         const reply = (!update) ? <Reply parentId={id} main={true} /> : null;

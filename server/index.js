@@ -143,7 +143,7 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                                 GROUP BY idParent) AS t
                             USING (id)) AS t1
                         ON p1.id = t1.idParent
-                        WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                        WHERE p1.idTopic = ? AND p1.idParent IS NULL AND (p1.update != 'DELE' OR p1.update IS NULL)
                         ORDER BY p1.lastTs DESC
                         LIMIT ?,?`,
                     [id, id, offset, limit], (error, result, fields) => {
@@ -186,7 +186,7 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                         GROUP BY idParent) AS t
                     USING (id)) AS t1
                 ON p1.id = t1.idParent
-                WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                WHERE p1.idTopic = ? AND p1.idParent IS NULL AND (p1.update != 'DELE' OR p1.update IS NULL)
                 ORDER BY p1.lastTs DESC
                 LIMIT ?,?`,
             [id, id, offset, limit], (error, result, fields) => {
@@ -599,12 +599,12 @@ app.post('/delete/post',
 
                         if (deletehash) {
                             imgur.deleteImage(deletehash)
-                                .then(() => { return res.redirect(200, '/') })
+                                .then(() => { return res.sendStatus(200) })
                                 .catch((err) => {
                                     console.error(err.message);
-                                    return res.redirect('/');
+                                    return res.sendStatus(200);
                                 });
-                        } else return res.redirect(200, '/');
+                        } else return res.sendStatus(200);
                     })
                 }
 
