@@ -147,7 +147,7 @@ export default class PostContainer extends React.Component {
             }
         }
 
-        const reply = (!update) ? <Reply parentId={id} main={true} /> : null;
+        const reply = (this.props.user && this.props.user.id !== this.state.opid) ? <Reply parentId={id} main={true} /> : null;
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Replies Loaded</div> : null;
