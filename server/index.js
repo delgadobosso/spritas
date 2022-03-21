@@ -143,7 +143,8 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                                 GROUP BY idParent) AS t
                             USING (id)) AS t1
                         ON p1.id = t1.idParent
-                        WHERE p1.idTopic = ? AND p1.idParent IS NULL AND (p1.update != 'DELE' OR p1.update IS NULL)
+                        WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                        AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
                         ORDER BY p1.lastTs DESC
                         LIMIT ?,?`,
                     [id, id, offset, limit], (error, result, fields) => {
@@ -186,7 +187,8 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                         GROUP BY idParent) AS t
                     USING (id)) AS t1
                 ON p1.id = t1.idParent
-                WHERE p1.idTopic = ? AND p1.idParent IS NULL AND (p1.update != 'DELE' OR p1.update IS NULL)
+                WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
                 ORDER BY p1.lastTs DESC
                 LIMIT ?,?`,
             [id, id, offset, limit], (error, result, fields) => {
@@ -272,7 +274,8 @@ app.get('/p/:id', (req, res) => {
         pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
-            WHERE posts.id = ? OR (posts.update = "UPDT" AND posts.idParent = ?)
+            WHERE (posts.id = ? AND (posts.update != "DELE" OR posts.update IS NULL))
+            OR (posts.update = "UPDT" AND posts.idParent = ?)
             ORDER BY posts.id = ? DESC, posts.ts`,
         [id, id, id], (error, result, fields) => {
             if (error) return res.status(500).send(error);
@@ -291,7 +294,7 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
         pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
-            WHERE posts.idParent = ? AND posts.update IS NULL
+            WHERE posts.idParent = ? AND posts.type = 'RPLY'
             ORDER BY posts.ts DESC
             LIMIT ?,?`,
         [id, offset, limit], (error, result, fields) => {
@@ -311,7 +314,7 @@ app.get('/r/:id.:offset.:limit', (req, res) => {
         pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
-            WHERE posts.idParent = ? AND posts.update IS NULL
+            WHERE posts.idParent = ? AND posts.type = 'RPLY'
             ORDER BY posts.id = ? DESC, posts.lastTs DESC
             LIMIT ?,?`,
         [id, id, offset, limit], (error, result, fields) => {
@@ -479,8 +482,8 @@ app.post('/update/post',
                     if (req.session.user.id === parent.idUser) {
                         // Add link if it's a VIDO
                         if (result[0].type === "VIDO" && req.body.link !== "null") {
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, req.body.link, result[0].type],
+                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,?,'UPDT',?,?)",
+                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, req.body.link, result[0].type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
@@ -500,11 +503,11 @@ app.post('/update/post',
                                 imgur.uploadBase64(file64,
                                         undefined,
                                         result[0].title,
-                                        req.body.body)
+                                        req.body.subtitle)
                                     .then((json) => {
                                         if (json.link) {
-                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,'UPDT',?,?,?)",
-                                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type],
+                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,?,'UPDT',?,?,?)",
+                                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
@@ -526,8 +529,8 @@ app.post('/update/post',
                             }
                         } else {
                         // No link insert
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`) VALUES(?,?,?,?,?,'UPDT')",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body],
+                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`) VALUES(?,?,?,?,?,?,'UPDT')",
+                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
@@ -582,43 +585,26 @@ app.post('/delete/post',
 
         pool.query(`SELECT *
         FROM posts AS p
-        WHERE id = ? OR (idParent = ? AND p.update = 'UPDT')
-        ORDER BY p.id, p.ts`,
-        [req.body.ogid, req.body.ogid], (error, result, fields) => {
+        WHERE id = ?`, req.body.currentid, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
             if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
-                var deletehash = result[0].deletehash
+                var deletehash = result[0].deletehash;
                 var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
-                // Post has no updates
-                if (result.length === 1) {
-                    pool.query(`UPDATE posts AS p
-                    SET subtitle = NULL, body = ?, p.update = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
-                    WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
-                        if (error) return res.status(500).send(error);
+                pool.query(`UPDATE posts AS p
+                SET subtitle = NULL, body = ?, p.update = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
+                WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
+                    if (error) return res.status(500).send(error);
 
-                        if (deletehash) {
-                            imgur.deleteImage(deletehash)
-                                .then(() => { return res.sendStatus(200) })
-                                .catch((err) => {
-                                    console.error(err.message);
-                                    return res.sendStatus(200);
-                                });
-                        } else return res.sendStatus(200);
-                    })
-                }
-
-                // Post is first and has updates
-                else if (result.length > 1 && req.body.ogid === req.body.currentid) {
-
-                }
-
-                // Post is not first and has updates
-                else if (result.length > 1 && req.body.ogid !== req.body.currentid) {
-
-                }
-
-                else return res.sendStatus(400);
+                    if (deletehash) {
+                        imgur.deleteImage(deletehash)
+                            .then(() => { return res.sendStatus(200) })
+                            .catch((err) => {
+                                console.error(err.message);
+                                return res.sendStatus(200);
+                            });
+                    } else return res.sendStatus(200);
+                })
             }
             else return res.sendStatus(403);
         })

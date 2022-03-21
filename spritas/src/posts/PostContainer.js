@@ -45,7 +45,8 @@ export default class PostContainer extends React.Component {
                         if (title) scrollBounce(title);
                         this.loadReplies();
                     });
-                    document.title = he.decode(data[0].title) + " - The Spritas";
+                    const title = (data[0].title) ? data[0].title : '';
+                    document.title = he.decode(title) + " - The Spritas";
                 }
             })
     }
@@ -107,8 +108,8 @@ export default class PostContainer extends React.Component {
 
     delete() {
         const post = (this.state.main) ? this.state.main[this.state.current - 1] : null;
-        var answer = prompt(`Are you sure you want to delete this post? Any comments will still stick around.\nType "${post.title}" to confirm:`, '');
-        if (answer === post.title) {
+        var answer = prompt(`Are you sure you want to delete this post?\nType "${this.state.post.title}" to confirm:`, '');
+        if (answer === this.state.post.title) {
             var myBody = new URLSearchParams();
             myBody.append('ogid', this.state.post.id);
             myBody.append('currentid', post.id);
@@ -121,8 +122,7 @@ export default class PostContainer extends React.Component {
                 if (resp.ok) window.location.href = '/';
                 else console.error('Post deletion error');
             });
-        }
-        else alert(`Post not deleted.`);
+        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
 
     setCurrent(value) {
@@ -132,14 +132,14 @@ export default class PostContainer extends React.Component {
     render() {
         const id = (this.state.post) ? this.state.post.id : "";
 
-        const title = (this.state.post) ? he.decode(this.state.post.title) : "";
+        const title = (this.state.post && this.state.post.title) ? he.decode(this.state.post.title) : "";
         const main = (this.state.main) ? <PostMain posts={this.state.main} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} /> : null;
 
         if (this.state.post) {
             var update;
-            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update != 'DELE') {
+            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update !== 'DELE') {
                 update = <UpdatePost post={this.state.post} user={this.props.user} currentPost={this.state.main[this.state.current - 1]} />;
-            } else if (this.props.user && this.props.user.type === 'ADMN' && this.state.post.update != 'DELE') {
+            } else if (this.props.user && this.props.user.type === 'ADMN' && this.state.post.update !== 'DELE') {
                 update = (
                     <div className='PostContainer-controls'>
                         <div className='UpdatePost-controlItem UpdatePost-delete' onClick={this.delete}>Delete Post As Admin</div>
