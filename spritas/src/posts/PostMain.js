@@ -213,7 +213,7 @@ export default class PostMain extends React.PureComponent {
 
         const subtitle = (currentPost.subtitle) ?
         <div className='PostMain-subtitleContainer'>
-            <h3 className='PostMain-subtitle'>{currentPost.subtitle}</h3>
+            <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3>
         </div> : null;
 
         return (

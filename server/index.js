@@ -617,6 +617,22 @@ app.post('/delete/reply',
         if (!req.session.user) return res.sendStatus(401);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        pool.query(`SELECT *
+        FROM posts AS p
+        WHERE id = ?`, req.body.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
+                var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
+                pool.query(`UPDATE posts AS p
+                SET body = ?, p.update = 'DELE'
+                WHERE id = ?`, [byWho, req.body.id], (error, result, fields) => {
+                    if (error) return res.status(500).send(error);
+                    else return res.sendStatus(200);
+                })
+            }
+        })
     }
 )
 
