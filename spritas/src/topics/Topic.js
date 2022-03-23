@@ -10,6 +10,7 @@ export default class Topic extends React.Component {
         super(props);
         this.topicClick = this.topicClick.bind(this);
         this.loadPosts = this.loadPosts.bind(this);
+        this.delete = this.delete.bind(this);
         this.state = {
             subtopics: false,
             topics: [],
@@ -38,6 +39,7 @@ export default class Topic extends React.Component {
                     if (this.props.user) {
                         if (this.props.user.type === "ADMN") {
                             controls.push(<a className="TopicPortal-control-item" href={`/create/topic/${id}`} key="1">Create Topic</a>);
+                            controls.push(<a className="TopicPortal-control-item" onClick={this.delete} key="2">Delete Topic</a>);
                         }
                         if (perm === "ADMN" && this.props.user.type === perm) {
                             controls.push(<a className="TopicPortal-control-item" href={`/create/post/${id}?type=${type}`} key="0">Create Post</a>);
@@ -162,6 +164,25 @@ export default class Topic extends React.Component {
                 }
             }, {signal: controller.signal});
         }
+    }
+
+    delete() {
+        const id = this.props.topic.id;
+        const name = this.props.topic.name;
+        var answer = prompt(`Are you sure you want to delete this topic? Children topics and posts will NOT be deleted, but made inaccessible.\nType "${name}" to confirm:`, '');
+        if (answer === name) {
+            var myBody = new URLSearchParams();
+            myBody.append('id', id);
+
+            fetch('/delete/topic', {
+                method: 'POST',
+                body: myBody
+            })
+            .then((resp) => {
+                if (resp.ok) window.location.href = '/';
+                else console.error('Topic deletion error');
+            })
+        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
 
     render() {

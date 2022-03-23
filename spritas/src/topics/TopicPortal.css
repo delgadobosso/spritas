@@ -17,6 +17,7 @@
     flex-grow: 1;
     text-align: center;
     padding: 10px 0;
+    cursor: pointer;
 
     transition: background-color 0.1s;
     -moz-user-select: none;

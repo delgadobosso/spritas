@@ -92,7 +92,7 @@ app.get('/create/post/:id', (req, res) => {
 app.get('/home', (req, res) => {
     if (req.headers.referer) {
         pool.query(`SELECT * FROM topics
-        WHERE idParent IS NULL
+        WHERE idParent IS NULL AND status IS NULL
         ORDER BY id`, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
@@ -108,7 +108,7 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
         const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
         const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
         if (offset === 0) {
-            pool.query(`SELECT * FROM topics WHERE idParent = ?`, id, (error, result, fields) => {
+            pool.query(`SELECT * FROM topics WHERE idParent = ? AND status IS NULL`, id, (error, result, fields) => {
                 if (error) return res.status(500).send(error);
 
                 else {
@@ -632,6 +632,23 @@ app.post('/delete/reply',
                     else return res.sendStatus(200);
                 })
             }
+        })
+    }
+)
+
+app.post('/delete/topic',
+    body('id').notEmpty().isInt(),
+    (req, res) => {
+        if (!req.session.user) return res.sendStatus(401);
+        else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        pool.query(`UPDATE topics AS t
+        SET status = 'DELE'
+        WHERE id = ?`, req.body.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+            else return res.sendStatus(200);
         })
     }
 )
