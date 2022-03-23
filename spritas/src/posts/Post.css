@@ -101,6 +101,27 @@
     }
 }
 
+.Post-delete {
+    width: 64px;
+    text-align: center;
+    cursor: pointer;
+    color: black;
+    border-radius: 5px;
+    margin-top: 10px;
+
+    transition: color 0.1s, background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+@media (hover: hover) {
+    .Post-delete:hover {
+        color: white;
+        background-color: red;
+    }
+}
+
 
 @media screen and (max-width: 900px) {
     .Post-main {

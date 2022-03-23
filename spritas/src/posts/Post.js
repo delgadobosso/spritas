@@ -10,6 +10,7 @@ export default class Post extends React.Component {
         this.loadReplies = this.loadReplies.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
         this.collapse = this.collapse.bind(this);
+        this.delete = this.delete.bind(this);
         this.state = ({
             replies: null,
             offset: 0,
@@ -28,7 +29,7 @@ export default class Post extends React.Component {
                 .then(data => {
                     if (data.length > 0) {
                         const replies = data.slice(0, this.state.amount).reverse().map((reply, index) =>
-                            <Post key={index} post={reply} opid={this.props.opid} /> );
+                            <Post key={index} post={reply} opid={this.props.opid} user={this.props.user} /> );
                         this.setState({
                             replies: replies
                         }, () => this.extendReplies());
@@ -54,7 +55,7 @@ export default class Post extends React.Component {
             .then(data => {
                 const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) => 
                     <Post key={index + this.state.offset} post={reply}
-                        opid={this.props.opid} /> );
+                        opid={this.props.opid} user={this.props.user} /> );
                 var rep = document.getElementById('Replies-' + this.props.post.id);
                 let maxHeight = rep.scrollHeight;
                 rep.style.height = maxHeight + "px";
@@ -113,6 +114,10 @@ export default class Post extends React.Component {
         });
     }
 
+    delete() {
+        console.log('delete dis');
+    }
+
     render() {
         const post = this.props.post;
 
@@ -147,8 +152,14 @@ export default class Post extends React.Component {
 
         const deleted = (post.update === 'DELE') ? ' Post-bodyDel' : '';
 
+        const deleteReply = (post.type === 'RPLY' && this.props.user &&
+        (this.props.user.id === post.idUser || this.props.user.type === 'ADMN')) ? (
+            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>X</div>
+        ) : null;
+
         return (
             <div className={"Post" + op + opreply} id={"p" + post.id}>
+                {deleteReply}
                 <div className="Post-main">
                     <div className="Post-user">
                         <img className="Post-user-img" src={pfp} alt="User" />

@@ -71,7 +71,7 @@ export default class PostContainer extends React.Component {
             .then(data => {
                 const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
                     <Post key={index + this.state.offset} post={reply}
-                        reply={true} opid={this.state.opid} />
+                        reply={true} opid={this.state.opid} user={this.props.user} />
                 );
                 var rep = document.getElementById('Replies');
                 let maxHeight = rep.scrollHeight;

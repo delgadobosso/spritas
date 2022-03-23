@@ -611,6 +611,15 @@ app.post('/delete/post',
     }
 )
 
+app.post('/delete/reply',
+    body('id').notEmpty().isInt(),
+    (req, res) => {
+        if (!req.session.user) return res.sendStatus(401);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+    }
+)
+
 app.listen(port, () => {
     console.log(`Spritas Server listening at http://localhost:${port}`);
 });
