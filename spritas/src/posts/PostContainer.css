@@ -28,17 +28,7 @@
     user-select: none;
 }
 
-.PostContainer-update {
-    display: block;
-    width: 1200px;
-    max-width: 100%;
-    margin: auto;
-    padding: 15px 0;
-    text-align: center;
-    background-color: lightsalmon;
-}
-
-.PostContainer .Reply, .PostContainer .UpdatePost {
+.PostContainer .Reply, .PostContainer .UpdatePost, .PostContainer-controls {
     width: 1200px;
     max-width: 100%;
     margin: auto;

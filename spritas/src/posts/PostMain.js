@@ -14,7 +14,6 @@ export default class PostMain extends React.PureComponent {
         this.goToPost = this.goToPost.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.state = ({
-            current: props.posts.length,
             modal: false
         });
     }
@@ -24,7 +23,7 @@ export default class PostMain extends React.PureComponent {
     }
 
     componentDidUpdate() {
-        const currentPost = this.props.posts[this.state.current - 1];
+        const currentPost = this.props.posts[this.props.current - 1];
         var ifram = document.getElementById(`PostMainVideo-${currentPost.id}`);
         if (ifram) {
             ifram.remove();
@@ -37,8 +36,8 @@ export default class PostMain extends React.PureComponent {
     }
 
     hashHandle(e) {
-        if (e.oldURL.split('#')[1] === `image${this.state.current}`) {
-            const modal = document.getElementById('PostModal-' + this.props.posts[this.state.current - 1].id);
+        if (e.oldURL.split('#')[1] === `image${this.props.current}`) {
+            const modal = document.getElementById('PostModal-' + this.props.posts[this.props.current - 1].id);
             modal.style.opacity = 0;
             const controller = new AbortController();
             modal.addEventListener('transitionend', (e) => {
@@ -49,7 +48,7 @@ export default class PostMain extends React.PureComponent {
                     controller.abort();
                 }
             }, { signal: controller.signal });
-        } else if (e.newURL.split('#')[1] === `image${this.state.current}`) {
+        } else if (e.newURL.split('#')[1] === `image${this.props.current}`) {
             this.setState({
                 modal: true
             }, () => this.props.naviHide(true));
@@ -57,23 +56,19 @@ export default class PostMain extends React.PureComponent {
     }
 
     left() {
-        if (this.state.current > 1) {
-            this.setState(state => ({
-                current: state.current - 1
-            }));
+        if (this.props.current > 1) {
+            this.props.setCurrent(this.props.current - 1);
         }
     }
 
     right() {
-        if (this.state.current < this.props.posts.length) {
-            this.setState(state => ({
-                current: state.current + 1
-            }));
+        if (this.props.current < this.props.posts.length) {
+            this.props.setCurrent(this.props.current + 1);
         }
     }
 
     goToPost(index) {
-        this.setState({ current: index });
+        this.props.setCurrent(index);
     }
 
     toggleModal() {
@@ -83,7 +78,7 @@ export default class PostMain extends React.PureComponent {
             if (this.state.modal) {
                 this.props.naviHide(true);
                 var prevState = window.history.state;
-                window.history.pushState(prevState, "", `#image${this.state.current}`);
+                window.history.pushState(prevState, "", `#image${this.props.current}`);
                 window.history.scrollRestoration = 'manual';
             } else if (!this.state.modal) {
                 this.props.naviHide(false);
@@ -95,14 +90,14 @@ export default class PostMain extends React.PureComponent {
     render() {
         const posts = this.props.posts;
         const length = posts.length;
-        const currentPost = posts[this.state.current - 1];
+        const currentPost = posts[this.props.current - 1];
         const currentElem = <Post post={currentPost} op={true} />;
 
         // Update controls
         if (length > 1) {
             const nodes = posts.map((post, index) => {
                 var fill, r;
-                if (this.state.current - 1 === index) {
+                if (this.props.current - 1 === index) {
                     fill = 'red';
                     r = '15';
                 } else {
@@ -121,10 +116,10 @@ export default class PostMain extends React.PureComponent {
                 )
             });
 
-            const nodeStyle = { transform: `translate(-${60 * (this.state.current - 1)}px)` };
-            const leftArrow = (this.state.current === 1)
+            const nodeStyle = { transform: `translate(-${60 * (this.props.current - 1)}px)` };
+            const leftArrow = (this.props.current === 1)
             ? { backgroundColor: 'grey' } : { backgroundColor: '#ab0f26' };
-            const rightArrow = (this.state.current === length)
+            const rightArrow = (this.props.current === length)
             ? { backgroundColor: 'grey' } : { backgroundColor: '#ab0f26' };
 
             var controls = (
@@ -218,7 +213,7 @@ export default class PostMain extends React.PureComponent {
 
         const subtitle = (currentPost.subtitle) ?
         <div className='PostMain-subtitleContainer'>
-            <h3 className='PostMain-subtitle'>{currentPost.subtitle}</h3>
+            <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3>
         </div> : null;
 
         return (

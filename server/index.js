@@ -92,7 +92,7 @@ app.get('/create/post/:id', (req, res) => {
 app.get('/home', (req, res) => {
     if (req.headers.referer) {
         pool.query(`SELECT * FROM topics
-        WHERE idParent IS NULL
+        WHERE idParent IS NULL AND status IS NULL
         ORDER BY id`, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
@@ -108,7 +108,7 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
         const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
         const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
         if (offset === 0) {
-            pool.query(`SELECT * FROM topics WHERE idParent = ?`, id, (error, result, fields) => {
+            pool.query(`SELECT * FROM topics WHERE idParent = ? AND status IS NULL`, id, (error, result, fields) => {
                 if (error) return res.status(500).send(error);
 
                 else {
@@ -144,6 +144,7 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                             USING (id)) AS t1
                         ON p1.id = t1.idParent
                         WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                        AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
                         ORDER BY p1.lastTs DESC
                         LIMIT ?,?`,
                     [id, id, offset, limit], (error, result, fields) => {
@@ -187,6 +188,7 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                     USING (id)) AS t1
                 ON p1.id = t1.idParent
                 WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
                 ORDER BY p1.lastTs DESC
                 LIMIT ?,?`,
             [id, id, offset, limit], (error, result, fields) => {
@@ -272,7 +274,8 @@ app.get('/p/:id', (req, res) => {
         pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
-            WHERE posts.id = ? OR (posts.update = "UPDT" AND posts.idParent = ?)
+            WHERE (posts.id = ? AND (posts.update != "DELE" OR posts.update IS NULL))
+            OR (posts.update = "UPDT" AND posts.idParent = ?)
             ORDER BY posts.id = ? DESC, posts.ts`,
         [id, id, id], (error, result, fields) => {
             if (error) return res.status(500).send(error);
@@ -291,7 +294,7 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
         pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
-            WHERE posts.idParent = ? AND posts.update IS NULL
+            WHERE posts.idParent = ? AND posts.type = 'RPLY'
             ORDER BY posts.ts DESC
             LIMIT ?,?`,
         [id, offset, limit], (error, result, fields) => {
@@ -311,7 +314,7 @@ app.get('/r/:id.:offset.:limit', (req, res) => {
         pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
-            WHERE posts.idParent = ? AND posts.update IS NULL
+            WHERE posts.idParent = ? AND posts.type = 'RPLY'
             ORDER BY posts.id = ? DESC, posts.lastTs DESC
             LIMIT ?,?`,
         [id, id, offset, limit], (error, result, fields) => {
@@ -320,11 +323,6 @@ app.get('/r/:id.:offset.:limit', (req, res) => {
             else res.send(result);
         })
     } else res.redirect('/post/' + req.params.id);
-})
-
-// Redirect to regular post URL if trying to access
-app.get('/p/:id', (req, res) => {
-    res.redirect('/post/' + req.params.id);
 })
 
 app.post('/create/topic',
@@ -396,9 +394,9 @@ app.post('/create/post',
                                 req.body.body)
                             .then((json) => {
                                 if (json.link) {
-                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
-                                    VALUES(?,?,?,?,?,?,?)`,
-                                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, result[0].type], (error, result, fields) => {
+                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,deletehash,type)
+                                    VALUES(?,?,?,?,?,?,?,?)`,
+                                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type], (error, result, fields) => {
                                         if (error) return res.status(500).send(error);
 
                                         res.redirect('/');
@@ -443,8 +441,8 @@ app.post('/create/reply',
             // Valid first post of a topic is found
             if (result.length > 0) {
                 const parent = result[0];
-                pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body)
-                VALUES(?,?,?,?)`,
+                pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
+                VALUES(?,?,?,?,'RPLY')`,
                 [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
                     if (error) return res.status(500).send(error);
 
@@ -484,8 +482,8 @@ app.post('/update/post',
                     if (req.session.user.id === parent.idUser) {
                         // Add link if it's a VIDO
                         if (result[0].type === "VIDO" && req.body.link !== "null") {
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, req.body.link, result[0].type],
+                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,?,'UPDT',?,?)",
+                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, req.body.link, result[0].type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
@@ -505,11 +503,11 @@ app.post('/update/post',
                                 imgur.uploadBase64(file64,
                                         undefined,
                                         result[0].title,
-                                        req.body.body)
+                                        req.body.subtitle)
                                     .then((json) => {
                                         if (json.link) {
-                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
-                                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body, json.link, result[0].type],
+                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,?,'UPDT',?,?,?)",
+                                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
@@ -531,8 +529,8 @@ app.post('/update/post',
                             }
                         } else {
                         // No link insert
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,subtitle,body,`update`) VALUES(?,?,?,?,?,'UPDT')",
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.subtitle, req.body.body],
+                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`) VALUES(?,?,?,?,?,?,'UPDT')",
+                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
@@ -561,7 +559,6 @@ app.get('/featured', (req, res) => {
     } else res.redirect('/');
 })
 
-
 app.post('/update/featured',
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     (req, res) => {
@@ -574,6 +571,84 @@ app.post('/update/featured',
             if (error) return res.status(500).send(error);
 
             return res.redirect('/');
+        })
+    }
+)
+
+app.post('/delete/post',
+    body('ogid').notEmpty().isInt(),
+    body('currentid').notEmpty().isInt(),
+    (req, res) => {
+        if (!req.session.user) return res.sendStatus(401);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        pool.query(`SELECT *
+        FROM posts AS p
+        WHERE id = ?`, req.body.currentid, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
+                var deletehash = result[0].deletehash;
+                var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
+                pool.query(`UPDATE posts AS p
+                SET subtitle = NULL, body = ?, p.update = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
+                WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
+                    if (error) return res.status(500).send(error);
+
+                    if (deletehash) {
+                        imgur.deleteImage(deletehash)
+                            .then(() => { return res.sendStatus(200) })
+                            .catch((err) => {
+                                console.error(err.message);
+                                return res.sendStatus(200);
+                            });
+                    } else return res.sendStatus(200);
+                })
+            }
+            else return res.sendStatus(403);
+        })
+    }
+)
+
+app.post('/delete/reply',
+    body('id').notEmpty().isInt(),
+    (req, res) => {
+        if (!req.session.user) return res.sendStatus(401);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        pool.query(`SELECT *
+        FROM posts AS p
+        WHERE id = ?`, req.body.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
+                var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
+                pool.query(`UPDATE posts AS p
+                SET body = ?, p.update = 'DELE'
+                WHERE id = ?`, [byWho, req.body.id], (error, result, fields) => {
+                    if (error) return res.status(500).send(error);
+                    else return res.sendStatus(200);
+                })
+            }
+        })
+    }
+)
+
+app.post('/delete/topic',
+    body('id').notEmpty().isInt(),
+    (req, res) => {
+        if (!req.session.user) return res.sendStatus(401);
+        else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        pool.query(`UPDATE topics AS t
+        SET status = 'DELE'
+        WHERE id = ?`, req.body.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+            else return res.sendStatus(200);
         })
     }
 )

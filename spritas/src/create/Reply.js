@@ -9,7 +9,15 @@ export default class Reply extends React.Component {
         this.state = ({ open: false });
     }
 
-    expand() { this.setState(state => ({ open: !state.open })); }
+    expand() {
+        this.setState(state => ({
+            open: !state.open
+        }), () => {
+            if (this.state.open) {
+                document.getElementById('reply').focus();
+            }
+        });
+    }
 
     render() {
         const parentId = (this.props.parentId) ? this.props.parentId : "";

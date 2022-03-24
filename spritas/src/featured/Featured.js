@@ -65,7 +65,7 @@ export default class Featured extends React.Component {
         if (this.props.user && this.props.user.type === 'ADMN') {
             update = (
                 <div className='Featured-update'>
-                    <div className='UpdatePost-expand' onClick={this.expand}>{label}</div>
+                    <div className='UpdatePost-controlItem' onClick={this.expand}>{label}</div>
                     <form action="/update/featured/" className={'Featured-form' + open}
                         method='POST'>
                         <div className='CreatePost-item'>
