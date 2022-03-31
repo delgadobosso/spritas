@@ -14,6 +14,7 @@ import CreateTopic from './create/CreateTopic';
 import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
 import Featured from "./featured/Featured";
+import UserContainer from './user/UserContainer';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -104,6 +105,8 @@ export default class App extends React.Component {
             <Route path='/login' component={Login} />
             <Route path='/create/topic/:id?' component={CreateTopic} />
             <Route path='/create/post/:id' component={CreatePost} />
+            <Route path='/user/:id'
+              render={props => <UserContainer user={this.state.user} {...props} />} />
             <Route path='/post/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/'>

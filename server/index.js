@@ -653,6 +653,17 @@ app.post('/delete/topic',
     }
 )
 
+app.get('/user/:id', (req, res) => {
+    if (req.headers.referer) {
+        pool.query(`SELECT name, ts FROM users WHERE id = ?`,
+        req.params.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            else res.send(result[0]);
+        });
+    } else redirect('/user/' + req.params.id);
+})
+
 app.listen(port, () => {
     console.log(`Spritas Server listening at http://localhost:${port}`);
 });
