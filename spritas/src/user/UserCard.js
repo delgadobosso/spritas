@@ -8,12 +8,24 @@ export default class UserCard extends React.Component {
     }
 
     render() {
-        const name = (this.props.thisUser) ? this.props.thisUser.name : null;
+        var name;
+        var bio;
+        var ts;
+        if (this.props.thisUser) {
+            name = this.props.thisUser.name;
+            bio = this.props.thisUser.bio;
+            ts = new Date(this.props.thisUser.ts);
+            ts = `Joined ${ts.toDateString()}`;
+        }
 
         return (
             <div className='UserCard'>
-                <img className='UserCard-avatar' src={pfp} />
+                <div className='UserCard-avatarContainer'>
+                    <img className='UserCard-avatar' src={pfp} />
+                </div>
                 <h2 className='UserCard-name'>{name}</h2>
+                <p className='UserCard-bio'>{bio}</p>
+                <p className='UserCard-ts'>{ts}</p>
             </div>
         )
     }

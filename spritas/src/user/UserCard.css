@@ -1,0 +1,24 @@
+.UserCard {
+    width: 256px;
+    height: 100%;
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.UserCard-avatarContainer, .UserCard-name {
+    text-align: center;
+}
+
+.UserCard-avatarContainer {
+    margin-top: 16px;
+}
+.UserCard-avatar {
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 1456px) {
+    .UserCard {
+        margin: auto;
+    }
+}

@@ -1,3 +1,16 @@
 .UserContainer {
     display: flex;
+    padding: 10px;
+}
+
+.UserContainer-topics {
+    width: 1200px;
+    max-width: 100%;
+    margin: auto;
+}
+
+@media screen and (max-width: 1456px) {
+    .UserContainer {
+        flex-direction: column;
+    }
 }
