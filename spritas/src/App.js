@@ -29,7 +29,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    if (window.location.pathname === "/") window.history.replaceState({}, "", window.location.pathname);
+    if (window.location.pathname === "/" || window.location.pathname.startsWith('/user/')) window.history.replaceState({}, "", window.location.pathname);
     window.history.scrollRestoration = 'manual';
 
     // Navi Hiding
@@ -113,9 +113,9 @@ export default class App extends React.Component {
               <Featured user={this.state.user} />
               <TopicContainer postClick={this.postClick} user={this.state.user}
                 naviHide={this.naviHide} />
-              {this.state.post}
             </Route>
           </Switch>
+          {this.state.post}
         </Router>
       </div>
     );
