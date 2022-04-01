@@ -8,6 +8,7 @@ export default class UserContainer extends React.Component {
     constructor(props) {
         super(props);
         this.loadPosts = this.loadPosts.bind(this);
+        this.extendPosts = this.extendPosts.bind(this);
         this.state = {
             thisUser: null,
             posts: [],
@@ -33,10 +34,10 @@ export default class UserContainer extends React.Component {
                 }
             }); });
 
-        this.loadPosts();
+        this.loadPosts(true);
     }
 
-    loadPosts() {
+    loadPosts(first=false) {
         const id = (this.props.id) ? this.props.id : this.props.match.params.id;
 
         fetch(`/user/posts/${id}.${this.state.offset}.${this.state.amount}`)
@@ -46,9 +47,6 @@ export default class UserContainer extends React.Component {
                     const posts = data.slice(0, this.state.amount).map((post, index) =>
                     <TopicPost key={index + this.state.offset} post={post}
                         postClick={this.props.postClick} />);
-                    this.setState(state => ({
-                        posts: [...posts, ...state.posts]
-                    }));
                     if (data.length < (this.state.amount + 1)) {
                         this.setState(state => ({
                             more: !state.more
@@ -58,23 +56,42 @@ export default class UserContainer extends React.Component {
                             offset: state.offset + this.state.amount
                         }));
                     }
+                    if (!first) {
+                        var sub = document.getElementById('UserContainer-topics');
+                        let maxHeight = sub.scrollHeight;
+                        sub.style.height = maxHeight + "px";
+                    }
+                    this.setState(state => ({
+                        posts: [...state.posts, ...posts]
+                    }), () => { if (!first) this.extendPosts(sub) });
                 }
             });
+    }
+
+    extendPosts(sub) {
+        if (sub) {
+            let maxHeight = sub.scrollHeight;
+            sub.style.height = maxHeight + "px";
+            const controller = new AbortController();
+            sub.addEventListener('transitionend', (e) => {
+                if (e.currentTarget === e.target) {
+                    sub.style.height = "auto";
+                    controller.abort();
+                }
+            }, {signal: controller.signal});
+        }
     }
 
     render() {
         const posts = (this.state.posts) ? this.state.posts : null;
 
-        var load = null;
-        if (this.state.more) {
-            load = <div className="Post-load" onClick={this.loadReplies}>Load More</div>;
-        }
-
         return (
             <div className='UserContainer'>
                 <UserCard user={this.props.user} thisUser={this.state.thisUser} />
-                <div className='UserContainer-topics'>
-                    <TopicPortal posts={posts} />
+                <div className='UserContainer-container'>
+                    <div className='UserContainer-topics' id='UserContainer-topics'>
+                        <TopicPortal posts={posts} more={this.state.more} load={this.loadPosts} />
+                    </div>
                 </div>
             </div>
         )
