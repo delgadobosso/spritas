@@ -25,7 +25,12 @@ export default class UserContainer extends React.Component {
             .then(data => { this.setState({
                 thisUser: data
             }, () => {
-                if (this.state.thisUser) document.title = `${this.state.thisUser.name} - The Spritas`;
+                if (this.state.thisUser) {
+                    document.title = `${this.state.thisUser.name} - The Spritas`;
+                    const nameUrl = this.state.thisUser.name.replaceAll(' ', '_');
+                    window.history.replaceState(window.history.state, "", `/user/${id}/${nameUrl}`);
+                    window.history.scrollRestoration = 'manual';
+                }
             }); });
 
         this.loadPosts();
