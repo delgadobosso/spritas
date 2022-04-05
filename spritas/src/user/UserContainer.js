@@ -9,6 +9,7 @@ export default class UserContainer extends React.Component {
         super(props);
         this.loadPosts = this.loadPosts.bind(this);
         this.extendPosts = this.extendPosts.bind(this);
+        this.scrollTo = this.scrollTo.bind(this);
         this.state = {
             thisUser: null,
             posts: [],
@@ -29,7 +30,7 @@ export default class UserContainer extends React.Component {
                 if (this.state.thisUser) {
                     document.title = `${this.state.thisUser.name} - The Spritas`;
                     const nameUrl = this.state.thisUser.name.replaceAll(' ', '_');
-                    window.history.replaceState(window.history.state, "", `/user/${id}/${nameUrl}`);
+                    window.history.replaceState(window.history.state, "", `/user/${id}`);
                     window.history.scrollRestoration = 'manual';
                 }
             }); });
@@ -82,15 +83,26 @@ export default class UserContainer extends React.Component {
         }
     }
 
+    scrollTo() {
+        var con = document.getElementById('UserPosts');
+        con.scrollIntoView({ behavior: "smooth" });
+        if (window.location.hash !== "#posts") window.history.pushState({}, "", "#posts");
+    }
+
     render() {
         const posts = (this.state.posts) ? this.state.posts : null;
 
         return (
             <div className='UserContainer'>
                 <UserCard user={this.props.user} thisUser={this.state.thisUser} />
-                <div className='UserContainer-container'>
-                    <div className='UserContainer-topics' id='UserContainer-topics'>
-                        <TopicPortal posts={posts} more={this.state.more} load={this.loadPosts} />
+                <div className='UserContainer-postContainer' id='UserPosts'>
+                    <div className="UserContainer-header" onClick={this.scrollTo}>
+                        <h1 className="UserContainer-title">Posts</h1>
+                    </div>
+                    <div className='UserContainer-container'>
+                        <div className='UserContainer-topics' id='UserContainer-topics'>
+                            <TopicPortal posts={posts} more={this.state.more} load={this.loadPosts} />
+                        </div>
                     </div>
                 </div>
             </div>
