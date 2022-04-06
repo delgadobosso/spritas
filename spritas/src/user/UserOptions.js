@@ -27,7 +27,7 @@ export default function UserOptions(props) {
         }
     } else {
         submit = <div className='UserOptions-option'>Save Changes</div>;
-        cancel = <div className='UserOptions-option' onClick={() => props.userEdit(false)}>Cancel Edit</div>;
+        cancel = <div className='UserOptions-option' onClick={() => props.userEdit(false)}>Cancel</div>;
     }
 
     return (
