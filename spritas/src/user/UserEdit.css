@@ -1,0 +1,11 @@
+.UserEdit-name {
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 20px 0;
+}
+
+.UserEdit-bio {
+    resize: none;
+}

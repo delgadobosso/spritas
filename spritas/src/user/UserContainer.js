@@ -4,6 +4,7 @@ import UserCard from './UserCard';
 import TopicPortal from '../topics/TopicPortal';
 import TopicPost from '../topics/TopicPost';
 import UserOptions from './UserOptions';
+import UserEdit from './UserEdit';
 
 export default class UserContainer extends React.Component {
     constructor(props) {
@@ -11,12 +12,14 @@ export default class UserContainer extends React.Component {
         this.loadPosts = this.loadPosts.bind(this);
         this.extendPosts = this.extendPosts.bind(this);
         this.scrollTo = this.scrollTo.bind(this);
+        this.userEdit = this.userEdit.bind(this);
         this.state = {
             thisUser: null,
             posts: [],
             offset: 0,
             amount: 10,
-            more: true
+            more: true,
+            edit: false
         }
     }
 
@@ -101,18 +104,31 @@ export default class UserContainer extends React.Component {
         if (window.location.hash !== "#posts") window.history.pushState({}, "", "#posts");
     }
 
+    userEdit(yes) {
+        this.setState({ edit: yes });
+    }
+
     render() {
         const id = (this.props.id) ? this.props.id : this.props.match.params.id;
         const posts = (this.state.posts) ? this.state.posts : null;
 
-        const options = (this.props.user && id) ? <UserOptions user={this.props.user} thisId={id} /> : null;
+        const options = (this.props.user && id) ? <UserOptions user={this.props.user} thisId={id} userEdit={this.userEdit} editMode={this.state.edit} /> : null;
+
+        const cards = (!this.state.edit) ? (
+            <div className='UserContainer-cards'>
+                <UserCard user={this.props.user} thisUser={this.state.thisUser} />
+                {options}
+            </div>
+        ) : (
+            <div className='UserContainer-cards'>
+                <UserEdit user={this.props.user} thisUser={this.state.thisUser} />
+                {options}
+            </div>
+        );
 
         return (
             <div className='UserContainer'>
-                <div className='UserContainer-cards'>
-                    <UserCard user={this.props.user} thisUser={this.state.thisUser} />
-                    {options}
-                </div>
+                {cards}
                 <div className='UserContainer-postContainer' id='UserPosts'>
                     <div className="UserContainer-header" onClick={this.scrollTo}>
                         <h1 className="UserContainer-title">Posts</h1>
