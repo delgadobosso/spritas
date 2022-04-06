@@ -1,0 +1,17 @@
+.UserOptions-option {
+    cursor: pointer;
+    padding: 10px 5px;
+    border-radius: 10px;
+    text-align: center;
+    
+    transition: background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+@media (hover: hover) {
+    .UserOptions-option:hover {
+        background-color: cadetblue;
+    }
+}

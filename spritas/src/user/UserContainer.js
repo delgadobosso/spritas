@@ -42,7 +42,6 @@ export default class UserContainer extends React.Component {
             }, () => {
                 if (this.state.thisUser) {
                     document.title = `${this.state.thisUser.name} - The Spritas`;
-                    const nameUrl = this.state.thisUser.name.replaceAll(' ', '_');
                     window.history.replaceState(window.history.state, "", `/user/${id}`);
                     window.history.scrollRestoration = 'manual';
                 }
@@ -103,13 +102,16 @@ export default class UserContainer extends React.Component {
     }
 
     render() {
+        const id = (this.props.id) ? this.props.id : this.props.match.params.id;
         const posts = (this.state.posts) ? this.state.posts : null;
+
+        const options = (this.props.user && id) ? <UserOptions user={this.props.user} thisId={id} /> : null;
 
         return (
             <div className='UserContainer'>
                 <div className='UserContainer-cards'>
                     <UserCard user={this.props.user} thisUser={this.state.thisUser} />
-                    <UserOptions thisUser={this.state.thisUser} />
+                    {options}
                 </div>
                 <div className='UserContainer-postContainer' id='UserPosts'>
                     <div className="UserContainer-header" onClick={this.scrollTo}>
