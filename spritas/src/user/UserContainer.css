@@ -4,6 +4,11 @@
     justify-content: center;
 }
 
+.UserContainer-cards {
+    display: flex;
+    flex-direction: column;
+}
+
 .UserContainer-postContainer {
     display: flex;
     flex-direction: column;
@@ -47,9 +52,5 @@
     .UserContainer {
         flex-direction: column;
         align-items: center;
-    }
-
-    .UserContainer-postContainer {
-        margin-top: 20px;
     }
 }

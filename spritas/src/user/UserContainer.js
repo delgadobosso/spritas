@@ -3,6 +3,7 @@ import './UserContainer.css';
 import UserCard from './UserCard';
 import TopicPortal from '../topics/TopicPortal';
 import TopicPost from '../topics/TopicPost';
+import UserOptions from './UserOptions';
 
 export default class UserContainer extends React.Component {
     constructor(props) {
@@ -20,6 +21,18 @@ export default class UserContainer extends React.Component {
     }
 
     componentDidMount() {
+        var con = document.getElementById('UserContainer-scroll');
+        var naviTime = false;
+        var prevScroll = con.scrollTop;
+        con.onscroll = () => {
+          clearTimeout(naviTime);
+          naviTime = setTimeout(() => {
+            var down = prevScroll < con.scrollTop;
+            this.props.naviHide(down);
+            prevScroll = con.scrollTop;
+          }, 50);
+        }
+
         const id = (this.props.id) ? this.props.id : this.props.match.params.id;
 
         fetch(`/user/${id}`)
@@ -94,12 +107,15 @@ export default class UserContainer extends React.Component {
 
         return (
             <div className='UserContainer'>
-                <UserCard user={this.props.user} thisUser={this.state.thisUser} />
+                <div className='UserContainer-cards'>
+                    <UserCard user={this.props.user} thisUser={this.state.thisUser} />
+                    <UserOptions thisUser={this.state.thisUser} />
+                </div>
                 <div className='UserContainer-postContainer' id='UserPosts'>
                     <div className="UserContainer-header" onClick={this.scrollTo}>
                         <h1 className="UserContainer-title">Posts</h1>
                     </div>
-                    <div className='UserContainer-container'>
+                    <div className='UserContainer-container' id='UserContainer-scroll'>
                         <div className='UserContainer-topics' id='UserContainer-topics'>
                             <TopicPortal posts={posts} more={this.state.more} load={this.loadPosts} />
                         </div>
