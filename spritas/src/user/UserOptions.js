@@ -26,7 +26,7 @@ export default function UserOptions(props) {
             block = <div className='UserOptions-option'>Block User</div>;
         }
     } else {
-        submit = <div className='UserOptions-option'>Save Changes</div>;
+        submit = <div className='UserOptions-option' onClick={() => editCheck(props)}>Save Changes</div>;
         cancel = <div className='UserOptions-option' onClick={() => props.userEdit(false)}>Cancel</div>;
     }
 
@@ -40,4 +40,13 @@ export default function UserOptions(props) {
             {cancel}
         </div>
     );
+}
+
+function editCheck(props) {
+    const name = document.getElementById('UserEdit-name').value;
+    const bio = document.getElementById('UserEdit-bio').value;
+
+    const ogBio = (props.thisUser) ? props.thisUser.bio : '';
+    
+    if (name === '' && bio === ogBio) alert('No values changed.');
 }

@@ -14,14 +14,12 @@ export default function UserEdit(props) {
 
     return (
         <div className='UserCard'>
-            <form action="/update/profile" method='POST'>
-                <div className='UserCard-avatarContainer'>
-                    <img className='UserCard-avatar' src={pfp} alt='Avatar' />
-                </div>
-                <input className='UserEdit-name' type='text' name='name' placeholder={name} />
-                <textarea className='UserEdit-bio' name='bio' placeholder={bio} />
-                <p className='UserCard-ts'>{ts}</p>
-            </form>
+            <div className='UserCard-avatarContainer'>
+                <img className='UserCard-avatar' src={pfp} alt='Avatar' />
+            </div>
+            <input className='UserEdit-name' id='UserEdit-name' type='text' name='name' placeholder={name} />
+            <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' defaultValue={bio} />
+            <p className='UserCard-ts'>{ts}</p>
         </div>
     );
 }

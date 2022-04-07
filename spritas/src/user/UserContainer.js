@@ -112,7 +112,7 @@ export default class UserContainer extends React.Component {
         const id = (this.props.id) ? this.props.id : this.props.match.params.id;
         const posts = (this.state.posts) ? this.state.posts : null;
 
-        const options = (this.props.user && id) ? <UserOptions user={this.props.user} thisId={id} userEdit={this.userEdit} editMode={this.state.edit} /> : null;
+        const options = (this.props.user && id) ? <UserOptions user={this.props.user} thisUser={this.state.thisUser} thisId={id} userEdit={this.userEdit} editMode={this.state.edit} /> : null;
 
         const cards = (!this.state.edit) ? (
             <div className='UserContainer-cards'>
