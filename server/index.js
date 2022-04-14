@@ -22,8 +22,28 @@ const app = express();
 const port = process.env.PORT;
 
 const multer = require('multer');
-const storage =  multer.memoryStorage();
-const uploadTmp = multer({ storage: storage });
+const memStorage = multer.memoryStorage();
+const memUpload = multer({
+    storage: memStorage,
+    limits: {
+        fileSize: 1048576 // THIS IS FOR REGULAR IMAGE UPLOADS CHANGE THIS THIS ONLY 1MB
+    }
+});
+const avatarStore = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './media/avatars');
+    },
+    filename: (req, file, cb) => {
+        var fileType = file.mimetype.split('/')[1];
+        cb(null, `test.${fileType}`);
+    }
+});
+const avatarUpload = multer({
+    storage: avatarStore,
+    limits: {
+        fileSize: 1048576
+    }
+});
 
 const imgurLimit = 40;
 var imgurCurrent = 0;
@@ -353,7 +373,7 @@ app.post('/create/topic',
 )
 
 app.post('/create/post',
-    uploadTmp.single('file'),
+    memUpload.single('file'),
     body('id').isInt(),
     body('type').notEmpty().isIn(["TEXT", "BLOG", "VIDO", "IMG"]),
     body('name').trim().isLength({ min: 2 }).escape(),
@@ -460,7 +480,7 @@ app.post('/create/reply',
 )
 
 app.post('/update/post',
-    uploadTmp.single('file'),
+    memUpload.single('file'),
     body('id').notEmpty().isInt(),
     body('subtitle').trim().isLength({ max: 30 }).escape(),
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
@@ -708,6 +728,16 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
             else res.send(result);
         });
     } else redirect('/user/' + req.params.id);
+})
+
+app.post('/user/update',
+    avatarUpload.single('avatar'),
+    body('name').trim().isLength({ min: 2 }).escape(),
+    body('bio').isLength({ max: 256 }),
+    (req, res) => {
+        console.log(`${req.file}\n${req.body.name}\n${req.body.bio}`);
+
+        return res.sendStatus(200);
 })
 
 app.listen(port, () => {

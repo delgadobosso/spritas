@@ -43,10 +43,30 @@ export default function UserOptions(props) {
 }
 
 function editCheck(props) {
+    var formData = new FormData();
+    const avatar = document.getElementById('UserEdit-avatar').files[0];
     const name = document.getElementById('UserEdit-name').value;
     const bio = document.getElementById('UserEdit-bio').value;
 
     const ogBio = (props.thisUser) ? props.thisUser.bio : '';
     
-    if (name === '' && bio === ogBio) alert('No values changed.');
+    if (!avatar && name === '' && bio === ogBio) alert('No changes made.');
+    else {
+        var choice = window.confirm("You won't be able to update your profile again for an hour. Are you sure you wish to save these changes?");
+        if (choice) {
+            var formData = new FormData();
+            if (avatar) formData.append('avatar', avatar, avatar.name);
+            formData.append('name', name);
+            formData.append('bio', bio);
+
+            fetch('/user/update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(resp => {
+                if (resp.ok) console.log('ok');
+                else console.error('User update error');
+            });
+        }
+    }
 }
