@@ -46,7 +46,7 @@ export default class Navi extends React.Component {
 
     render() {
         const user = this.props.user;
-        const userItem = (user) ? <a className="Navi-item" href={"/user/" + user.id}>{user.name}</a>
+        const userItem = (user) ? <a className="Navi-item" href={"/user/" + user.id}>{user.nickname}</a>
             : <a className="Navi-item" href="/login">Login</a>;
         const logout = (user) ? <a className="Navi-item" href="/logout">Logout</a>
             : null;

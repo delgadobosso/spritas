@@ -44,7 +44,7 @@ export default class UserContainer extends React.Component {
                 thisUser: data
             }, () => {
                 if (this.state.thisUser) {
-                    document.title = `${this.state.thisUser.name} - The Spritas`;
+                    document.title = `${this.state.thisUser.nickname}`;
                     window.history.replaceState(window.history.state, "", `/user/${id}`);
                     window.history.scrollRestoration = 'manual';
                 }

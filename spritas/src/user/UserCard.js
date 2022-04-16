@@ -6,7 +6,7 @@ export default function UserCard(props) {
     var bio;
     var ts;
     if (props.thisUser) {
-        name = props.thisUser.name;
+        name = props.thisUser.nickname;
         bio = props.thisUser.bio;
         ts = new Date(props.thisUser.ts);
         ts = `Joined ${ts.toDateString()}`;
