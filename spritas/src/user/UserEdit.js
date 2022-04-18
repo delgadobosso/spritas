@@ -28,12 +28,14 @@ export default class UserEdit extends React.Component {
 
     render() {
         var avatar;
-        var name;
+        var username;
+        var nickname;
         var bio;
         var ts;
         if (this.props.thisUser) {
             avatar = (this.state.imgPreview) ? this.state.imgPreview : pfp;
-            name = this.props.thisUser.nickname;
+            username = this.props.thisUser.username;
+            nickname = this.props.thisUser.nickname;
             bio = this.props.thisUser.bio;
             ts = new Date(this.props.thisUser.ts);
             ts = `Joined ${ts.toDateString()}`;
@@ -46,7 +48,8 @@ export default class UserEdit extends React.Component {
                     onChange={this.handleImg} accept="image/png, image/jpeg, image/gif" />
                     <img className='UserCard-avatar' src={avatar} alt='Avatar' />
                 </div>
-                <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={name} />
+                <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} />
+                <p className='UserCard-username'>{username}</p>
                 <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='256' />
                 <p className='UserCard-ts'>{ts}</p>
             </div>

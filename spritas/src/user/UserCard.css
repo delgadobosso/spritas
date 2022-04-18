@@ -6,7 +6,7 @@
     margin-bottom: 20px;
 }
 
-.UserCard-avatarContainer, .UserCard-name {
+.UserCard-avatarContainer, .UserCard-nickname, .UserCard-username {
     text-align: center;
 }
 
@@ -17,6 +17,20 @@
     width: 128px;
     height: 128px;
     border-radius: 10px;
+}
+
+.UserCard-nickname {
+    margin-bottom: 0;
+}
+
+.UserCard-username {
+    color: grey;
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.UserCard-ts {
+    color: grey;
 }
 
 @media screen and (max-width: 1256px) {
