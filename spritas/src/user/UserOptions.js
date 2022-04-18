@@ -45,18 +45,18 @@ export default function UserOptions(props) {
 function editCheck(props) {
     var formData = new FormData();
     const avatar = document.getElementById('UserEdit-avatar').files[0];
-    const name = document.getElementById('UserEdit-name').value;
+    const nickname = document.getElementById('UserEdit-nickname').value;
     const bio = document.getElementById('UserEdit-bio').value;
 
     const ogBio = (props.thisUser) ? props.thisUser.bio : '';
     
-    if (!avatar && name === '' && bio === ogBio) alert('No changes made.');
+    if (!avatar && nickname === '' && bio === ogBio) alert('No changes made.');
     else {
         var choice = window.confirm("You won't be able to update your profile again for an hour. Are you sure you wish to save these changes?");
         if (choice) {
-            var formData = new FormData();
             if (avatar) formData.append('avatar', avatar, avatar.name);
-            formData.append('name', name);
+            formData.append('id', props.user.id);
+            formData.append('nickname', nickname);
             formData.append('bio', bio);
 
             fetch('/user/update', {

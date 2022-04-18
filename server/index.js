@@ -735,10 +735,14 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
 
 app.post('/user/update',
     avatarUpload.single('avatar'),
+    body('id').isInt(),
     body('nickname').trim().isLength({ min: 2 }).escape(),
     body('bio').isLength({ max: 256 }),
     (req, res) => {
-        console.log(`${req.file}\n${req.body.nickname}\n${req.body.bio}`);
+        console.log(`${req.file.filename}\n${req.body.id}\n${req.body.nickname}\n${req.body.bio}`);
+        if (parseInt(req.body.id) === req.session.user.id) {
+            console.log('is gud');
+        }
 
         return res.sendStatus(200);
 })
