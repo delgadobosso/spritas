@@ -54,7 +54,7 @@ function editCheck(props) {
     else {
         var choice = window.confirm("You won't be able to update your profile again for an hour. Are you sure you wish to save these changes?");
         if (choice) {
-            if (avatar) formData.append('avatar', avatar, avatar.name);
+            if (avatar) formData.append('avatar', avatar, props.user.id);
             formData.append('id', props.user.id);
             formData.append('nickname', nickname);
             formData.append('bio', bio);
@@ -63,10 +63,11 @@ function editCheck(props) {
                 method: 'POST',
                 body: formData
             })
-            .then(resp => {
-                if (resp.ok) console.log('ok');
-                else console.error('User update error');
-            });
+            .then(resp => resp.text())
+            .then(data => {
+                if (data === 'time') alert('You must wait 1 hour from when you last updated your profile.');
+                else if (data === 'updated') console.log('success');
+            })
         }
     }
 }

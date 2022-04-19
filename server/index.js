@@ -35,7 +35,7 @@ const avatarStore = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         var fileType = file.mimetype.split('/')[1];
-        cb(null, `test.${fileType}`);
+        cb(null, `avatar-${file.originalname}.${fileType}`);
     }
 });
 const avatarUpload = multer({
@@ -61,6 +61,7 @@ app.use(session({
 }))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'media')));
 app.use(express.static(path.join(__dirname, '../spritas/build')));
 
 const imgur = require('imgur');
@@ -682,7 +683,7 @@ app.get('/user/:id', (req, res) => {
         req.params.id, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
-            else res.send(result[0]);
+            else return res.send(result[0]);
         });
     } else redirect('/user/' + req.params.id);
 })
@@ -739,12 +740,53 @@ app.post('/user/update',
     body('nickname').trim().isLength({ min: 2 }).escape(),
     body('bio').isLength({ max: 256 }),
     (req, res) => {
-        console.log(`${req.file.filename}\n${req.body.id}\n${req.body.nickname}\n${req.body.bio}`);
         if (parseInt(req.body.id) === req.session.user.id) {
-            console.log('is gud');
+            // Check if it's been long enough to make change
+            pool.query(`SELECT lastTs FROM users WHERE id = ?`, req.body.id, (error, result, fields) => {
+                if (error) return res.status(500).send(error);
+
+                var last = new Date(result[0].lastTs);
+                var current = new Date();
+                var elapsed = (current - last) / 60000;
+
+                if (elapsed >= 60) {
+                    var avatar = (req.file) ? req.file.filename : null;
+                    var nickname = req.body.nickname;
+                    var bio = req.body.bio;
+                    pool.query(`
+                    UPDATE users
+                    SET
+                        avatar = CASE WHEN ? IS NOT NULL
+                            THEN ?
+                            ELSE avatar
+                        END,
+                        nickname = CASE WHEN ? IS NOT NULL
+                            THEN ?
+                            ELSE nickname
+                        END,
+                        bio = CASE WHEN ? IS NOT NULL
+                            THEN ?
+                            ELSE bio
+                        END,
+                        lastTs = CURRENT_TIMESTAMP
+                    WHERE id = ?
+                    `, [avatar, avatar, nickname, nickname, bio, bio, req.body.id], (error, result, fields) => {
+                        if (error) return res.status(500).send(error);
+
+                        else {
+                            // update sessions user info
+                            req.session.user.nickname = nickname;
+
+                            return res.status(200).send('updated');
+                        }
+                    })
+                }
+                // it hasn't been enough time yet
+                else return res.status(200).send('time');
+            })
         }
 
-        return res.sendStatus(200);
+        else return res.sendStatus(200);
 })
 
 app.listen(port, () => {
