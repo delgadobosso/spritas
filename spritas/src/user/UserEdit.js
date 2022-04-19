@@ -27,13 +27,15 @@ export default class UserEdit extends React.Component {
     }
 
     render() {
+        var ogAvatar = (this.props.user && this.props.user.avatar)  ? `/media/avatars/${this.props.user.avatar}` : pfp;
+
         var avatar;
         var username;
         var nickname;
         var bio;
         var ts;
         if (this.props.thisUser) {
-            avatar = (this.state.imgPreview) ? this.state.imgPreview : pfp;
+            avatar = (this.state.imgPreview) ? this.state.imgPreview : ogAvatar;
             username = this.props.thisUser.username;
             nickname = this.props.thisUser.nickname;
             bio = this.props.thisUser.bio;

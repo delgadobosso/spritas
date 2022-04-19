@@ -38,7 +38,7 @@ export default class UserContainer extends React.Component {
 
         const id = (this.props.id) ? this.props.id : this.props.match.params.id;
 
-        fetch(`/user/${id}`)
+        fetch(`/user/info/${id}`)
             .then(res => res.json())
             .then(data => { this.setState({
                 thisUser: data

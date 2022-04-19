@@ -61,7 +61,6 @@ app.use(session({
 }))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'media')));
 app.use(express.static(path.join(__dirname, '../spritas/build')));
 
 const imgur = require('imgur');
@@ -72,6 +71,10 @@ imgur.setCredentials(process.env.IMGUR_USER, process.env.IMGUR_PW, process.env.I
 app.get('/', (req, res) => {
     res.sendFile(reactApp);
 });
+
+app.get('/user/:id', (req, res) => {
+    res.sendFile(reactApp);
+})
 
 app.get('/login', (req, res) => {
     if (req.session.user) res.redirect('/');
@@ -150,7 +153,8 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                             p1.perm,
                             p1.ts,
                             IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                            users.nickname AS userName
+                            users.nickname AS userName,
+                            users.avatar AS avatar
                         FROM posts AS p1
                         LEFT JOIN users
                         ON p1.idUser = users.id
@@ -194,7 +198,8 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                     p1.perm,
                     p1.ts,
                     IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                    users.nickname AS userName
+                    users.nickname AS userName,
+                    users.avatar AS avatar
                 FROM posts AS p1
                 LEFT JOIN users
                 ON p1.idUser = users.id
@@ -263,7 +268,7 @@ app.post('/login/signin',
                 bcrypt.compare(req.body.pass, result[0].pass, (err, ress) => {
                     if (ress) {
                         req.session.regenerate(() => {
-                            const user = (({id, username, nickname, type}) => ({id, username, nickname, type}))(result[0]);
+                            const user = (({id, username, nickname, avatar, type}) => ({id, username, nickname, avatar, type}))(result[0]);
                             req.session.user = user;
                             res.redirect('/');
                         })
@@ -295,7 +300,7 @@ app.get('/session/user', (req, res) => {
 app.get('/p/:id', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        pool.query(`SELECT posts.*, users.nickname AS userName, users.type AS userType
+        pool.query(`SELECT posts.*, users.nickname AS userName, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE (posts.id = ? AND (posts.update != "DELE" OR posts.update IS NULL))
@@ -315,7 +320,7 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
         const id = req.params.id;
         const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
         const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
-        pool.query(`SELECT posts.*, users.nickname AS userName, users.type AS userType
+        pool.query(`SELECT posts.*, users.nickname AS userName, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE posts.idParent = ? AND posts.type = 'RPLY'
@@ -335,7 +340,7 @@ app.get('/r/:id.:offset.:limit', (req, res) => {
         const id = req.params.id;
         const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
         const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
-        pool.query(`SELECT posts.*, users.nickname AS userName, users.type AS userType
+        pool.query(`SELECT posts.*, users.nickname AS userName, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE posts.idParent = ? AND posts.type = 'RPLY'
@@ -677,15 +682,15 @@ app.post('/delete/topic',
     }
 )
 
-app.get('/user/:id', (req, res) => {
+app.get('/user/info/:id', (req, res) => {
     if (req.headers.referer) {
-        pool.query(`SELECT username, nickname, bio, ts FROM users WHERE id = ?`,
+        pool.query(`SELECT username, nickname, bio, avatar, ts, lastTs FROM users WHERE id = ?`,
         req.params.id, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
             else return res.send(result[0]);
         });
-    } else redirect('/user/' + req.params.id);
+    } else res.redirect('/user/' + req.params.id);
 })
 
 app.get('/user/posts/:id.:offset.:limit', (req, res) => {
@@ -708,7 +713,8 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
             p1.perm,
             p1.ts,
             IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-            users.nickname AS userName
+            users.nickname AS userName,
+            users.avatar AS avatar
         FROM posts AS p1
         LEFT JOIN users
         ON p1.idUser = users.id
@@ -775,6 +781,7 @@ app.post('/user/update',
 
                         else {
                             // update sessions user info
+                            req.session.user.avatar = avatar;
                             req.session.user.nickname = nickname;
 
                             return res.status(200).send('updated');
@@ -787,6 +794,10 @@ app.post('/user/update',
         }
 
         else return res.sendStatus(200);
+})
+
+app.get('/media/avatars/:avatar', express.static(path.join(__dirname, '/media/avatars')), (req, res) => {
+    res.sendFile(path.join(__dirname, '/media/avatars/', req.params.avatar));
 })
 
 app.listen(port, () => {

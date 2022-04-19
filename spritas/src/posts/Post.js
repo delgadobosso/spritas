@@ -139,6 +139,8 @@ export default class Post extends React.Component {
         ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on
         ${ts.toDateString()}`;
 
+        const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
+
         const replies = (this.props.reply) ?
         <div>
             <div className="Post-replies" id={"Replies-" + post.id}>
@@ -176,7 +178,7 @@ export default class Post extends React.Component {
                 {deleteReply}
                 <div className="Post-main">
                     <div className="Post-user">
-                        <img className="Post-user-img" src={pfp} alt="User" />
+                        <img className="Post-user-img" src={avatar} alt="User" />
                         <div className="Post-user-info">
                             <p className="Post-user-name">{post.userName}{optag}</p>
                             <p className="Post-user-type">{post.userType}</p>
