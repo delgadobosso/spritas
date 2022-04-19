@@ -757,7 +757,7 @@ app.post('/user/update',
 
                 if (elapsed >= 60) {
                     var avatar = (req.file) ? req.file.filename : null;
-                    var nickname = req.body.nickname;
+                    var nickname = (req.body.nickname !== "") ? req.body.nickname : null;
                     var bio = req.body.bio;
                     pool.query(`
                     UPDATE users
@@ -781,8 +781,8 @@ app.post('/user/update',
 
                         else {
                             // update sessions user info
-                            req.session.user.avatar = avatar;
-                            req.session.user.nickname = nickname;
+                            if (req.file) req.session.user.avatar = avatar;
+                            if (req.body.nickname !== "") req.session.user.nickname = nickname;
 
                             return res.status(200).send('updated');
                         }

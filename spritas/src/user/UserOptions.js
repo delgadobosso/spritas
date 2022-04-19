@@ -66,7 +66,9 @@ function editCheck(props) {
             .then(resp => resp.text())
             .then(data => {
                 if (data === 'time') alert('You must wait 1 hour from when you last updated your profile.');
-                else if (data === 'updated') console.log('success');
+                else if (data === 'updated') {
+                    window.location.reload();
+                }
             })
         }
     }
