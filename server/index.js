@@ -757,7 +757,7 @@ app.post('/user/update',
                 var current = new Date();
                 var elapsed = (current - last) / 60000;
 
-                if (elapsed >= 60) {
+                if (elapsed >= 5) {
                     var avatar = (req.file) ? req.file.filename : null;
                     var ogAvatar = result[0].avatar;
                     var nickname = (req.body.nickname !== "") ? req.body.nickname : null;

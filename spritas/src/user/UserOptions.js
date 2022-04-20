@@ -12,7 +12,7 @@ export default function UserOptions(props) {
     if (!props.editMode) {
         // If this user is you
         if (props.user.id === parseInt(props.thisId)) {
-            edit = <div className='UserOptions-option' onClick={() => props.userEdit(true)}>Edit Profile</div>;
+            edit = <div className='UserOptions-option' onClick={() => editTimeCheck(props)}>Edit Profile</div>;
         // If this user isn't you
         } else if (props.user.id !== parseInt(props.thisId)) {
             // And you're not admin
@@ -52,7 +52,7 @@ function editCheck(props) {
     
     if (!avatar && nickname === '' && bio === ogBio) alert('No changes made.');
     else {
-        var choice = window.confirm("You won't be able to update your profile again for an hour. Are you sure you wish to save these changes?");
+        var choice = window.confirm("You won't be able to update your profile again for 5 minutes. Are you sure you wish to save these changes?");
         if (choice) {
             if (avatar) formData.append('avatar', avatar, props.user.id);
             formData.append('id', props.user.id);
@@ -65,11 +65,20 @@ function editCheck(props) {
             })
             .then(resp => resp.text())
             .then(data => {
-                if (data === 'time') alert('You must wait 1 hour from when you last updated your profile.');
+                if (data === 'time') alert('You must wait 5 minutes from when you last updated your profile.');
                 else if (data === 'updated') {
                     window.location.reload();
                 }
             })
         }
     }
+}
+
+function editTimeCheck(props) {
+    var last = new Date(props.thisUser.lastTs);
+    var current = new Date();
+    var elapsed = (current - last) / 60000;
+
+    if (elapsed >= 5) props.userEdit(true);
+    else alert('You must wait 5 minutes from when you last updated your profile.');
 }
