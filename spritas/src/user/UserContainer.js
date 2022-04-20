@@ -36,52 +36,53 @@ export default class UserContainer extends React.Component {
           }, 50);
         }
 
-        const id = (this.props.id) ? this.props.id : this.props.match.params.id;
+        const name = this.props.match.params.name;
 
-        fetch(`/user/info/${id}`)
+        fetch(`/user/info/${name}`)
             .then(res => res.json())
             .then(data => { this.setState({
                 thisUser: data
             }, () => {
                 if (this.state.thisUser) {
                     document.title = `${this.state.thisUser.nickname}`;
-                    window.history.replaceState(window.history.state, "", `/user/${id}`);
+                    window.history.replaceState(window.history.state, "", `/u/${name}`);
                     window.history.scrollRestoration = 'manual';
+                    this.loadPosts(true);
                 }
             }); });
-
-        this.loadPosts(true);
     }
 
     loadPosts(first=false) {
-        const id = (this.props.id) ? this.props.id : this.props.match.params.id;
-
-        fetch(`/user/posts/${id}.${this.state.offset}.${this.state.amount}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.length > 0) {
-                    const posts = data.slice(0, this.state.amount).map((post, index) =>
-                    <TopicPost key={index + this.state.offset} post={post}
-                        postClick={this.props.postClick} />);
-                    if (data.length < (this.state.amount + 1)) {
+        if (this.state.thisUser) {
+            console.log(this.state.thisUser);
+            const id = this.state.thisUser.id;
+            fetch(`/user/posts/${id}.${this.state.offset}.${this.state.amount}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const posts = data.slice(0, this.state.amount).map((post, index) =>
+                        <TopicPost key={index + this.state.offset} post={post}
+                            postClick={this.props.postClick} />);
+                        if (data.length < (this.state.amount + 1)) {
+                            this.setState(state => ({
+                                more: !state.more
+                            }));
+                        } else {
+                            this.setState(state => ({
+                                offset: state.offset + this.state.amount
+                            }));
+                        }
+                        if (!first) {
+                            var sub = document.getElementById('UserContainer-topics');
+                            let maxHeight = sub.scrollHeight;
+                            sub.style.height = maxHeight + "px";
+                        }
                         this.setState(state => ({
-                            more: !state.more
-                        }));
-                    } else {
-                        this.setState(state => ({
-                            offset: state.offset + this.state.amount
-                        }));
+                            posts: [...state.posts, ...posts]
+                        }), () => { if (!first) this.extendPosts(sub) });
                     }
-                    if (!first) {
-                        var sub = document.getElementById('UserContainer-topics');
-                        let maxHeight = sub.scrollHeight;
-                        sub.style.height = maxHeight + "px";
-                    }
-                    this.setState(state => ({
-                        posts: [...state.posts, ...posts]
-                    }), () => { if (!first) this.extendPosts(sub) });
-                }
-            });
+                });
+        }
     }
 
     extendPosts(sub) {

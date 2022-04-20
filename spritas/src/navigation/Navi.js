@@ -52,7 +52,7 @@ export default class Navi extends React.Component {
         var logout;
         if (user) {
             avatar = (user.avatar) ? `/media/avatars/${user.avatar}` : pfp;
-            userItem = <a className="Navi-item" href={"/user/" + user.id}>{user.nickname}</a>;
+            userItem = <a className="Navi-item" href={"/u/" + user.username}>{user.nickname}</a>;
             logout = <a className="Navi-item" href="/logout">Logout</a>;
         } else {
             avatar = pfp;

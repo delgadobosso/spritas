@@ -684,10 +684,10 @@ app.post('/delete/topic',
     }
 )
 
-app.get('/user/info/:id', (req, res) => {
+app.get('/user/info/:name', (req, res) => {
     if (req.headers.referer) {
-        pool.query(`SELECT username, nickname, bio, avatar, ts, lastTs FROM users WHERE id = ?`,
-        req.params.id, (error, result, fields) => {
+        pool.query(`SELECT id, username, nickname, bio, avatar, ts, lastTs FROM users WHERE username = ?`,
+        req.params.name, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
             else return res.send(result[0]);

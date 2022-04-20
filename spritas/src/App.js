@@ -105,7 +105,7 @@ export default class App extends React.Component {
             <Route path='/login' component={Login} />
             <Route path='/create/topic/:id?' component={CreateTopic} />
             <Route path='/create/post/:id' component={CreatePost} />
-            <Route path='/user/:id'
+            <Route path='/u/:name'
               render={props => <UserContainer postClick={this.postClick} naviHide={this.naviHide} user={this.state.user} {...props} />} />
             <Route path='/post/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
