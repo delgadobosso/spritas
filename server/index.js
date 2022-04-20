@@ -1,5 +1,6 @@
 require('dotenv').config();
 const path = require('path');
+const fs = require('fs');
 const reactApp = path.join(__dirname, process.env.REACT_BUILD);
 
 const bcrypt = require('bcrypt');
@@ -35,7 +36,8 @@ const avatarStore = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         var fileType = file.mimetype.split('/')[1];
-        cb(null, `avatar-${file.originalname}.${fileType}`);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, `${file.originalname}-${uniqueSuffix}.${fileType}`);
     }
 });
 const avatarUpload = multer({
@@ -748,7 +750,7 @@ app.post('/user/update',
     (req, res) => {
         if (parseInt(req.body.id) === req.session.user.id) {
             // Check if it's been long enough to make change
-            pool.query(`SELECT lastTs FROM users WHERE id = ?`, req.body.id, (error, result, fields) => {
+            pool.query(`SELECT avatar, lastTs FROM users WHERE id = ?`, req.body.id, (error, result, fields) => {
                 if (error) return res.status(500).send(error);
 
                 var last = new Date(result[0].lastTs);
@@ -757,6 +759,7 @@ app.post('/user/update',
 
                 if (elapsed >= 60) {
                     var avatar = (req.file) ? req.file.filename : null;
+                    var ogAvatar = result[0].avatar;
                     var nickname = (req.body.nickname !== "") ? req.body.nickname : null;
                     var bio = req.body.bio;
                     pool.query(`
@@ -780,6 +783,16 @@ app.post('/user/update',
                         if (error) return res.status(500).send(error);
 
                         else {
+                            // delete old avatar
+                            if (avatar && ogAvatar) {
+                                const ogPath = path.join(__dirname, "/media/avatars/", ogAvatar);
+                                if (fs.existsSync(ogPath)) {
+                                    fs.unlink(ogPath, (err) => {
+                                        if (err) return console.error(err);
+                                    });
+                                }
+                            }
+
                             // update sessions user info
                             if (req.file) req.session.user.avatar = avatar;
                             if (req.body.nickname !== "") req.session.user.nickname = nickname;
