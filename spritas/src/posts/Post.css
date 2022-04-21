@@ -42,6 +42,15 @@
     width: 64px;
     height: 64px;
     border-radius: 64px;
+
+    transition: filter 0.5s, border-radius 0.25s;
+}
+@media (hover: hover) {
+    .Post-user-img:hover {
+        cursor: pointer;
+        border-radius: 10px;
+        filter: brightness(1.1);
+    }
 }
 
 .Post-right {
