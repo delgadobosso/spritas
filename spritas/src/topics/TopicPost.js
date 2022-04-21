@@ -11,9 +11,10 @@ export default class TopicPost extends React.Component {
     }
 
     handleClick(e) {
-        e.preventDefault();
-
-        this.props.postClick(this.props.post.id);
+        if (e.target.className !== 'TopicPost-img') {
+            e.preventDefault();
+            this.props.postClick(this.props.post.id);
+        }
     }
 
     render() {
