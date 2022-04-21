@@ -8,10 +8,10 @@ export default function UserOptions(props) {
     var submit;
     var cancel;
 
-    // If in edit mode
+    // If not in edit mode
     if (!props.editMode) {
         // If this user is you
-        if (props.user.id === parseInt(props.thisId)) {
+        if (props.user.id === parseInt(props.thisId) && props.thisUser.type !== "BAN") {
             edit = <div className='UserOptions-option' onClick={() => editTimeCheck(props)}>Edit Profile</div>;
         // If this user isn't you
         } else if (props.user.id !== parseInt(props.thisId)) {
