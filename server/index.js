@@ -688,7 +688,7 @@ app.post('/delete/topic',
 
 app.get('/user/info/:name', (req, res) => {
     if (req.headers.referer) {
-        pool.query(`SELECT id, username, nickname, bio, avatar, ts, lastTs FROM users WHERE username = ?`,
+        pool.query(`SELECT id, username, nickname, bio, avatar, type, ts, lastTs FROM users WHERE username = ?`,
         req.params.name, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
@@ -814,6 +814,30 @@ app.post('/user/update',
 
 app.get('/media/avatars/:avatar', express.static(path.join(__dirname, '/media/avatars')), (req, res) => {
     res.sendFile(path.join(__dirname, '/media/avatars/', req.params.avatar));
+})
+
+app.post('/ban/user/:id', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+    else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
+
+    pool.query(`UPDATE users
+        SET type = "BAN"
+        WHERE id = ?`, req.params.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+            else return res.sendStatus(200);
+        })
+})
+
+app.post('/unban/user/:id', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+    else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
+
+    pool.query(`UPDATE users
+        SET type = "USER"
+        WHERE id = ?`, req.params.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+            else return res.sendStatus(200);
+        })
 })
 
 app.listen(port, () => {

@@ -20,7 +20,9 @@ export default function UserOptions(props) {
                 report = <div className='UserOptions-option'>Report User</div>;
             // You ARE admin
             } else {
-                ban = <div className='UserOptions-option'>Ban User</div>;
+                ban = (props.thisUser && props.thisUser.type !== "BAN") ?
+                    <div className='UserOptions-option' onClick={() => banUser(props)}>Ban User</div> :
+                    <div className='UserOptions-option' onClick={() => unbanUser(props)}>Unban User</div>;
             }
 
             block = <div className='UserOptions-option'>Block User</div>;
@@ -81,4 +83,34 @@ function editTimeCheck(props) {
 
     if (elapsed >= 5) props.userEdit(true);
     else alert('You must wait 5 minutes from when you last updated your profile.');
+}
+
+function banUser(props) {
+    if (props.thisId && props.thisUser) {
+        var answer = prompt(`Are you sure you want to ban ${props.thisUser.nickname} (${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
+        if (answer === props.thisUser.username) {
+            fetch('/ban/user/' + props.thisId, {
+                method: "POST"
+            })
+            .then((resp) => {
+                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
+                else alert('User ban error');
+            });
+        } else if (answer !== null) alert(`Value incorrect. User not banned.`);
+    }
+}
+
+function unbanUser(props) {
+    if (props.thisId && props.thisUser) {
+        var answer = prompt(`Are you sure you want to unban ${props.thisUser.nickname} (${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
+        if (answer === props.thisUser.username) {
+            fetch('/unban/user/' + props.thisId, {
+                method: "POST"
+            })
+            .then((resp) => {
+                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
+                else alert('User ban error');
+            });
+        } else if (answer !== null) alert(`Value incorrect. User will stay banned.`);
+    }
 }
