@@ -29,7 +29,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    if (window.location.pathname === "/" || window.location.pathname.startsWith('/user/')) window.history.replaceState({}, "", window.location.pathname);
+    if (window.location.pathname === "/" || window.location.pathname.startsWith('/u/')) window.history.replaceState({}, "", window.location.pathname);
     window.history.scrollRestoration = 'manual';
 
     // Navi Hiding

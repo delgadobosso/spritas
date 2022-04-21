@@ -54,7 +54,6 @@ export default class UserContainer extends React.Component {
 
     loadPosts(first=false) {
         if (this.state.thisUser) {
-            console.log(this.state.thisUser);
             const id = this.state.thisUser.id;
             fetch(`/user/posts/${id}.${this.state.offset}.${this.state.amount}`)
                 .then(res => res.json())
@@ -102,7 +101,7 @@ export default class UserContainer extends React.Component {
     scrollTo() {
         var con = document.getElementById('UserPosts');
         con.scrollIntoView({ behavior: "smooth" });
-        if (window.location.hash !== "#posts") window.history.pushState({}, "", "#posts");
+        // if (window.location.hash !== "#posts") window.history.pushState({}, "", "#posts");
     }
 
     userEdit(yes) {
@@ -110,7 +109,7 @@ export default class UserContainer extends React.Component {
     }
 
     render() {
-        const id = (this.props.id) ? this.props.id : this.props.match.params.id;
+        const id = (this.state.thisUser) ? this.state.thisUser.id : null;
         const posts = (this.state.posts) ? this.state.posts : null;
 
         const options = (this.props.user && id) ? <UserOptions user={this.props.user} thisUser={this.state.thisUser} thisId={id} userEdit={this.userEdit} editMode={this.state.edit} /> : null;

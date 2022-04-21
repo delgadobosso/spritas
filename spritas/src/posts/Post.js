@@ -178,9 +178,11 @@ export default class Post extends React.Component {
                 {deleteReply}
                 <div className="Post-main">
                     <div className="Post-user">
-                        <img className="Post-user-img" src={avatar} alt="User" />
+                        <a href={`/u/${post.username}`}>
+                            <img className="Post-user-img" src={avatar} alt="User" />
+                        </a>
                         <div className="Post-user-info">
-                            <p className="Post-user-name">{post.userName}{optag}</p>
+                            <p className="Post-user-name">{post.nickname}{optag}</p>
                             <p className="Post-user-type">{post.userType}</p>
                         </div>
                     </div>

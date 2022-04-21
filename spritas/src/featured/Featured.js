@@ -23,7 +23,7 @@ export default class Featured extends React.Component {
     scrollTo() {
         var feat = document.getElementById('featured');
         feat.scrollIntoView({ behavior: "smooth" });
-        if (window.location.hash !== "#featured") window.history.pushState({}, "", "#featured");
+        // if (window.location.hash !== "#featured") window.history.pushState({}, "", "#featured");
     }
 
     expand() { this.setState(state => ({ open: !state.open })); }

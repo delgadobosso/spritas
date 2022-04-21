@@ -33,7 +33,7 @@ export default class Container extends React.Component {
     scrollTo() {
         var con = document.getElementById('topics');
         con.scrollIntoView({ behavior: "smooth" });
-        if (window.location.hash !== "#topics") window.history.pushState({}, "", "#topics");
+        // if (window.location.hash !== "#topics") window.history.pushState({}, "", "#topics");
     }
 
     render() {

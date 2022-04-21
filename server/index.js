@@ -155,7 +155,8 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                             p1.perm,
                             p1.ts,
                             IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                            users.nickname AS userName,
+                            users.username AS username,
+                            users.nickname AS nickname,
                             users.avatar AS avatar
                         FROM posts AS p1
                         LEFT JOIN users
@@ -200,7 +201,8 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                     p1.perm,
                     p1.ts,
                     IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                    users.nickname AS userName,
+                    users.username AS username,
+                    users.nickname AS nickname,
                     users.avatar AS avatar
                 FROM posts AS p1
                 LEFT JOIN users
@@ -302,7 +304,7 @@ app.get('/session/user', (req, res) => {
 app.get('/p/:id', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        pool.query(`SELECT posts.*, users.nickname AS userName, users.avatar AS avatar, users.type AS userType
+        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE (posts.id = ? AND (posts.update != "DELE" OR posts.update IS NULL))
@@ -322,7 +324,7 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
         const id = req.params.id;
         const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
         const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
-        pool.query(`SELECT posts.*, users.nickname AS userName, users.avatar AS avatar, users.type AS userType
+        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE posts.idParent = ? AND posts.type = 'RPLY'
@@ -342,7 +344,7 @@ app.get('/r/:id.:offset.:limit', (req, res) => {
         const id = req.params.id;
         const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
         const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
-        pool.query(`SELECT posts.*, users.nickname AS userName, users.avatar AS avatar, users.type AS userType
+        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE posts.idParent = ? AND posts.type = 'RPLY'
@@ -715,7 +717,8 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
             p1.perm,
             p1.ts,
             IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-            users.nickname AS userName,
+            users.username AS username,
+            users.nickname AS nickname,
             users.avatar AS avatar
         FROM posts AS p1
         LEFT JOIN users
