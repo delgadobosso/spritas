@@ -824,7 +824,15 @@ app.post('/ban/user/:id', (req, res) => {
         SET type = "BAN"
         WHERE id = ?`, req.params.id, (error, result, fields) => {
             if (error) return res.status(500).send(error);
-            else return res.sendStatus(200);
+            else {
+                req.sessionStore.all((err, sessions) => {
+                    if (err) console.error('Error getting all sessions');
+                    else {
+                        console.log(sessions); // How the hell do I update the session user data for another user?
+                    }
+                })
+                return res.sendStatus(200);
+            }
         })
 })
 
