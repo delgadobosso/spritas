@@ -841,9 +841,9 @@ app.post('/ban/user/:id', (req, res) => {
                         sessionStore.get(userSession.session_id, (err, session) => {
                             session.user.type = 'BAN';
                             sessionStore.set(userSession.session_id, session);
-                            return res.sendStatus(200);
                         })
                     });
+                    return res.sendStatus(200);
                 })
             }
         })
@@ -865,9 +865,9 @@ app.post('/unban/user/:id', (req, res) => {
                         sessionStore.get(userSession.session_id, (err, session) => {
                             session.user.type = 'USER';
                             sessionStore.set(userSession.session_id, session);
-                            return res.sendStatus(200);
                         })
                     });
+                    return res.sendStatus(200);
                 })
             }
         })
