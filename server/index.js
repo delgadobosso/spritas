@@ -761,6 +761,8 @@ app.post('/user/update',
     body('bio').isLength({ max: 256 }),
     (req, res) => {
         if (parseInt(req.body.id) === req.session.user.id) {
+            if (req.session.user.type === 'BAN') return res.sendStatus(403);
+
             // Check if it's been long enough to make change
             pool.query(`SELECT avatar, lastTs FROM users WHERE id = ?`, req.body.id, (error, result, fields) => {
                 if (error) return res.status(500).send(error);
