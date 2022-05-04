@@ -834,8 +834,17 @@ app.post('/ban/user/:id', (req, res) => {
         WHERE id = ?`, req.params.id, (error, result, fields) => {
             if (error) return res.status(500).send(error);
             else {
-                console.log(req.session);
-                return res.sendStatus(200);
+                pool.query(`SELECT *
+                FROM users_sessions
+                WHERE idUser = ?`, req.params.id, (error, result, fields) => {
+                    result.forEach(userSession => {
+                        sessionStore.get(userSession.session_id, (err, session) => {
+                            session.user.type = 'BAN';
+                            sessionStore.set(userSession.session_id, session);
+                            return res.sendStatus(200);
+                        })
+                    });
+                })
             }
         })
 })
@@ -848,7 +857,19 @@ app.post('/unban/user/:id', (req, res) => {
         SET type = "USER"
         WHERE id = ?`, req.params.id, (error, result, fields) => {
             if (error) return res.status(500).send(error);
-            else return res.sendStatus(200);
+            else {
+                pool.query(`SELECT *
+                FROM users_sessions
+                WHERE idUser = ?`, req.params.id, (error, result, fields) => {
+                    result.forEach(userSession => {
+                        sessionStore.get(userSession.session_id, (err, session) => {
+                            session.user.type = 'USER';
+                            sessionStore.set(userSession.session_id, session);
+                            return res.sendStatus(200);
+                        })
+                    });
+                })
+            }
         })
 })
 
