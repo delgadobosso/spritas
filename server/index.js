@@ -272,9 +272,18 @@ app.post('/login/signin',
                 bcrypt.compare(req.body.pass, result[0].pass, (err, ress) => {
                     if (ress) {
                         req.session.regenerate(() => {
-                            const user = (({id, username, nickname, avatar, type}) => ({id, username, nickname, avatar, type}))(result[0]);
-                            req.session.user = user;
-                            res.redirect('/');
+                            req.session.save((err) => {
+                                const userRes = result[0];
+                                pool.query(`INSERT INTO users_sessions (idUser, session_id) VALUES (?, ?)`, [userRes.id, req.session.id], (error, result, fields) => {
+                                    if (error) return res.status(500).send(error);
+
+                                    else {
+                                        const user = (({id, username, nickname, avatar, type}) => ({id, username, nickname, avatar, type}))(userRes);
+                                        req.session.user = user;
+                                        res.redirect('/');
+                                    }
+                                })
+                            })
                         })
                     }
                     else res.send({'status': 'failure', 'message': 'wrong username or password'});
@@ -825,12 +834,7 @@ app.post('/ban/user/:id', (req, res) => {
         WHERE id = ?`, req.params.id, (error, result, fields) => {
             if (error) return res.status(500).send(error);
             else {
-                req.sessionStore.all((err, sessions) => {
-                    if (err) console.error('Error getting all sessions');
-                    else {
-                        console.log(sessions); // How the hell do I update the session user data for another user?
-                    }
-                })
+                console.log(req.session);
                 return res.sendStatus(200);
             }
         })
