@@ -137,7 +137,7 @@ export default class PostContainer extends React.Component {
 
         if (this.state.post) {
             var update;
-            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update !== 'DELE') {
+            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update !== 'DELE' && this.props.user.type !== "BAN") {
                 update = <UpdatePost post={this.state.post} user={this.props.user} currentPost={this.state.main[this.state.current - 1]} />;
             } else if (this.props.user && this.props.user.type === 'ADMN' && this.state.post.update !== 'DELE') {
                 update = (

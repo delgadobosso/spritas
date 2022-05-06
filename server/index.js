@@ -516,6 +516,7 @@ app.post('/update/post',
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
@@ -629,6 +630,7 @@ app.post('/delete/post',
     body('currentid').notEmpty().isInt(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
@@ -664,6 +666,7 @@ app.post('/delete/reply',
     body('id').notEmpty().isInt(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
