@@ -74,7 +74,7 @@ app.get('/', (req, res) => {
     res.sendFile(reactApp);
 });
 
-app.get('/user/:id', (req, res) => {
+app.get('/u/:name', (req, res) => {
     res.sendFile(reactApp);
 })
 
@@ -101,6 +101,7 @@ app.get('/create/topic/:id?', (req, res) => {
 
 app.get('/create/post/:id', (req, res) => {
     if (!req.session.user) res.sendStatus(401);
+    else if (req.session.user.type === "BAN") res.sendStatus(403);
     else {
         pool.query(`SELECT perm FROM topics WHERE id = ?`,
         req.params.id, (error, result, fields) => {
@@ -404,6 +405,7 @@ app.post('/create/post',
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        else if (!req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 

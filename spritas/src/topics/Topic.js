@@ -41,9 +41,7 @@ export default class Topic extends React.Component {
                             controls.push(<a className="TopicPortal-control-item" href={`/create/topic/${id}`} key="1">Create Topic</a>);
                             controls.push(<a className="TopicPortal-control-item" onClick={this.delete} key="2">Delete Topic</a>);
                         }
-                        if (perm === "ADMN" && this.props.user.type === perm) {
-                            controls.push(<a className="TopicPortal-control-item" href={`/create/post/${id}?type=${type}`} key="0">Create Post</a>);
-                        } else if (perm !== "ADMN") {
+                        if (((perm === "ADMN" && this.props.user.type === perm) || perm !== "ADMN") && this.props.user.type !== 'BAN') {
                             controls.push(<a className="TopicPortal-control-item" href={`/create/post/${id}?type=${type}`} key="0">Create Post</a>);
                         }
                     }
