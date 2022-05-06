@@ -141,12 +141,14 @@ export default class Post extends React.Component {
 
         const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
+        const reply = (this.props.user && this.props.user.id !== this.state.opid && this.props.user.type !== "BAN") ? <Reply parentId={post.id} user={this.props.user} /> : null;
+
         const replies = (this.props.reply) ?
         <div>
             <div className="Post-replies" id={"Replies-" + post.id}>
                 {this.state.replies}
             </div>
-            <Reply parentId={post.id} />
+            {reply}
         </div>
         : null;
 
