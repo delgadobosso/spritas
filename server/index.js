@@ -486,19 +486,23 @@ app.post('/create/reply',
             // Valid first post of a topic is found
             if (result.length > 0) {
                 const parent = result[0];
-                pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
-                VALUES(?,?,?,?,'RPLY')`,
-                [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
-                    if (error) return res.status(500).send(error);
-
-                    pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
-                    WHERE id = ? OR id = ?`,
-                    [parent.id, parent.idParent], (error, result, fields) => {
+                // check if post was made by person trying to comment, don't let them
+                if (parent.type !== "RPLY" && req.session.user.id === parent.idUser) return res.sendStatus(403);
+                else {
+                    pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
+                    VALUES(?,?,?,?,'RPLY')`,
+                    [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
-                        return res.redirect('/');
+                        pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
+                        WHERE id = ? OR id = ?`,
+                        [parent.id, parent.idParent], (error, result, fields) => {
+                            if (error) return res.status(500).send(error);
+
+                            return res.redirect('/');
+                        })
                     })
-                })
+                }
             } else return res.status(400).json({error: "No post to reply to."});
         })
     }
