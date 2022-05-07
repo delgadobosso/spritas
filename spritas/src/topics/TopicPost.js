@@ -82,7 +82,7 @@ export default class TopicPost extends React.Component {
                     <div className="TopicPost-user">
                         <a href={`/u/${post.username}`}>
                             <img className="TopicPost-img" src={avatar}
-                            title={post.nickname}
+                            title={post.username}
                             alt="Topic icon" />
                         </a>
                         <p className="TopicPost-details">
