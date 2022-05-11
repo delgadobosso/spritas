@@ -8,6 +8,7 @@ export default function UserCard(props) {
     var bio;
     var ts;
     var ban;
+    var blocked;
     if (props.thisUser) {
         avatar = (props.thisUser.avatar) ? `/media/avatars/${props.thisUser.avatar}` : pfp;
         username = props.thisUser.username;
@@ -15,12 +16,14 @@ export default function UserCard(props) {
         bio = props.thisUser.bio;
         ts = new Date(props.thisUser.ts);
         ts = `Joined ${ts.toDateString()}`;
-        if (props.thisUser.type === "BAN") ban = <h2 className='UserCard-nickname'>BANNED</h2>;
+        if (props.thisUser.type === "BAN") ban = <h2 className='UserCard-nickname'>Banned</h2>;
+        if (props.thisUser.blocked) blocked = <h2 className='UserCard-nickname'>Blocking You</h2>
     }
 
     return (
         <div className='UserCard'>
             {ban}
+            {blocked}
             <div className='UserCard-avatarContainer'>
                 <img className='UserCard-avatar' src={avatar} alt='Avatar' />
             </div>

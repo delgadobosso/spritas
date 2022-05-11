@@ -40,16 +40,18 @@ export default class UserContainer extends React.Component {
 
         fetch(`/user/info/${name}`)
             .then(res => res.json())
-            .then(data => { this.setState({
-                thisUser: data
-            }, () => {
-                if (this.state.thisUser) {
-                    document.title = `${this.state.thisUser.nickname}`;
-                    window.history.replaceState(window.history.state, "", `/u/${name}`);
-                    window.history.scrollRestoration = 'manual';
-                    this.loadPosts(true);
-                }
-            }); });
+            .then(data => {
+                this.setState({
+                    thisUser: data
+                }, () => {
+                    if (this.state.thisUser) {
+                        document.title = `${this.state.thisUser.nickname}`;
+                        window.history.replaceState(window.history.state, "", `/u/${name}`);
+                        window.history.scrollRestoration = 'manual';
+                        this.loadPosts(true);
+                    }
+                });
+            });
     }
 
     loadPosts(first=false) {

@@ -25,7 +25,8 @@ export default function UserOptions(props) {
                     <div className='UserOptions-option' onClick={() => unbanUser(props)}>Unban User</div>;
             }
 
-            block = <div className='UserOptions-option'>Block User</div>;
+            block = (props.thisUser.blocking) ? <div className='UserOptions-option' onClick={() => unblockUser(props)}>Unblock User</div>
+            : <div className='UserOptions-option' onClick={() => blockUser(props)}>Block User</div>;
         }
     } else {
         submit = <div className='UserOptions-option' onClick={() => editCheck(props)}>Save Changes</div>;
@@ -112,5 +113,35 @@ function unbanUser(props) {
                 else alert('User ban error');
             });
         } else if (answer !== null) alert(`Value incorrect. User will stay banned.`);
+    }
+}
+
+function blockUser(props) {
+    if (props.thisId && props.thisUser) {
+        var answer = prompt(`Are you sure you want to block ${props.thisUser.nickname} (${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
+        if (answer === props.thisUser.username) {
+            fetch('/block/user/' + props.thisId, {
+                method: "POST"
+            })
+            .then((resp) => {
+                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
+                else alert('User block error');
+            });
+        } else if (answer !== null) alert(`Value incorrect. User not blocked.`);
+    }
+}
+
+function unblockUser(props) {
+    if (props.thisId && props.thisUser) {
+        var answer = prompt(`Are you sure you want to unblock ${props.thisUser.nickname} (${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
+        if (answer === props.thisUser.username) {
+            fetch('/unblock/user/' + props.thisId, {
+                method: "POST"
+            })
+            .then((resp) => {
+                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
+                else alert('User unblock error');
+            });
+        } else if (answer !== null) alert(`Value incorrect. User still blocked.`);
     }
 }

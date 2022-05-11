@@ -711,7 +711,29 @@ app.get('/user/info/:name', (req, res) => {
         req.params.name, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
-            else return res.send(result[0]);
+            else {
+                var info = result[0];
+                if (req.session.user) {
+                    pool.query(`SELECT * FROM users_blocked
+                    WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
+                    [req.session.user.id, info.id, info.id, req.session.user.id], (error, result, fields) => {
+                        if (error) return res.status(500).send(error);
+                        else if (result.length > 1) {
+                            info.blocked = true;
+                            info.blocking = true;
+                            return res.send(info);
+                        } else if (result.length > 0 && result[0].blockedId === info.id) {
+                            info.blocking = true;
+                            return res.send(info);
+                        } else if (result.length > 0 && result[0].blockedId === req.session.user.id) {
+                            info.blocked = true;
+                            return res.send(info);
+                        } else return res.send(info);
+                    })
+                } else {
+                    return res.send(info);
+                }
+            }
         });
     } else res.redirect('/user/' + req.params.id);
 })
@@ -883,6 +905,25 @@ app.post('/unban/user/:id', (req, res) => {
                 })
             }
         })
+})
+
+app.post('/block/user/:id', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+
+    pool.query(`INSERT INTO users_blocked (blockerId, blockedId)
+    VALUES (?, ?)`, [req.session.user.id, req.params.id], (error, results, fields) => {
+        if (error) return res.status(500).send(error);
+        else return res.sendStatus(200);
+    })
+})
+
+app.post('/unblock/user/:id', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+
+    pool.query(`DELETE FROM users_blocked WHERE blockerId = ? AND blockedId = ?`, [req.session.user.id, req.params.id], (error, results, fields) => {
+        if (error) return res.status(500).send(error);
+        else return res.sendStatus(200);
+    })
 })
 
 app.listen(port, () => {
