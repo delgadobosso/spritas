@@ -11,15 +11,17 @@ export default class TopicPost extends React.Component {
     }
 
     handleClick(e) {
-        e.preventDefault();
-
-        this.props.postClick(this.props.post.id);
+        if (e.target.className !== 'TopicPost-img') {
+            e.preventDefault();
+            this.props.postClick(this.props.post.id);
+        }
     }
 
     render() {
         const post = this.props.post;
         const title = he.decode(post.title);
         const subtitle = (post.subtitle) ? he.decode(post.subtitle) : null;
+        const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
         var ts = new Date(post.ts);
         ts = `Created ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on
@@ -78,11 +80,13 @@ export default class TopicPost extends React.Component {
                     </div>
                     {thumb}
                     <div className="TopicPost-user">
-                        <img className="TopicPost-img" src={pfp}
-                            title={post.userName}
+                        <a href={`/u/${post.username}`}>
+                            <img className="TopicPost-img" src={avatar}
+                            title={post.username}
                             alt="Topic icon" />
+                        </a>
                         <p className="TopicPost-details">
-                            {post.userName} &middot; {ts}
+                            {post.nickname} &middot; {ts}
                         </p>
                     </div>
                 </a>

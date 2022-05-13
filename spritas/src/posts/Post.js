@@ -116,8 +116,8 @@ export default class Post extends React.Component {
 
     delete() {
         const post = this.props.post;
-        var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.userName}" to confirm:`, '');
-        if (answer === post.userName) {
+        var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.username}" to confirm:`, '');
+        if (answer === post.username) {
             var myBody = new URLSearchParams();
             myBody.append('id', post.id);
             
@@ -127,7 +127,7 @@ export default class Post extends React.Component {
             })
             .then((resp) => {
                 if (resp.ok) window.location.href = '/';
-                else console.error('Post deletion error');
+                else alert('Post deletion error');
             })
         } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
@@ -139,12 +139,19 @@ export default class Post extends React.Component {
         ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on
         ${ts.toDateString()}`;
 
+        const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
+
+        var reply;
+        if ((this.props.user && this.props.user.type === "BAN") || (this.props.blockers && this.props.blockers.includes(this.props.opid))) reply = null;
+        else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <h2 className="PostContainer-reply-header">{post.nickname} Has Blocked You From Replying</h2>;
+        else if (this.props.user) reply = <Reply parentId={post.id} user={this.props.user} />;
+
         const replies = (this.props.reply) ?
         <div>
             <div className="Post-replies" id={"Replies-" + post.id}>
                 {this.state.replies}
             </div>
-            <Reply parentId={post.id} />
+            {reply}
         </div>
         : null;
 
@@ -167,7 +174,7 @@ export default class Post extends React.Component {
         const deleted = (post.update === 'DELE') ? ' Post-bodyDel' : '';
 
         const deleteReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user &&
-        (this.props.user.id === post.idUser || this.props.user.type === 'ADMN')) ? (
+        (this.props.user.id === post.idUser || this.props.user.type === 'ADMN') && this.props.user.type !== "BAN") ? (
             <div className='Post-delete' onClick={this.delete} title='Delete Reply'>X</div>
         ) : null;
 
@@ -176,9 +183,11 @@ export default class Post extends React.Component {
                 {deleteReply}
                 <div className="Post-main">
                     <div className="Post-user">
-                        <img className="Post-user-img" src={pfp} alt="User" />
+                        <a href={`/u/${post.username}`}>
+                            <img className="Post-user-img" src={avatar} title={post.username} alt="User" />
+                        </a>
                         <div className="Post-user-info">
-                            <p className="Post-user-name">{post.userName}{optag}</p>
+                            <p className="Post-user-name">{post.nickname}{optag}</p>
                             <p className="Post-user-type">{post.userType}</p>
                         </div>
                     </div>

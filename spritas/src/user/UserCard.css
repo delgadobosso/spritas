@@ -1,0 +1,40 @@
+.UserCard {
+    width: 256px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.UserCard-avatarContainer, .UserCard-nickname, .UserCard-username {
+    text-align: center;
+}
+
+.UserCard-avatarContainer {
+    margin-top: 16px;
+}
+.UserCard-avatar {
+    width: 128px;
+    height: 128px;
+    border-radius: 10px;
+}
+
+.UserCard-nickname {
+    margin-bottom: 0;
+}
+
+.UserCard-username {
+    color: grey;
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.UserCard-ts {
+    color: grey;
+}
+
+@media screen and (max-width: 1256px) {
+    .UserCard {
+        margin: 0 10px 20px 10px;
+    }
+}

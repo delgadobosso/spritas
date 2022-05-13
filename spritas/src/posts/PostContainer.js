@@ -24,7 +24,8 @@ export default class PostContainer extends React.Component {
             amount: 4,
             more: true,
             ever: false,
-            opid: null
+            opid: null,
+            blockers: []
         }
     }
 
@@ -49,6 +50,16 @@ export default class PostContainer extends React.Component {
                     document.title = he.decode(title) + " - The Spritas";
                 }
             })
+
+        fetch('/user/blockers')
+            .then(resp => resp.json())
+            .then(data => {
+              if (data.length > 0) {
+                var list = [];
+                data.forEach(block => list.push(Object.values(block)[0]));
+                this.setState({ blockers: list });
+              }
+            });
     }
 
     scrollTop() {
@@ -71,7 +82,8 @@ export default class PostContainer extends React.Component {
             .then(data => {
                 const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
                     <Post key={index + this.state.offset} post={reply}
-                        reply={true} opid={this.state.opid} user={this.props.user} />
+                        reply={true} opid={this.state.opid} user={this.props.user}
+                        blockers={this.state.blockers} />
                 );
                 var rep = document.getElementById('Replies');
                 let maxHeight = rep.scrollHeight;
@@ -137,7 +149,7 @@ export default class PostContainer extends React.Component {
 
         if (this.state.post) {
             var update;
-            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update !== 'DELE') {
+            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update !== 'DELE' && this.props.user.type !== "BAN") {
                 update = <UpdatePost post={this.state.post} user={this.props.user} currentPost={this.state.main[this.state.current - 1]} />;
             } else if (this.props.user && this.props.user.type === 'ADMN' && this.state.post.update !== 'DELE') {
                 update = (
@@ -147,7 +159,10 @@ export default class PostContainer extends React.Component {
             }
         }
 
-        const reply = (this.props.user && this.props.user.id !== this.state.opid) ? <Reply parentId={id} main={true} /> : null;
+        var reply;
+        if (this.props.user && this.props.user.type === "BAN") reply = <h2 className="PostContainer-reply-header">You Are Banned</h2>;
+        else if (this.state.blockers.includes(this.state.opid)) reply = <h2 className="PostContainer-reply-header">{this.state.post.nickname} Has Blocked You From Commenting</h2>;
+        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply parentId={id} main={true} user={this.props.user} />
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Replies Loaded</div> : null;

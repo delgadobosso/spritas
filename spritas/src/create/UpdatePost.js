@@ -40,7 +40,7 @@ export default class UpdatePost extends React.Component {
             })
             .then((resp) => {
                 if (resp.ok) window.location.href = '/';
-                else console.error('Post deletion error');
+                else alert('Post deletion error');
             });
         } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }

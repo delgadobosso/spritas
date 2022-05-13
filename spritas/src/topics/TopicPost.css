@@ -48,6 +48,15 @@
     width: 40px;
     height: 40px;
     border-radius: 20px;
+
+    transition: filter 0.5s, border-radius 0.25s;
+}
+@media (hover: hover) {
+    .TopicPost-img:hover {
+        cursor: pointer;
+        border-radius: 5px;
+        filter: brightness(1.1);
+    }
 }
 
 .TopicPost-details {

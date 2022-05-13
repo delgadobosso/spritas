@@ -8,8 +8,8 @@ export default function Login() {
             <form action="/login/signin" className="Login-form" method="POST">
                 <h1>Login</h1>
                 <div className="Login-item">
-                    <label htmlFor="name">Username: </label>
-                    <input type="text" name="name" id="name" required></input>
+                    <label htmlFor="username">Username: </label>
+                    <input type="text" name="username" id="username" required></input>
                 </div>
                 <div className="Login-item">
                     <label htmlFor="pass">Password: </label>
@@ -23,8 +23,13 @@ export default function Login() {
             <form action="/login/signup" className="Login-form" method="POST">
                 <h1>Register</h1>
                 <div className="Login-item">
-                    <label htmlFor="name">Username: </label>
-                    <input type="text" name="name" id="name"
+                    <label htmlFor="username">Username: </label>
+                    <input type="text" name="username" id="username"
+                    minlength="2" required></input>
+                </div>
+                <div className="Login-item">
+                    <label htmlFor="nickname">Display Name: </label>
+                    <input type="text" name="nickname" id="nickname"
                     minlength="2" required></input>
                 </div>
                 <div className="Login-item">

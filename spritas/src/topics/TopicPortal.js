@@ -23,11 +23,15 @@ export default class TopicPortal extends React.Component {
 
         const top = (this.props.top) ? "TopicPortal-top" : null;
 
+        const controls = (this.props.controls) ? (
+            <div className="TopicPortal-controls">
+                {this.props.controls}
+            </div>
+        ) : null;
+
         return (
             <div className="TopicPortal" id={top}>
-                <div className="TopicPortal-controls">
-                    {this.props.controls}
-                </div>
+                {controls}
                 {this.props.topics}
                 {this.props.posts}
                 {load}

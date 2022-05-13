@@ -14,6 +14,7 @@ import CreateTopic from './create/CreateTopic';
 import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
 import Featured from "./featured/Featured";
+import UserContainer from './user/UserContainer';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -28,7 +29,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    if (window.location.pathname === "/") window.history.replaceState({}, "", window.location.pathname);
+    if (window.location.pathname === "/" || window.location.pathname.startsWith('/u/')) window.history.replaceState({}, "", window.location.pathname);
     window.history.scrollRestoration = 'manual';
 
     // Navi Hiding
@@ -104,15 +105,17 @@ export default class App extends React.Component {
             <Route path='/login' component={Login} />
             <Route path='/create/topic/:id?' component={CreateTopic} />
             <Route path='/create/post/:id' component={CreatePost} />
+            <Route path='/u/:name'
+              render={props => <UserContainer postClick={this.postClick} naviHide={this.naviHide} user={this.state.user} {...props} />} />
             <Route path='/post/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/'>
               <Featured user={this.state.user} />
               <TopicContainer postClick={this.postClick} user={this.state.user}
                 naviHide={this.naviHide} />
-              {this.state.post}
             </Route>
           </Switch>
+          {this.state.post}
         </Router>
       </div>
     );

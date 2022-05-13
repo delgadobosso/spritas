@@ -1,5 +1,6 @@
 require('dotenv').config();
 const path = require('path');
+const fs = require('fs');
 const reactApp = path.join(__dirname, process.env.REACT_BUILD);
 
 const bcrypt = require('bcrypt');
@@ -22,8 +23,29 @@ const app = express();
 const port = process.env.PORT;
 
 const multer = require('multer');
-const storage =  multer.memoryStorage();
-const uploadTmp = multer({ storage: storage });
+const memStorage = multer.memoryStorage();
+const memUpload = multer({
+    storage: memStorage,
+    limits: {
+        fileSize: 1048576 // THIS IS FOR REGULAR IMAGE UPLOADS CHANGE THIS THIS ONLY 1MB
+    }
+});
+const avatarStore = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './media/avatars');
+    },
+    filename: (req, file, cb) => {
+        var fileType = file.mimetype.split('/')[1];
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, `${file.originalname}-${uniqueSuffix}.${fileType}`);
+    }
+});
+const avatarUpload = multer({
+    storage: avatarStore,
+    limits: {
+        fileSize: 1048576
+    }
+});
 
 const imgurLimit = 40;
 var imgurCurrent = 0;
@@ -52,6 +74,10 @@ app.get('/', (req, res) => {
     res.sendFile(reactApp);
 });
 
+app.get('/u/:name', (req, res) => {
+    res.sendFile(reactApp);
+})
+
 app.get('/login', (req, res) => {
     if (req.session.user) res.redirect('/');
     else res.sendFile(reactApp);
@@ -75,6 +101,7 @@ app.get('/create/topic/:id?', (req, res) => {
 
 app.get('/create/post/:id', (req, res) => {
     if (!req.session.user) res.sendStatus(401);
+    else if (req.session.user.type === "BAN") res.sendStatus(403);
     else {
         pool.query(`SELECT perm FROM topics WHERE id = ?`,
         req.params.id, (error, result, fields) => {
@@ -129,7 +156,9 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                             p1.perm,
                             p1.ts,
                             IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                            users.name AS userName
+                            users.username AS username,
+                            users.nickname AS nickname,
+                            users.avatar AS avatar
                         FROM posts AS p1
                         LEFT JOIN users
                         ON p1.idUser = users.id
@@ -173,7 +202,9 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                     p1.perm,
                     p1.ts,
                     IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                    users.name AS userName
+                    users.username AS username,
+                    users.nickname AS nickname,
+                    users.avatar AS avatar
                 FROM posts AS p1
                 LEFT JOIN users
                 ON p1.idUser = users.id
@@ -201,7 +232,8 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
 });
 
 app.post('/login/signup',
-    body('name').trim().isLength({ min: 2 }).escape(),
+    body('username').trim().isLength({ min: 2 }).escape(),
+    body('nickname').trim().isLength({ min: 2 }).escape(),
     body('pass').isLength({ min: 8 }),
     body('email').isEmail(),
     (req, res) => {
@@ -209,12 +241,14 @@ app.post('/login/signup',
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
         bcrypt.hash(req.body.pass, saltRounds, function(err, hash) {
-            pool.query(`INSERT INTO users (email,name,pass,type) VALUES(?,?,?,"USER")`,
-            [req.body.email, req.body.name, hash],
+            pool.query(`INSERT INTO users (email,username,nickname,pass,type) VALUES(?,?,?,?,"USER")`,
+            [req.body.email, req.body.username, req.body.nickname, hash],
             (error, result, fields) => {
                 if (error) {
                     if (error.errno == 1062) {
-                        res.send({'status': 'failure', 'message': 'this email is already in use'});
+                        var errType = error.sqlMessage.split(' ').pop();
+                        if (errType === "'users.username'") res.send({'status': 'failure', 'message': 'this username is already in use'});
+                        else res.send({'status': 'failure', 'message': 'this email is already in use'});
                     } else res.sendStatus(500);
                 } else {
                     res.send({'status': 'success', 'message': 'successfully created account'});
@@ -225,29 +259,38 @@ app.post('/login/signup',
 )
 
 app.post('/login/signin',
-    body('name').trim().isLength({ min: 2 }).escape(),
+    body('username').trim().isLength({ min: 2 }).escape(),
     body('pass').isLength({ min: 8 }),
     (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-        pool.query(`SELECT * FROM users WHERE name = ? LIMIT 1`,
-        req.body.name, (error, result, fields) => {
+        pool.query(`SELECT * FROM users WHERE username = ? LIMIT 1`,
+        req.body.username, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
             else if (result.length > 0) {
                 bcrypt.compare(req.body.pass, result[0].pass, (err, ress) => {
                     if (ress) {
                         req.session.regenerate(() => {
-                            const user = (({id, name, type}) => ({id, name, type}))(result[0]);
-                            req.session.user = user;
-                            res.redirect('/');
+                            req.session.save((err) => {
+                                const userRes = result[0];
+                                pool.query(`INSERT INTO users_sessions (idUser, session_id) VALUES (?, ?)`, [userRes.id, req.session.id], (error, result, fields) => {
+                                    if (error) return res.status(500).send(error);
+
+                                    else {
+                                        const user = (({id, username, nickname, avatar, type}) => ({id, username, nickname, avatar, type}))(userRes);
+                                        req.session.user = user;
+                                        res.redirect('/');
+                                    }
+                                })
+                            })
                         })
                     }
                     else res.send({'status': 'failure', 'message': 'wrong username or password'});
                 })
             } else {
-                res.send({'status': 'failure', 'message': 'this user does not exist'});
+                res.send({'status': 'failure', 'message': 'wrong username or password'});
             }
         })
     }
@@ -271,7 +314,7 @@ app.get('/session/user', (req, res) => {
 app.get('/p/:id', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
+        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE (posts.id = ? AND (posts.update != "DELE" OR posts.update IS NULL))
@@ -291,7 +334,7 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
         const id = req.params.id;
         const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
         const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
-        pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
+        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE posts.idParent = ? AND posts.type = 'RPLY'
@@ -311,7 +354,7 @@ app.get('/r/:id.:offset.:limit', (req, res) => {
         const id = req.params.id;
         const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
         const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
-        pool.query(`SELECT posts.*, users.name AS userName, users.type AS userType
+        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
             WHERE posts.idParent = ? AND posts.type = 'RPLY'
@@ -353,7 +396,7 @@ app.post('/create/topic',
 )
 
 app.post('/create/post',
-    uploadTmp.single('file'),
+    memUpload.single('file'),
     body('id').isInt(),
     body('type').notEmpty().isIn(["TEXT", "BLOG", "VIDO", "IMG"]),
     body('name').trim().isLength({ min: 2 }).escape(),
@@ -362,6 +405,7 @@ app.post('/create/post',
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        else if (!req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
@@ -430,43 +474,76 @@ app.post('/create/reply',
     body('reply').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
         // Working on insert
-        pool.query(`SELECT * FROM posts
-        WHERE id = ?`, req.body.id, (error, result, fields) => {
+        pool.query(`SELECT *
+        FROM posts
+        WHERE id = ?
+        OR (id = (
+            SELECT idParent
+            FROM posts
+            WHERE id = ?) AND type != 'RPLY')
+        OR id = (
+            SELECT idParent
+            FROM posts
+            WHERE id = (
+                SELECT idParent
+                FROM posts
+                WHERE id = ?))
+        ORDER BY id DESC;`, [req.body.id, req.body.id, req.body.id], (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
+            var ogOpId;
+            var replyOpId;
+            // If this is reply to reply, get the op id of original post
+            if (result.length > 1) ogOpId = result[1].idUser;
             // Valid first post of a topic is found
             if (result.length > 0) {
                 const parent = result[0];
-                pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
-                VALUES(?,?,?,?,'RPLY')`,
-                [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
-                    if (error) return res.status(500).send(error);
-
-                    pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
-                    WHERE id = ? OR id = ?`,
-                    [parent.id, parent.idParent], (error, result, fields) => {
+                replyOpId = result[0].idUser;
+                // Check if this user is blocked by the op
+                pool.query(`SELECT * FROM users_blocked
+                    WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
+                    [ogOpId, req.session.user.id, replyOpId, req.session.user.id], (error, blockRes, fields) => {
                         if (error) return res.status(500).send(error);
 
-                        return res.redirect('/');
+                        if (blockRes.length > 0) return res.sendStatus(403);
+
+                        // check if post was made by person trying to comment, don't let them
+                        if (parent.type !== "RPLY" && req.session.user.id === parent.idUser) return res.sendStatus(403);
+                        else {
+                            pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
+                            VALUES(?,?,?,?,'RPLY')`,
+                            [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                                if (error) return res.status(500).send(error);
+
+                                pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
+                                WHERE id = ? OR id = ?`,
+                                [parent.id, parent.idParent], (error, result, fields) => {
+                                    if (error) return res.status(500).send(error);
+
+                                    return res.redirect('/');
+                                })
+                            })
+                        }
                     })
-                })
             } else return res.status(400).json({error: "No post to reply to."});
         })
     }
 )
 
 app.post('/update/post',
-    uploadTmp.single('file'),
+    memUpload.single('file'),
     body('id').notEmpty().isInt(),
     body('subtitle').trim().isLength({ max: 30 }).escape(),
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
@@ -580,6 +657,7 @@ app.post('/delete/post',
     body('currentid').notEmpty().isInt(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
@@ -615,6 +693,7 @@ app.post('/delete/reply',
     body('id').notEmpty().isInt(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
@@ -652,6 +731,240 @@ app.post('/delete/topic',
         })
     }
 )
+
+app.get('/user/info/:name', (req, res) => {
+    if (req.headers.referer) {
+        pool.query(`SELECT id, username, nickname, bio, avatar, type, ts, lastTs FROM users WHERE username = ?`,
+        req.params.name, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            else {
+                var info = result[0];
+                if (req.session.user) {
+                    pool.query(`SELECT * FROM users_blocked
+                    WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
+                    [req.session.user.id, info.id, info.id, req.session.user.id], (error, result, fields) => {
+                        if (error) return res.status(500).send(error);
+                        else if (result.length > 1) {
+                            info.blocked = true;
+                            info.blocking = true;
+                            return res.send(info);
+                        } else if (result.length > 0 && result[0].blockedId === info.id) {
+                            info.blocking = true;
+                            return res.send(info);
+                        } else if (result.length > 0 && result[0].blockedId === req.session.user.id) {
+                            info.blocked = true;
+                            return res.send(info);
+                        } else return res.send(info);
+                    })
+                } else {
+                    return res.send(info);
+                }
+            }
+        });
+    } else res.redirect('/user/' + req.params.id);
+})
+
+app.get('/user/posts/:id.:offset.:limit', (req, res) => {
+    if (req.headers.referer) {
+        const id = req.params.id;
+        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
+        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
+        pool.query(`
+        SELECT 
+            p1.id,
+            p1.idTopic,
+            p1.idParent,
+            p1.idUser,
+            p1.title,
+            IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
+            IFNULL(t1.body, p1.body) AS body,
+            IFNULL(t1.update, p1.update) AS 'update',
+            IFNULL(t1.link, p1.link) AS link,
+            IFNULL(t1.type, p1.type) AS type,
+            p1.perm,
+            p1.ts,
+            IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
+            users.username AS username,
+            users.nickname AS nickname,
+            users.avatar AS avatar
+        FROM posts AS p1
+        LEFT JOIN users
+        ON p1.idUser = users.id
+        LEFT JOIN (
+            SELECT *
+            FROM posts AS p
+            INNER JOIN (
+                SELECT MAX(id) AS id
+                FROM posts
+                WHERE idUser = ? AND posts.update = 'UPDT'
+                GROUP BY idParent) AS t
+            USING (id)) AS t1
+        ON p1.id = t1.idParent
+        WHERE p1.idUser = ? AND p1.idParent IS NULL
+        AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
+        ORDER BY p1.lastTs DESC
+        LIMIT ?,?
+        `, [id, id, offset, limit], (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            else res.send(result);
+        });
+    } else redirect('/');
+})
+
+app.post('/user/update',
+    avatarUpload.single('avatar'),
+    body('id').isInt(),
+    body('nickname').trim().isLength({ min: 2 }).escape(),
+    body('bio').isLength({ max: 256 }),
+    (req, res) => {
+        if (parseInt(req.body.id) === req.session.user.id) {
+            if (req.session.user.type === 'BAN') return res.sendStatus(403);
+
+            // Check if it's been long enough to make change
+            pool.query(`SELECT avatar, lastTs FROM users WHERE id = ?`, req.body.id, (error, result, fields) => {
+                if (error) return res.status(500).send(error);
+
+                var last = new Date(result[0].lastTs);
+                var current = new Date();
+                var elapsed = (current - last) / 60000;
+
+                if (elapsed >= 5) {
+                    var avatar = (req.file) ? req.file.filename : null;
+                    var ogAvatar = result[0].avatar;
+                    var nickname = (req.body.nickname !== "") ? req.body.nickname : null;
+                    var bio = req.body.bio;
+                    pool.query(`
+                    UPDATE users
+                    SET
+                        avatar = CASE WHEN ? IS NOT NULL
+                            THEN ?
+                            ELSE avatar
+                        END,
+                        nickname = CASE WHEN ? IS NOT NULL
+                            THEN ?
+                            ELSE nickname
+                        END,
+                        bio = CASE WHEN ? IS NOT NULL
+                            THEN ?
+                            ELSE bio
+                        END,
+                        lastTs = CURRENT_TIMESTAMP
+                    WHERE id = ?
+                    `, [avatar, avatar, nickname, nickname, bio, bio, req.body.id], (error, result, fields) => {
+                        if (error) return res.status(500).send(error);
+
+                        else {
+                            // delete old avatar
+                            if (avatar && ogAvatar) {
+                                const ogPath = path.join(__dirname, "/media/avatars/", ogAvatar);
+                                if (fs.existsSync(ogPath)) {
+                                    fs.unlink(ogPath, (err) => {
+                                        if (err) return console.error(err);
+                                    });
+                                }
+                            }
+
+                            // update sessions user info
+                            if (req.file) req.session.user.avatar = avatar;
+                            if (req.body.nickname !== "") req.session.user.nickname = nickname;
+
+                            return res.status(200).send('updated');
+                        }
+                    })
+                }
+                // it hasn't been enough time yet
+                else return res.status(200).send('time');
+            })
+        }
+
+        else return res.sendStatus(200);
+})
+
+app.get('/media/avatars/:avatar', express.static(path.join(__dirname, '/media/avatars')), (req, res) => {
+    res.sendFile(path.join(__dirname, '/media/avatars/', req.params.avatar));
+})
+
+app.post('/ban/user/:id', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+    else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
+
+    pool.query(`UPDATE users
+        SET type = "BAN"
+        WHERE id = ?`, req.params.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+            else {
+                pool.query(`SELECT *
+                FROM users_sessions
+                WHERE idUser = ?`, req.params.id, (error, result, fields) => {
+                    result.forEach(userSession => {
+                        sessionStore.get(userSession.session_id, (err, session) => {
+                            session.user.type = 'BAN';
+                            sessionStore.set(userSession.session_id, session);
+                        })
+                    });
+                    return res.sendStatus(200);
+                })
+            }
+        })
+})
+
+app.post('/unban/user/:id', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+    else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
+
+    pool.query(`UPDATE users
+        SET type = "USER"
+        WHERE id = ?`, req.params.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+            else {
+                pool.query(`SELECT *
+                FROM users_sessions
+                WHERE idUser = ?`, req.params.id, (error, result, fields) => {
+                    result.forEach(userSession => {
+                        sessionStore.get(userSession.session_id, (err, session) => {
+                            session.user.type = 'USER';
+                            sessionStore.set(userSession.session_id, session);
+                        })
+                    });
+                    return res.sendStatus(200);
+                })
+            }
+        })
+})
+
+app.post('/block/user/:id', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+
+    pool.query(`INSERT INTO users_blocked (blockerId, blockedId)
+    VALUES (?, ?)`, [req.session.user.id, req.params.id], (error, results, fields) => {
+        if (error) return res.status(500).send(error);
+        else return res.sendStatus(200);
+    })
+})
+
+app.post('/unblock/user/:id', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+
+    pool.query(`DELETE FROM users_blocked WHERE blockerId = ? AND blockedId = ?`, [req.session.user.id, req.params.id], (error, results, fields) => {
+        if (error) return res.status(500).send(error);
+        else return res.sendStatus(200);
+    })
+})
+
+app.get('/user/blockers', (req, res) => {
+    if (req.headers.referer) {
+        if (!req.session.user) return res.sendStatus(401);
+
+        pool.query(`SELECT blockerId FROM users_blocked WHERE blockedId = ?`,
+        req.session.user.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            else return res.send(result);
+        })
+    } else res.redirect('/');
+})
 
 app.listen(port, () => {
     console.log(`Spritas Server listening at http://localhost:${port}`);
