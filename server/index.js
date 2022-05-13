@@ -953,6 +953,19 @@ app.post('/unblock/user/:id', (req, res) => {
     })
 })
 
+app.get('/user/blockers', (req, res) => {
+    if (req.headers.referer) {
+        if (!req.session.user) return res.sendStatus(401);
+
+        pool.query(`SELECT blockerId FROM users_blocked WHERE blockedId = ?`,
+        req.session.user.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            else return res.send(result);
+        })
+    } else res.redirect('/');
+})
+
 app.listen(port, () => {
     console.log(`Spritas Server listening at http://localhost:${port}`);
 });
