@@ -142,9 +142,9 @@ export default class Post extends React.Component {
         const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
         var reply;
-        if (this.props.blockers && this.props.blockers.includes(this.props.opid)) reply = null;
+        if ((this.props.user && this.props.user.type === "BAN") || (this.props.blockers && this.props.blockers.includes(this.props.opid))) reply = null;
         else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <h2 className="PostContainer-reply-header">{post.nickname} Has Blocked You From Replying</h2>;
-        else if (this.props.user && this.props.user.type !== "BAN") reply = <Reply parentId={post.id} user={this.props.user} />;
+        else if (this.props.user) reply = <Reply parentId={post.id} user={this.props.user} />;
 
         const replies = (this.props.reply) ?
         <div>

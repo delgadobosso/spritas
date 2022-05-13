@@ -160,8 +160,9 @@ export default class PostContainer extends React.Component {
         }
 
         var reply;
-        if (this.state.blockers.includes(this.state.opid)) reply = <h2 className="PostContainer-reply-header">{this.state.post.nickname} Has Blocked You From Commenting</h2>;
-        else if (this.props.user && this.props.user.id !== this.state.opid && this.props.user.type !== "BAN") reply = <Reply parentId={id} main={true} user={this.props.user} />
+        if (this.props.user && this.props.user.type === "BAN") reply = <h2 className="PostContainer-reply-header">You Are Banned</h2>;
+        else if (this.state.blockers.includes(this.state.opid)) reply = <h2 className="PostContainer-reply-header">{this.state.post.nickname} Has Blocked You From Commenting</h2>;
+        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply parentId={id} main={true} user={this.props.user} />
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Replies Loaded</div> : null;
