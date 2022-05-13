@@ -41,7 +41,7 @@
 .Post-user-img {
     width: 64px;
     height: 64px;
-    border-radius: 64px;
+    border-radius: 32px;
 
     transition: filter 0.5s, border-radius 0.25s;
 }

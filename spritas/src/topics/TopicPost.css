@@ -47,7 +47,7 @@
 .TopicPost-img {
     width: 40px;
     height: 40px;
-    border-radius: 40px;
+    border-radius: 20px;
 
     transition: filter 0.5s, border-radius 0.25s;
 }

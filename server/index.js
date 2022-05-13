@@ -479,30 +479,56 @@ app.post('/create/reply',
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
         // Working on insert
-        pool.query(`SELECT * FROM posts
-        WHERE id = ?`, req.body.id, (error, result, fields) => {
+        pool.query(`SELECT *
+        FROM posts
+        WHERE id = ?
+        OR (id = (
+            SELECT idParent
+            FROM posts
+            WHERE id = ?) AND type != 'RPLY')
+        OR id = (
+            SELECT idParent
+            FROM posts
+            WHERE id = (
+                SELECT idParent
+                FROM posts
+                WHERE id = ?))
+        ORDER BY id DESC;`, [req.body.id, req.body.id, req.body.id], (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
+            var opId;
+            // If this is reply to reply, get the op id of original post
+            if (result.length > 1) opId = result[1].idUser;
+            else if (result.length > 0) opId = result[0].idUser;
             // Valid first post of a topic is found
             if (result.length > 0) {
                 const parent = result[0];
-                // check if post was made by person trying to comment, don't let them
-                if (parent.type !== "RPLY" && req.session.user.id === parent.idUser) return res.sendStatus(403);
-                else {
-                    pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
-                    VALUES(?,?,?,?,'RPLY')`,
-                    [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                // Check if this user is blocked by the op
+                pool.query(`SELECT * FROM users_blocked
+                    WHERE (blockerId = ? AND blockedId = ?)`,
+                    [opId, req.session.user.id], (error, blockRes, fields) => {
                         if (error) return res.status(500).send(error);
 
-                        pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
-                        WHERE id = ? OR id = ?`,
-                        [parent.id, parent.idParent], (error, result, fields) => {
-                            if (error) return res.status(500).send(error);
+                        if (blockRes.length > 0) return res.sendStatus(403);
 
-                            return res.redirect('/');
-                        })
+                        // check if post was made by person trying to comment, don't let them
+                        if (parent.type !== "RPLY" && req.session.user.id === parent.idUser) return res.sendStatus(403);
+                        else {
+                            pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
+                            VALUES(?,?,?,?,'RPLY')`,
+                            [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                                if (error) return res.status(500).send(error);
+
+                                pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
+                                WHERE id = ? OR id = ?`,
+                                [parent.id, parent.idParent], (error, result, fields) => {
+                                    if (error) return res.status(500).send(error);
+
+                                    return res.redirect('/');
+                                })
+                            })
+                        }
                     })
-                }
             } else return res.status(400).json({error: "No post to reply to."});
         })
     }

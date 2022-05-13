@@ -118,7 +118,7 @@ function unbanUser(props) {
 
 function blockUser(props) {
     if (props.thisId && props.thisUser) {
-        var answer = prompt(`Are you sure you want to block ${props.thisUser.nickname} (${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
+        var answer = prompt(`Are you sure you want to block ${props.thisUser.nickname} (${props.thisUser.username})? They won't be able to reply to your posts.\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
             fetch('/block/user/' + props.thisId, {
                 method: "POST"
