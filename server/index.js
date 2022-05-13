@@ -496,17 +496,18 @@ app.post('/create/reply',
         ORDER BY id DESC;`, [req.body.id, req.body.id, req.body.id], (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
-            var opId;
+            var ogOpId;
+            var replyOpId;
             // If this is reply to reply, get the op id of original post
-            if (result.length > 1) opId = result[1].idUser;
-            else if (result.length > 0) opId = result[0].idUser;
+            if (result.length > 1) ogOpId = result[1].idUser;
             // Valid first post of a topic is found
             if (result.length > 0) {
                 const parent = result[0];
+                replyOpId = result[0].idUser;
                 // Check if this user is blocked by the op
                 pool.query(`SELECT * FROM users_blocked
-                    WHERE (blockerId = ? AND blockedId = ?)`,
-                    [opId, req.session.user.id], (error, blockRes, fields) => {
+                    WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
+                    [ogOpId, req.session.user.id, replyOpId, req.session.user.id], (error, blockRes, fields) => {
                         if (error) return res.status(500).send(error);
 
                         if (blockRes.length > 0) return res.sendStatus(403);
