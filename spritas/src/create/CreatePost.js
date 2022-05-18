@@ -11,12 +11,19 @@ export default class CreatePost extends React.Component {
 
     handleImg(e) {
         const file = e.target.files[0];
-        const reader = new FileReader();
 
-        if (!file.type.startsWith('image/')) return;
+        // Check file size
+        if (file.size > 1048576) {
+            e.target.value = '';
+            alert('The file you selected is too large. Image must be 1 MB or less.');
+        } else {
+            const reader = new FileReader();
     
-        reader.onload = ((e) => { this.setState({ imgPreview: e.target.result }); });
-        reader.readAsDataURL(file);
+            if (!file.type.startsWith('image/')) return;
+        
+            reader.onload = ((e) => { this.setState({ imgPreview: e.target.result }); });
+            reader.readAsDataURL(file);
+        }
     }
 
     render() {
