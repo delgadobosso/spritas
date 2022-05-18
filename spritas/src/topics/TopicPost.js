@@ -11,7 +11,9 @@ export default class TopicPost extends React.Component {
     }
 
     handleClick(e) {
-        if (e.target.className !== 'TopicPost-img') {
+        if (e.target.className !== 'TopicPost-user' &&
+        e.target.className !== 'TopicPost-img' &&
+        e.target.className !== 'TopicPost-nickname') {
             e.preventDefault();
             this.props.postClick(this.props.post.id);
         }
@@ -81,14 +83,13 @@ export default class TopicPost extends React.Component {
                     <div className='TopicPost-titles'>
                         <h4 className="TopicPost-subName">{subtitle}</h4>
                     </div>
-                    <div className="TopicPost-user">
-                        <a href={`/u/${post.username}`}>
+                    <a href={`/u/${post.username}`} title={post.username}>
+                        <div className="TopicPost-user">
                             <img className="TopicPost-img" src={avatar}
-                            title={post.username}
                             alt="Topic icon" />
-                        </a>
-                        <p className="TopicPost-nickname">{post.nickname}</p>
-                    </div>
+                            <p className="TopicPost-nickname">{post.nickname}</p>
+                        </div>
+                    </a>
                     <p className="TopicPost-ts">{ts}</p>
                 </a>
             </div>
