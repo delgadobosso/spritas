@@ -61,7 +61,7 @@ export default class TopicPost extends React.Component {
                 if (post.link) {
                     const link_img = he.decode(post.link);
                     const dot = post.link.lastIndexOf('.');
-                    const embedSrc = link_img.slice(0, dot) + 'l' + link_img.slice(dot);
+                    const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
                     const style = { backgroundImage: `url(${embedSrc})` };
                     thumb = <div className='TopicPost-thumb' style={style} />
                 }
@@ -76,19 +76,20 @@ export default class TopicPost extends React.Component {
                 <a className="TopicPost-link" href={'/post/' + post.id} onClick={this.handleClick}>
                     <div className='TopicPost-titles'>
                         <h2 className="TopicPost-name" id={"TopicPostName-" + post.id}>{title}</h2>
-                        <h4 className="TopicPost-subName">{subtitle}</h4>
                     </div>
                     {thumb}
+                    <div className='TopicPost-titles'>
+                        <h4 className="TopicPost-subName">{subtitle}</h4>
+                    </div>
                     <div className="TopicPost-user">
                         <a href={`/u/${post.username}`}>
                             <img className="TopicPost-img" src={avatar}
                             title={post.username}
                             alt="Topic icon" />
                         </a>
-                        <p className="TopicPost-details">
-                            {post.nickname} &middot; {ts}
-                        </p>
+                        <p className="TopicPost-nickname">{post.nickname}</p>
                     </div>
+                    <p className="TopicPost-ts">{ts}</p>
                 </a>
             </div>
         );

@@ -33,7 +33,9 @@ export default class TopicPortal extends React.Component {
             <div className="TopicPortal" id={top}>
                 {controls}
                 {this.props.topics}
-                {this.props.posts}
+                <div className='TopicPortal-posts'>
+                    {this.props.posts}
+                </div>
                 {load}
             </div>
         );
