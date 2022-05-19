@@ -101,12 +101,8 @@
     }
 }
 
-@media screen and (max-width: 675px) {
+@media screen and (max-width: 680px) {
     .TopicPost {
         width: 100%;
-    }
-
-    .TopicPost-thumb {
-        background-size: cover;
     }
 }

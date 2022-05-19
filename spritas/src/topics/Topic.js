@@ -17,7 +17,7 @@ export default class Topic extends React.Component {
             posts: [],
             controls: [],
             offset: 0,
-            amount: 10,
+            amount: 12,
             more: true
         };
     }
