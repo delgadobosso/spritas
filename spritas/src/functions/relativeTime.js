@@ -10,26 +10,26 @@ export default function relativeTime(date) {
     var elapsed = current - posted;
 
     if (elapsed < minute) {
-        if (Math.round(elapsed / 1000) === 1) return `${Math.round(elapsed / 1000)} second ago`;
-        else return `${Math.round(elapsed / 1000)} seconds ago`;
+        if (Math.floor(elapsed / 1000) === 1) return `a second ago`;
+        else return `${Math.floor(elapsed / 1000)} seconds ago`;
     }
     else if (elapsed < hour) {
-        if (Math.round(elapsed / minute) === 1) return `${Math.round(elapsed / minute)} minute ago`;
-        else return `${Math.round(elapsed / minute)} minutes ago`;
+        if (Math.floor(elapsed / minute) === 1) return `a minute ago`;
+        else return `${Math.floor(elapsed / minute)} minutes ago`;
     }
     else if (elapsed < day) {
-        if (Math.round(elapsed / hour) === 1) return `${Math.round(elapsed / hour)} hour ago`;
-        else return `${Math.round(elapsed / hour)} hours ago`;
+        if (Math.floor(elapsed / hour) === 1) return `an hour ago`;
+        else return `${Math.floor(elapsed / hour)} hours ago`;
     }
     else if (elapsed < month) {
-        if (Math.round(elapsed / day) === 1) return `${Math.round(elapsed / day)} day ago`;
-        else return `${Math.round(elapsed / day)} days ago`;
+        if (Math.floor(elapsed / day) === 1) return `yesterday`;
+        else return `${Math.floor(elapsed / day)} days ago`;
     }
     else if (elapsed < year) {
-        if (Math.round(elapsed / month) === 1) return `${Math.round(elapsed / month)} month ago`;
-        else return `${Math.round(elapsed / month)} months ago`;
+        if (Math.floor(elapsed / month) === 1) return `last month`;
+        else return `${Math.floor(elapsed / month)} months ago`;
     } else {
-        if (Math.round(elapsed / year) === 1) return `${Math.round(elapsed / year)} year ago`;
-        else return `${Math.round(elapsed / year)} years ago`;
+        if (Math.floor(elapsed / year) === 1) return `last year`;
+        else return `${Math.floor(elapsed / year)} years ago`;
     }
 }
