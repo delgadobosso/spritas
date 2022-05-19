@@ -2,11 +2,6 @@
     width: 300px;
     margin: 0 10px;
 }
-@media screen and (max-width: 675px) {
-    .TopicPost {
-        width: 100%;
-    }
-}
 
 .TopicPost-link {
     display: block;
@@ -55,6 +50,13 @@
 
     transition: background-color 0.1s;
 }
+.TopicPost-user:active {
+    background-color: lightsalmon;
+}
+.TopicPost-user:active .TopicPost-img {
+    border-radius: 5px;
+    filter: brightness(1.1);
+}
 
 .TopicPost-img {
     width: 40px;
@@ -95,5 +97,15 @@
 @media (hover: hover) {
     .TopicPost-link:hover .TopicPost-thumb {
         filter: brightness(1.1);
+    }
+}
+
+@media screen and (max-width: 675px) {
+    .TopicPost {
+        width: 100%;
+    }
+
+    .TopicPost-thumb {
+        background-size: cover;
     }
 }
