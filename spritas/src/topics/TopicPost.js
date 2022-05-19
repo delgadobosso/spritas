@@ -3,6 +3,7 @@ import pfp from '../images/pfp.png';
 import React from 'react';
 import he from 'he';
 import * as Regex from '../functions/constants';
+import relativeTime from '../functions/relativeTime';
 
 export default class TopicPost extends React.Component {
     constructor(props) {
@@ -26,13 +27,14 @@ export default class TopicPost extends React.Component {
         const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
         var ts = new Date(post.ts);
-        ts = `Created ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on
-        ${ts.toDateString()}`;
+        var relTime = relativeTime(post.ts);
+        ts = `Created ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
         if (post.update === 'UPDT') {
             var lastTs = new Date(post.lastTs);
-            ts = `Updated ${('0' + lastTs.getHours()).slice(-2)}:${('0' + lastTs.getMinutes()).slice(-2)} on
-            ${lastTs.toDateString()}`
-        }
+            var lastRelTime = relativeTime(post.lastTs);
+            ts = `Updated ${('0' + lastTs.getHours()).slice(-2)}:${('0' + lastTs.getMinutes()).slice(-2)} on ${lastTs.toDateString()}`
+            relTime = `Updated ${lastRelTime}`;
+        } else relTime = `Created ${relTime}`;
 
         var thumb;
         switch(post.type) {
@@ -90,7 +92,7 @@ export default class TopicPost extends React.Component {
                             <p className="TopicPost-nickname">{post.nickname}</p>
                         </div>
                     </a>
-                    <p className="TopicPost-ts">{ts}</p>
+                    <p className="TopicPost-ts" title={ts}>{relTime}</p>
                 </a>
             </div>
         );

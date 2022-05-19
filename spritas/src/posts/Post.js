@@ -3,6 +3,7 @@ import he from 'he';
 import './Post.css';
 import Reply from '../create/Reply';
 import pfp from '../images/pfp.png';
+import relativeTime from '../functions/relativeTime';
 
 export default class Post extends React.Component {
     constructor(props) {
@@ -136,8 +137,9 @@ export default class Post extends React.Component {
         const post = this.props.post;
 
         var ts = new Date(post.ts);
-        ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on
-        ${ts.toDateString()}`;
+        var relTime = relativeTime(post.ts);
+        ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        relTime = `Posted ${relTime}`;
 
         const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
@@ -193,7 +195,7 @@ export default class Post extends React.Component {
                     </div>
                     <div className="Post-right">
                         <div className={"Post-body" + deleted}>{he.decode(post.body)}</div>
-                        <div className="Post-footer">{ts}</div>
+                        <div className="Post-footer" title={ts}>{relTime}</div>
                     </div>
                 </div>
                 <div className="Post-controls">
