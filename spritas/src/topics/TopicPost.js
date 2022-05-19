@@ -31,13 +31,13 @@ export default class TopicPost extends React.Component {
 
         var ts = new Date(post.ts);
         var relTime = relativeTime(post.ts);
-        ts = `Created ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        ts = `Posted ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
         if (post.update === 'UPDT') {
             var lastTs = new Date(post.lastTs);
             var lastRelTime = relativeTime(post.lastTs);
             ts = `Updated ${('0' + lastTs.getHours()).slice(-2)}:${('0' + lastTs.getMinutes()).slice(-2)} on ${lastTs.toDateString()}`
             relTime = `Updated ${lastRelTime}`;
-        } else relTime = `Created ${relTime}`;
+        } else relTime = `Posted ${relTime}`;
 
         var thumb;
         switch(post.type) {
