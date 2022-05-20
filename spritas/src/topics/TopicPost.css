@@ -32,6 +32,9 @@
 .TopicPost-name {
     color: #ab0f26;
     margin: 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .TopicPost-subName {
@@ -40,11 +43,15 @@
     border-radius: 5px;
     margin: 0 5px;
     padding: 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .TopicPost-user {
     display: flex;
     width: max-content;
+    max-width: 100%;
     align-items: center;
     margin-top: 5px;
     padding: 0 5px;
@@ -81,12 +88,18 @@
 .TopicPost-nickname {
     margin-left: 5px;
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .TopicPost-ts {
     margin: 0 5px 5px 5px;
     font-size: 0.9rem;
     color: rgb(96, 96, 96);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .TopicPost-thumb {
