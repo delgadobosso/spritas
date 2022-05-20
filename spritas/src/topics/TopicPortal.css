@@ -16,8 +16,7 @@
 
 .TopicPortal-controls {
     display: flex;
-    margin: 10px;
-    border-radius: 10px;
+    margin-bottom: 20px;
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
