@@ -3,6 +3,7 @@ import pfp from '../images/pfp.png';
 import React from 'react';
 import he from 'he';
 import * as Regex from '../functions/constants';
+import relativeTime from '../functions/relativeTime';
 
 export default class TopicPost extends React.Component {
     constructor(props) {
@@ -11,7 +12,9 @@ export default class TopicPost extends React.Component {
     }
 
     handleClick(e) {
-        if (e.target.className !== 'TopicPost-img') {
+        if (e.target.className !== 'TopicPost-user' &&
+        e.target.className !== 'TopicPost-img' &&
+        e.target.className !== 'TopicPost-nickname') {
             e.preventDefault();
             this.props.postClick(this.props.post.id);
         }
@@ -20,17 +23,21 @@ export default class TopicPost extends React.Component {
     render() {
         const post = this.props.post;
         const title = he.decode(post.title);
-        const subtitle = (post.subtitle) ? he.decode(post.subtitle) : null;
+        const subtitle = (post.subtitle) ? (
+            <div className='TopicPost-titles'>
+                <h4 className="TopicPost-subName">{he.decode(post.subtitle)}</h4>
+            </div>) : null;
         const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
         var ts = new Date(post.ts);
-        ts = `Created ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on
-        ${ts.toDateString()}`;
+        var relTime = relativeTime(post.ts);
+        ts = `Posted ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
         if (post.update === 'UPDT') {
             var lastTs = new Date(post.lastTs);
-            ts = `Updated ${('0' + lastTs.getHours()).slice(-2)}:${('0' + lastTs.getMinutes()).slice(-2)} on
-            ${lastTs.toDateString()}`
-        }
+            var lastRelTime = relativeTime(post.lastTs);
+            ts = `Updated ${('0' + lastTs.getHours()).slice(-2)}:${('0' + lastTs.getMinutes()).slice(-2)} on ${lastTs.toDateString()}`
+            relTime = `Updated ${lastRelTime}`;
+        } else relTime = `Posted ${relTime}`;
 
         var thumb;
         switch(post.type) {
@@ -61,7 +68,7 @@ export default class TopicPost extends React.Component {
                 if (post.link) {
                     const link_img = he.decode(post.link);
                     const dot = post.link.lastIndexOf('.');
-                    const embedSrc = link_img.slice(0, dot) + 'l' + link_img.slice(dot);
+                    const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
                     const style = { backgroundImage: `url(${embedSrc})` };
                     thumb = <div className='TopicPost-thumb' style={style} />
                 }
@@ -76,19 +83,17 @@ export default class TopicPost extends React.Component {
                 <a className="TopicPost-link" href={'/post/' + post.id} onClick={this.handleClick}>
                     <div className='TopicPost-titles'>
                         <h2 className="TopicPost-name" id={"TopicPostName-" + post.id}>{title}</h2>
-                        <h4 className="TopicPost-subName">{subtitle}</h4>
                     </div>
                     {thumb}
-                    <div className="TopicPost-user">
-                        <a href={`/u/${post.username}`}>
+                    {subtitle}
+                    <a href={`/u/${post.username}`} title={post.username}>
+                        <div className="TopicPost-user">
                             <img className="TopicPost-img" src={avatar}
-                            title={post.username}
                             alt="Topic icon" />
-                        </a>
-                        <p className="TopicPost-details">
-                            {post.nickname} &middot; {ts}
-                        </p>
-                    </div>
+                            <p className="TopicPost-nickname">{post.nickname}</p>
+                        </div>
+                    </a>
+                    <p className="TopicPost-ts" title={ts}>{relTime}</p>
                 </a>
             </div>
         );
