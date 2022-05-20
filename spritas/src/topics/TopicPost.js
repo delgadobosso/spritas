@@ -9,6 +9,9 @@ export default class TopicPost extends React.Component {
     constructor(props) {
         super(props);
         this.handleClick = this.handleClick.bind(this);
+        this.state = {
+            toggleTime: false
+        }
     }
 
     handleClick(e) {
@@ -16,7 +19,7 @@ export default class TopicPost extends React.Component {
         e.target.className !== 'TopicPost-img' &&
         e.target.className !== 'TopicPost-nickname') {
             e.preventDefault();
-            this.props.postClick(this.props.post.id);
+            if (e.target.className !== 'TopicPost-ts') this.props.postClick(this.props.post.id);
         }
     }
 
@@ -38,6 +41,10 @@ export default class TopicPost extends React.Component {
             ts = `Updated ${('0' + lastTs.getHours()).slice(-2)}:${('0' + lastTs.getMinutes()).slice(-2)} on ${lastTs.toDateString()}`
             relTime = `Updated ${lastRelTime}`;
         } else relTime = `Posted ${relTime}`;
+
+        const time = (!this.state.toggleTime) ?
+        <p className="TopicPost-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
+        <p className="TopicPost-ts" title={relTime} onClick={() => this.setState({ toggleTime: false})}>{ts}</p>;
 
         var thumb;
         switch(post.type) {
@@ -93,7 +100,7 @@ export default class TopicPost extends React.Component {
                             <p className="TopicPost-nickname">{post.nickname}</p>
                         </div>
                     </a>
-                    <p className="TopicPost-ts" title={ts}>{relTime}</p>
+                    {time}
                 </a>
             </div>
         );

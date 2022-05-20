@@ -102,6 +102,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    max-width: max-content;
+
+    transition: color 0.1s;
 }
 
 .TopicPost-thumb {
@@ -117,6 +120,10 @@
 @media (hover: hover) {
     .TopicPost-link:hover .TopicPost-thumb {
         filter: brightness(1.1);
+    }
+
+    .TopicPost-ts:hover {
+        color: white;
     }
 }
 
