@@ -52,7 +52,7 @@ export default class UserEdit extends React.Component {
                 </div>
                 <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} />
                 <p className='UserCard-username'>@{username}</p>
-                <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='256' />
+                <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='300' />
                 <p className='UserCard-ts'>{ts}</p>
             </div>
         );

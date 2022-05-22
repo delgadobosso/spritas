@@ -52,9 +52,9 @@
     }
 }
 
-@media screen and (max-width: 680px) {
+@media screen and (max-width: 700px) {
     .Container {
-        width: initial;
+        width: 100%;
         border-radius: 0;
     }
 }

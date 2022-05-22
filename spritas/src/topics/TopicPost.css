@@ -126,9 +126,3 @@
         color: white;
     }
 }
-
-@media screen and (max-width: 680px) {
-    .TopicPost {
-        width: 100%;
-    }
-}
