@@ -51,7 +51,7 @@ export default class UserEdit extends React.Component {
                     <img className='UserCard-avatar' src={avatar} alt='Avatar' />
                 </div>
                 <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} />
-                <p className='UserCard-username'>{username}</p>
+                <p className='UserCard-username'>@{username}</p>
                 <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='256' />
                 <p className='UserCard-ts'>{ts}</p>
             </div>

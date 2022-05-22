@@ -28,7 +28,7 @@ export default function UserCard(props) {
                 <img className='UserCard-avatar' src={avatar} alt='Avatar' />
             </div>
             <h2 className='UserCard-nickname'>{nickname}</h2>
-            <p className='UserCard-username'>{username}</p>
+            <p className='UserCard-username'>@{username}</p>
             {ban}
             {blocked}
             {blocking}
