@@ -201,7 +201,7 @@ export default class PostMain extends React.PureComponent {
                                 alt="Main Post" />
                             <div className='PostMain-gradientTop'></div>
                             <div className='PostMain-gradientBot'></div>
-                            <p className='PostMain-view'>Press To View Full Image</p>
+                            <p className='PostMain-view'>Click To View Full Image</p>
                         </div>
                     </div>
                 }
