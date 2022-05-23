@@ -4,6 +4,11 @@
     --mid-grey: #363636;
     --light-grey: #464646;
     --lightest-grey: #565656;
+
+    --info-grey: rgb(196, 196, 196);
+
+    --spritan-red: #ab0f26;
+    --spritan-gold: #ffe289;
 }
 
 body {

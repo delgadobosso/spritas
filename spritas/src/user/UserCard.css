@@ -25,13 +25,13 @@
 }
 
 .UserCard-username {
-    color: rgb(196, 196, 196);
+    color: var(--info-grey);
     margin-top: 0;
     font-size: 18px;
 }
 
 .UserCard-ts {
-    color: rgb(196, 196, 196);
+    color: var(--info-grey);
     font-size: 0.9rem;
 }
 

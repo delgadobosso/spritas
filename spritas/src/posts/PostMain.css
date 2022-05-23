@@ -9,7 +9,7 @@
 
 .PostMain-arrowContainer {
     cursor: pointer;
-    background-color: #ab0f26;
+    background-color: var(--spritan-red);
     width: 80px;
     height: 40px;
 }
@@ -108,7 +108,7 @@
 }
 
 .PostMain-subtitle {
-    background-color: #ab0f26;
+    background-color: var(--spritan-red);
     color: white;
     margin: 0;
     padding: 8px 20px;

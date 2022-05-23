@@ -118,9 +118,9 @@ export default class PostMain extends React.PureComponent {
 
             const nodeStyle = { transform: `translate(-${60 * (this.props.current - 1)}px)` };
             const leftArrow = (this.props.current === 1)
-            ? { backgroundColor: 'grey' } : { backgroundColor: '#ab0f26' };
+            ? { backgroundColor: 'grey' } : { backgroundColor: 'var(--spritan-red)' };
             const rightArrow = (this.props.current === length)
-            ? { backgroundColor: 'grey' } : { backgroundColor: '#ab0f26' };
+            ? { backgroundColor: 'grey' } : { backgroundColor: 'var(--spritan-red)' };
 
             var controls = (
                 <div className="PostMain-controls">

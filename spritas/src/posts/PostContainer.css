@@ -4,7 +4,7 @@
     top: -1px;
     text-align: center;
     color: white;
-    background-color: #ab0f26;
+    background-color: var(--spritan-red);
     padding: 8px 20px;
     overflow: hidden;
     z-index: 1;

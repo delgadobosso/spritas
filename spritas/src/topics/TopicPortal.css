@@ -69,7 +69,7 @@
 
 .TopicPortal-loaded {
     color: black;
-    background-color: rgb(196, 196, 196);
+    background-color: var(--info-grey);
 }
 
 .Subtopic > .TopicPortal, .UserContainer-topics > .TopicPortal {

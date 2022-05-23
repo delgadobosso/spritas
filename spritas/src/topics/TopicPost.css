@@ -41,7 +41,7 @@
 
 .TopicPost-subName {
     color: black;
-    background-color: rgb(196, 196, 196);
+    background-color: var(--info-grey);
     border-radius: 5px;
     margin: 0 5px;
     padding: 0 10px;
@@ -98,7 +98,7 @@
 .TopicPost-ts {
     margin: 0 5px 5px 5px;
     font-size: 0.9rem;
-    color: rgb(196, 196, 196);
+    color: var(--info-grey);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
