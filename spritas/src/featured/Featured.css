@@ -37,6 +37,17 @@
     margin: auto;
 }
 
+.Featured .UpdatePost-controlItem {
+    background-color: #363636;
+    color: white;
+}
+
+@media (hover: hover) {
+    .Featured .UpdatePost-controlItem:hover {
+        background-color: #565656;
+    }
+}
+
 .Featured-form {
     display: flex;
     width: 100%;

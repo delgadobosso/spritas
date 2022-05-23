@@ -1,6 +1,6 @@
 a {
     text-decoration: none;
-    color: black;
+    color: white;
 }
 
 
@@ -17,13 +17,13 @@ a {
 .Topic-link {
     display: flex;
     padding: 0px 5px;
-    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
+    background-color: #464646;
 
     transition: background-color 0.1s, border-radius 0.1s;
 }
 @media (hover: hover) {
     .Topic-link:hover {
-        background-color: lightskyblue;
+        background-color: #565656;
         cursor: pointer;
     }
 }
@@ -45,7 +45,7 @@ a {
 }
 
 .Topic-name {
-    color: #ab0f26;
+    color: white;
 }
 
 .Subtopic {
@@ -53,14 +53,4 @@ a {
     overflow: hidden;
     
     transition: height 0.5s;
-}
-
-.Subtopic > .TopicPortal > .Topic > .Topic-link {
-    background-color: bisque;
-}
-@media (hover: hover) {
-    .Subtopic > .TopicPortal > .Topic > .Topic-link:hover {
-        background-color: lightskyblue;
-        cursor: pointer;
-    }
 }
