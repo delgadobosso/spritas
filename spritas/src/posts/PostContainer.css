@@ -36,6 +36,7 @@
 
 .PostContainer-reply-header {
     text-align: center;
+    color: white;
 }
 
 .PostContainer-replies {
@@ -52,6 +53,8 @@
     width: 100%;
     text-align: center;
     padding: 15px 0;
+    background-color: var(--dark-grey);
+    color: white;
 
     transition: background-color 0.1s;
     -moz-user-select: none;
@@ -62,7 +65,7 @@
 @media (hover: hover) {
     .PostContainer-load:hover {
         cursor: pointer;
-        background-color: lightgreen;
+        background-color: var(--lightest-grey);
     }
 }
 
@@ -70,7 +73,7 @@
     width: 100%;
     text-align: center;
     padding: 15px 0;
-    background-color: lightgray;
+    background-color: var(--info-grey);
 
     -moz-user-select: none;
     -webkit-user-select: none;

@@ -194,8 +194,8 @@ export default class Post extends React.Component {
                         </div>
                     </div>
                     <div className="Post-right">
-                        <div className={"Post-body" + deleted}>{he.decode(post.body)}</div>
-                        <div className="Post-footer" title={ts}>{relTime}</div>
+                        <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
+                        <p className="Post-footer" title={ts}>{relTime}</p>
                     </div>
                 </div>
                 <div className="Post-controls">

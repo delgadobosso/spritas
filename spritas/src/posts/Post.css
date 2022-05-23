@@ -1,8 +1,8 @@
 .Post {
-    border-left: thick solid lightsalmon;
+    border-left: thick solid var(--spritan-red);
     margin: 0 10px 50px 10px;
     border-radius: 5px;
-    background-color: moccasin;
+    background-color: var(--mid-grey);
     padding: 5px;
 
     transition: border-radius 0.5s;
@@ -11,7 +11,7 @@
 .Post-op {
     margin: 0;
     border-radius: 0;
-    border-color: lightskyblue;
+    border-color: var(--spritan-gold);
 }
 @media screen and (max-width: 1200px) {
     .Post-op {
@@ -20,11 +20,11 @@
 }
 
 .Post-replyop {
-    border-color: lightskyblue;
+    border-color: var(--spritan-gold);
 }
 .Post-optag {
     font-size: 0.8em;
-    color: grey;
+    color: var(--spritan-gold);
 }
 
 .Post-main {
@@ -99,7 +99,7 @@
 @media (hover: hover) {
     .Post-load:hover {
         cursor: pointer;
-        background-color: lightgreen;
+        background-color: var(--lightest-grey);
     }
 }
 
