@@ -1,14 +1,14 @@
 .TopicPost {
     width: 300px;
     margin: 0 10px 20px 10px;
-    background-color: #363636;
+    background-color: var(--mid-grey);
     border-radius: 10px;
     overflow: hidden;
 }
 
 .TopicPost-link {
     display: block;
-    background-color: #464646;
+    background-color: var(--light-grey);
     border-radius: 10px;
     overflow: hidden;
 
@@ -16,7 +16,7 @@
 }
 @media (hover: hover) {
     .TopicPost-link:hover {
-        background-color: #565656;
+        background-color: var(--lightest-grey);
         cursor: pointer;
     }
 }
@@ -62,7 +62,7 @@
     transition: background-color 0.1s;
 }
 .TopicPost-user:active {
-    background-color: #161616;
+    background-color: var(--darkest-grey);
 }
 .TopicPost-user:active .TopicPost-img {
     border-radius: 5px;
@@ -79,7 +79,7 @@
 @media (hover: hover) {
     .TopicPost-user:hover {
         cursor: pointer;
-        background-color: #161616;
+        background-color: var(--darkest-grey);
     }
     .TopicPost-user:hover .TopicPost-img {
         border-radius: 5px;
@@ -111,7 +111,7 @@
     width: 100%;
     height: 150px;
     background-position: center;
-    background-color: #363636;
+    background-color: var(--mid-grey);
     background-repeat: no-repeat;
     margin-top: 10px;
 

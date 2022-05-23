@@ -13,6 +13,6 @@
 }
 @media (hover: hover) {
     .UserOptions-option:hover {
-        background-color: #565656;
+        background-color: var(--lightest-grey);
     }
 }

@@ -1,5 +1,13 @@
+:root {
+    --darkest-grey: #161616;
+    --dark-grey: #262626;
+    --mid-grey: #363636;
+    --light-grey: #464646;
+    --lightest-grey: #565656;
+}
+
 body {
-    background: #262626;
+    background: var(--dark-grey);
 }
 
 p {

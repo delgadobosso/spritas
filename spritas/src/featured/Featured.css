@@ -38,13 +38,13 @@
 }
 
 .Featured .UpdatePost-controlItem {
-    background-color: #363636;
+    background-color: var(--mid-grey);
     color: white;
 }
 
 @media (hover: hover) {
     .Featured .UpdatePost-controlItem:hover {
-        background-color: #565656;
+        background-color: var(--lightest-grey);
     }
 }
 

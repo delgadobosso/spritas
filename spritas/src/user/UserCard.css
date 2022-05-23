@@ -1,6 +1,6 @@
 .UserCard {
     width: 300px;
-    background-color: #161616;
+    background-color: var(--darkest-grey);
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 20px;

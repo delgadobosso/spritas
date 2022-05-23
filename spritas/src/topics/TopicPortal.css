@@ -8,7 +8,7 @@
 .TopicPortal-posts::after {
     content: "";
     display: block;
-    background-color: #363636;
+    background-color: var(--mid-grey);
     flex: 1;
     margin: 0 10px 20px 10px;
     border-radius: 10px;
@@ -17,7 +17,7 @@
 .TopicPortal-controls {
     display: flex;
     margin-bottom: 20px;
-    background-color: #363636;
+    background-color: var(--mid-grey);
     overflow: hidden;
 }
 
@@ -35,7 +35,7 @@
 }
 @media (hover: hover) {
     .TopicPortal-control-item:hover {
-        background-color: #565656;
+        background-color: var(--lightest-grey);
     }
 }
 
@@ -50,7 +50,7 @@
     padding: 10px 0;
     border-radius: 10px;
     color: white;
-    background-color: #363636;
+    background-color: var(--mid-grey);
     overflow: hidden;
     text-align: center;
 
@@ -63,7 +63,7 @@
 @media (hover: hover) {
     .TopicPortal-load:hover {
         cursor: pointer;
-        background-color: #565656;
+        background-color: var(--lightest-grey);
     }
 }
 

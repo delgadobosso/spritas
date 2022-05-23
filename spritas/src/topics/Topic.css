@@ -17,13 +17,13 @@ a {
 .Topic-link {
     display: flex;
     padding: 0px 5px;
-    background-color: #464646;
+    background-color: var(--light-grey);
 
     transition: background-color 0.1s, border-radius 0.1s;
 }
 @media (hover: hover) {
     .Topic-link:hover {
-        background-color: #565656;
+        background-color: var(--lightest-grey);
         cursor: pointer;
     }
 }
