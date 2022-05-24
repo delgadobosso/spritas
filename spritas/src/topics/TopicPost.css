@@ -1,7 +1,7 @@
 .TopicPost {
     width: 300px;
     margin: 0 10px 20px 10px;
-    background-color: var(--mid-grey);
+    background-color: var(--dark-grey);
     border-radius: 10px;
     overflow: hidden;
 }
