@@ -3,7 +3,7 @@
 }
 
 .Featured-header {
-    background-color: var(--spritan-red);
+    background-color: var(--darkest-grey);
     padding: 10px 20px;
     text-align: center;
     cursor: pointer;
@@ -15,7 +15,7 @@
 }
 
 .Featured-title {
-    color: white;
+    color: var(--spritan-gold);
     margin: 0;
 }
 

@@ -33,10 +33,9 @@
 }
 
 .UserContainer-header {
-    background-color: var(--spritan-red);
+    background-color: var(--darkest-grey);
     padding: 10px 20px;
     text-align: center;
-    box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.3);
     cursor: pointer;
 
     -moz-user-select: none;

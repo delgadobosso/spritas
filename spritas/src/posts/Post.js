@@ -167,7 +167,7 @@ export default class Post extends React.Component {
             collapse = (this.state.collapsed) ?
             <div className="Post-collapse" onClick={this.collapse}>Show Replies</div> :
             <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
-        } else if (this.props.reply) collapse = <div className="Post-gap" />;
+        }
 
         const op = (this.props.op) ? " Post-op" : "";
         const opreply = (this.props.opid === post.idUser) ? " Post-replyop" : "";

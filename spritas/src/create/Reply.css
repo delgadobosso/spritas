@@ -2,6 +2,9 @@
     cursor: pointer;
     padding: 10px 0;
     text-align: center;
+    background-color: var(--dark-grey);
+    color: white;
+    border-radius: 10px;
 
     transition: background-color 0.1s;
     -moz-user-select: none;
@@ -11,7 +14,7 @@
 }
 @media (hover: hover) {
     .Reply-expand:hover {
-        background-color: lightgreen;
+        background-color: var(--lightest-grey);
     }
 }
 

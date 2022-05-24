@@ -49,7 +49,7 @@ export default class Container extends React.Component {
         return (
             <div id="topics" className="Container">
                 <div className="Container-header" onClick={this.scrollTo}>
-                    <h1 className="Container-title">Topics</h1>
+                    <h1 className="Container-title">All Posts</h1>
                 </div>
                 <TopicPortal topics={topics} controls={controls} top={true} />
             </div>
