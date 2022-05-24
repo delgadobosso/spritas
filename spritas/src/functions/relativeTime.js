@@ -2,6 +2,7 @@ export default function relativeTime(date) {
     const minute = 60 * 1000;
     const hour = minute * 60;
     const day = hour * 24;
+    const week = day * 7;
     const month = day * 30;
     const year = day * 365;
 
@@ -21,9 +22,13 @@ export default function relativeTime(date) {
         if (Math.floor(elapsed / hour) === 1) return `an hour ago`;
         else return `${Math.floor(elapsed / hour)} hours ago`;
     }
-    else if (elapsed < month) {
+    else if (elapsed < week) {
         if (Math.floor(elapsed / day) === 1) return `yesterday`;
         else return `${Math.floor(elapsed / day)} days ago`;
+    }
+    else if (elapsed < month) {
+        if (Math.floor(elapsed / week) === 1) return `last week`;
+        else return `${Math.floor(elapsed / week)} weeks ago`;
     }
     else if (elapsed < year) {
         if (Math.floor(elapsed / month) === 1) return `last month`;
