@@ -76,13 +76,13 @@
 
 .Post-replies .Post {
     margin: 5px 0;
+    border-radius: 0;
 }
 
 .Post-controls {
     display: flex;
     width: 100%;
     text-align: center;
-    border-radius: 10px;
     overflow: hidden;
 }
 
