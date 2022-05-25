@@ -14,7 +14,7 @@ export default class Reply extends React.Component {
             open: !state.open
         }), () => {
             if (this.state.open) {
-                document.getElementById('reply').focus();
+                // document.getElementById('reply').focus();
             }
         });
     }
