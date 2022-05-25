@@ -1,7 +1,7 @@
 .PostHome {
     position: fixed;
     top: 0;
-    background-color: var(--darkest-grey);
+    background-color: var(--dark-grey);
     width: 100%;
     height: 100%;
     overflow-y: scroll;
