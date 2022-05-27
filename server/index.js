@@ -27,7 +27,7 @@ const memStorage = multer.memoryStorage();
 const memUpload = multer({
     storage: memStorage,
     limits: {
-        fileSize: 1048576 // THIS IS FOR REGULAR IMAGE UPLOADS CHANGE THIS THIS ONLY 1MB
+        fileSize: 20971520 // THIS IS FOR REGULAR IMAGE UPLOADS CHANGE THIS THIS ONLY 1MB
     }
 });
 const avatarStore = multer.diskStorage({
@@ -418,7 +418,7 @@ app.post('/create/post',
                 if (result[0].perm === "ADMN" && req.session.user.type != "ADMN") return res.sendStatus(403);
 
                 // Add link if it's a VIDO
-                if (result[0].type === "VIDO" && req.body.link !== "null") {
+                if (result[0].type === "VIDO" && req.file.buffer) {
                     pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
                     VALUES(?,?,?,?,?,?,?)`,
                     [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
@@ -427,6 +427,7 @@ app.post('/create/post',
                         res.redirect('/');
                     })
                 // Upload file to Imgur and add that link
+                } else if (result[0].type === "VIDO" && req.body.link !== "null") {
                 } else if (result[0].type === "IMG" && req.file.buffer) {
                     if (imgurCurrent <= imgurLimit) {
                         imgurCurrent++;

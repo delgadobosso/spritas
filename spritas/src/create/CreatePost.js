@@ -1,16 +1,20 @@
 import './CreatePost.css';
 import { regex_video } from '../functions/constants';
 import React from 'react';
+import he from 'he';
 
 export default class CreatePost extends React.Component {
     constructor(props) {
         super(props);
         this.handleImg = this.handleImg.bind(this);
-        this.canvasRef = React.createRef();
+        this.handleLink = this.handleLink.bind(this);
         this.videoRef = React.createRef();
+        this.linkRef = React.createRef();
+        this.fileRef = React.createRef();
         this.state = {
             imgPreview: null,
-            videoUp: false
+            videoUp: false,
+            vidLink: null
         };
     }
 
@@ -24,16 +28,63 @@ export default class CreatePost extends React.Component {
         } else {
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
-                reader.onload = ((e) => { this.setState({ imgPreview: e.target.result }); });
+                reader.onload = ((e) => {
+                    this.setState({
+                        imgPreview: e.target.result,
+                        isLink: false
+                    });
+                });
                 reader.readAsDataURL(file);
             } else if (file.type.startsWith('video/')) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     this.videoRef.current.src = e.target.result;
-                    this.videoRef.current.load()
+                    this.videoRef.current.load();
+                    this.videoRef.current.classList.remove('CreatePost-hide');
+                    this.linkRef.current.value = "";
+                    this.setState({ vidLink: null });
                 }
                 reader.readAsDataURL(file);
             }
+        }
+    }
+
+    handleLink(e) {
+        if (this.fileRef.current.value !== "") {
+            this.fileRef.current.value = "";
+            this.videoRef.current.classList.add('CreatePost-hide');
+            this.videoRef.current.pause();
+            this.videoRef.current.removeAttribute('src');
+            this.videoRef.current.load();
+        }
+
+        var video;
+        const re = new RegExp(regex_video);
+        const link = he.decode(e.target.value);
+        if (e.target.value && re.test(link)) {
+            const matches = link.match(regex_video).groups;
+            var source;
+            for (const thisSrc in matches) {
+                if (thisSrc.includes('source') && matches[thisSrc]) source = matches[thisSrc];
+            }
+            var id;
+            for (const thisId in matches) {
+                if (thisId.includes('id') && matches[thisId]) id = matches[thisId];
+            }
+            if (id) {
+                var embedSrc;
+                if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
+                else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
+                video =
+                <iframe width="640" height="360"
+                    className='CreatePost-vidLinkPreview'
+                    id={`PostMainVideo`}
+                    title="Embedded-Video" allowFullScreen
+                    src={embedSrc}>
+                </iframe>
+            }
+
+            this.setState({ vidLink: video });
         }
     }
 
@@ -45,7 +96,9 @@ export default class CreatePost extends React.Component {
         const link = (type === "VIDO") ?
         <div className="CreatePost-item">
             <label htmlFor="link">Link: </label>
-            <input type="text" name="link" id="link" pattern={regex_video} />
+            <input type="text" name="link" id="link" pattern={regex_video}
+                onChange={this.handleLink}
+                ref={this.linkRef} />
         </div>
         : <input type="hidden" name="link" id="link" value="null" />;
 
@@ -54,7 +107,8 @@ export default class CreatePost extends React.Component {
             <label htmlFor="videoFile">Video File: </label>
             <input type="file" name="videoFile" id="videoFile"
                 onChange={this.handleImg}
-                accept="video/mp4, video/webm" />
+                accept="video/mp4, video/webm"
+                ref={this.fileRef} />
         </div>
         : <input type="hidden" name="videoFile" id="videoFile" value="null" />;
 
@@ -88,7 +142,8 @@ export default class CreatePost extends React.Component {
                     {videoFile}
                     {link}
                     {file}
-                    <video controls ref={this.videoRef} width="640" height="360" loop muted />
+                    <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" loop />
+                    {this.state.vidLink}
                     {imgPreview}
                     <div className="CreatePost-item">
                         <label htmlFor="body">Body: </label>
