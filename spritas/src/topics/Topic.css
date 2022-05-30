@@ -5,7 +5,7 @@ a {
 
 
 .Topic {
-    border-left: thick solid lightsalmon;
+    border-left: thick solid var(--spritan-gold);
     margin-bottom: 10px;
 
     -moz-user-select: none;
@@ -16,8 +16,9 @@ a {
 
 .Topic-link {
     display: flex;
-    padding: 0px 5px;
+    padding: 0px 10px;
     background-color: var(--light-grey);
+    justify-content: center;
 
     transition: background-color 0.1s, border-radius 0.1s;
 }

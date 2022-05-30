@@ -199,14 +199,14 @@ export default class Topic extends React.Component {
         return (
             <div className="Topic" title={title}>
                 <div className={"Topic-link" + open} onClick={this.topicClick}>
-                    <img className="Topic-img" src={status}
+                    {/* <img className="Topic-img" src={status}
                         title="No new posts"
-                        alt="Topic icon" />
+                        alt="Topic icon" /> */}
                     <div className="Topic-info">
                         <h1 className="Topic-name" id={"TopicName-" + topic.id}>
                             {title}
                         </h1>
-                        <p className="Topic-description">{topic.description}</p>
+                        {/* <p className="Topic-description">{topic.description}</p> */}
                     </div>
                 </div>
                 {subtopics}

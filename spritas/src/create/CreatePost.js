@@ -142,7 +142,7 @@ export default class CreatePost extends React.Component {
                     {videoFile}
                     {link}
                     {file}
-                    <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" loop />
+                    <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" />
                     {this.state.vidLink}
                     {imgPreview}
                     <div className="CreatePost-item">
