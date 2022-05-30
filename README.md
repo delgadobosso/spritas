@@ -1,6 +1,6 @@
 # Spritas Website
 ## Work In Progress Previews
-### Top of Page Page
+### Top of Main Page
 ![Screenshot 2022-05-29 at 14-04-21 The Spritas](https://user-images.githubusercontent.com/15951232/170884993-4c94eb40-aa26-4a1b-9099-08d37fb9256e.png)
 
 ### All Posts section of Main Page
