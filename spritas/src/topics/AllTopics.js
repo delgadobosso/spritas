@@ -19,7 +19,7 @@ export default class AllTopics extends React.Component {
     render() {
         const topicContainers = (this.state.topics) ? this.state.topics.map((topic, index) => 
             <TopicContainer key={index} topic={topic} user={this.props.user}
-                postClick={this.props.postClick} />) : null;
+                postClick={this.props.postClick} naviHide={this.props.naviHide} />) : null;
 
         return (
             <div className='AllTopics'>

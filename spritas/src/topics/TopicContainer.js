@@ -9,7 +9,7 @@ export default class TopicContainer extends React.Component {
     }
 
     scrollTo() {
-        var con = document.getElementById(`Topic-${this.props.topic.id}`);
+        var con = document.getElementById(`TopicContainer-${this.props.topic.id}`);
         con.scrollIntoView({ behavior: "smooth" });
         // if (window.location.hash !== "#topics") window.history.pushState({}, "", "#topics");
     }
@@ -21,7 +21,7 @@ export default class TopicContainer extends React.Component {
         // }
 
         return (
-            <div id={`Topic-${this.props.topic.id}`} className="Container">
+            <div id={`TopicContainer-${this.props.topic.id}`} className="Container">
                 <div className="Container-header" onClick={this.scrollTo}>
                     <h1 className="Container-title">{this.props.topic.name}</h1>
                 </div>
