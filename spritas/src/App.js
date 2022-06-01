@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import './App.css';
 import Header from './header/Header'
-import TopicContainer from './topics/TopicContainer';
 import Login from './login/Login';
 import Navi from './navigation/Navi';
 import PostContainer from './posts/PostContainer';
@@ -15,6 +14,7 @@ import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
 import Featured from "./featured/Featured";
 import UserContainer from './user/UserContainer';
+import AllTopics from "./topics/AllTopics";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -111,7 +111,9 @@ export default class App extends React.Component {
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/'>
               <Featured user={this.state.user} />
-              <TopicContainer postClick={this.postClick} user={this.state.user}
+              {/* <TopicContainer postClick={this.postClick} user={this.state.user}
+                naviHide={this.naviHide} /> */}
+              <AllTopics postClick={this.postClick} user={this.state.user}
                 naviHide={this.naviHide} />
             </Route>
           </Switch>

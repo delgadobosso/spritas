@@ -128,12 +128,14 @@ export default class UserContainer extends React.Component {
             </div>
         );
 
+        const name = (this.state.thisUser) ? `${this.state.thisUser.nickname}'s Posts` : 'Posts';
+
         return (
             <div className='UserContainer'>
                 {cards}
                 <div className='UserContainer-postContainer' id='UserPosts'>
                     <div className="UserContainer-header" onClick={this.scrollTo}>
-                        <h1 className="UserContainer-title">Posts</h1>
+                        <h1 className="UserContainer-title">{name}</h1>
                     </div>
                     <div className='UserContainer-container' id='UserContainer-scroll'>
                         <div className='UserContainer-topics' id='UserContainer-topics'>

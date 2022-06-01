@@ -189,8 +189,7 @@ export default class Topic extends React.Component {
 
         const subtopics = (this.state.subtopics) ?
         <div className="Subtopic" id={"Subtopic-" + topic.name.replace(" ", "")}>
-            <TopicPortal topics={this.state.topics} posts={this.state.posts} controls={this.state.controls}
-            more={this.state.more} load={this.loadPosts} />
+            <TopicPortal topics={this.state.topics} posts={this.state.posts} controls={this.state.controls} more={this.state.more} load={this.loadPosts} id={topic.id} naviHide={this.props.naviHide} />
         </div>
         : null;
 
@@ -199,14 +198,10 @@ export default class Topic extends React.Component {
         return (
             <div className="Topic" title={title}>
                 <div className={"Topic-link" + open} onClick={this.topicClick}>
-                    {/* <img className="Topic-img" src={status}
-                        title="No new posts"
-                        alt="Topic icon" /> */}
                     <div className="Topic-info">
                         <h1 className="Topic-name" id={"TopicName-" + topic.id}>
                             {title}
                         </h1>
-                        {/* <p className="Topic-description">{topic.description}</p> */}
                     </div>
                 </div>
                 {subtopics}
