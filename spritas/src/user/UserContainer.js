@@ -17,7 +17,7 @@ export default class UserContainer extends React.Component {
             thisUser: null,
             posts: [],
             offset: 0,
-            amount: 10,
+            amount: 20,
             more: true,
             edit: false
         }
