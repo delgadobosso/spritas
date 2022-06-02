@@ -68,6 +68,12 @@ export default class TopicPost extends React.Component {
                         const style = { backgroundImage: `url(${embedSrc})` };
                         thumb = <div className="TopicPost-thumb" style={style} />;
                     }
+                } else if (post.link) {
+                    const link_img = he.decode(post.link);
+                    const dot = post.link.lastIndexOf('.');
+                    const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
+                    const style = { backgroundImage: `url(${embedSrc})` };
+                    thumb = <div className='TopicPost-thumb' style={style} />
                 }
                 break;
 

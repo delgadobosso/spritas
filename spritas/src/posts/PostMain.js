@@ -174,15 +174,21 @@ export default class PostMain extends React.PureComponent {
                         var embedSrc;
                         if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
-                        video =
+                        video = (
                         <div className="PostMain-video">
                             <iframe width="100%" height="675"
                                 id={`PostMainVideo-${currentPost.id}`}
                                 title="Embedded-Video" allowFullScreen
                                 src={embedSrc}>
                             </iframe>
-                        </div>
+                        </div>);
                     }
+                } else if (currentPost.link) {
+                    video = (
+                        <div className='PostMain-video'>
+                            <video src={link} controls width="100%"></video>
+                        </div>
+                    )
                 }
                 break;
 
