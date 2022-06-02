@@ -8,12 +8,12 @@ export default class CreatePost extends React.Component {
         super(props);
         this.handleImg = this.handleImg.bind(this);
         this.handleLink = this.handleLink.bind(this);
+        this.clickVideoLink = this.clickVideoLink.bind(this);
+        this.clickVideoUp = this.clickVideoUp.bind(this);
         this.videoRef = React.createRef();
-        this.linkRef = React.createRef();
-        this.fileRef = React.createRef();
         this.state = {
             imgPreview: null,
-            videoUp: false,
+            videoUp: true,
             vidLink: null
         };
     }
@@ -41,8 +41,7 @@ export default class CreatePost extends React.Component {
                     this.videoRef.current.src = e.target.result;
                     this.videoRef.current.load();
                     this.videoRef.current.classList.remove('CreatePost-hide');
-                    this.linkRef.current.value = "";
-                    this.setState({ vidLink: null });
+                    this.setState({ videoUp: true });
                 }
                 reader.readAsDataURL(file);
             }
@@ -50,14 +49,6 @@ export default class CreatePost extends React.Component {
     }
 
     handleLink(e) {
-        if (this.fileRef.current.value !== "") {
-            this.fileRef.current.value = "";
-            this.videoRef.current.classList.add('CreatePost-hide');
-            this.videoRef.current.pause();
-            this.videoRef.current.removeAttribute('src');
-            this.videoRef.current.load();
-        }
-
         var video;
         const re = new RegExp(regex_video);
         const link = he.decode(e.target.value);
@@ -88,37 +79,71 @@ export default class CreatePost extends React.Component {
         }
     }
 
+    clickVideoUp() {
+        this.setState({
+            videoUp: true,
+            vidLink: null
+        });
+    }
+
+    clickVideoLink() {
+        this.setState({ videoUp: false }, () => {
+            this.videoRef.current.classList.add('CreatePost-hide');
+            this.videoRef.current.pause();
+            this.videoRef.current.removeAttribute('src');
+            this.videoRef.current.load();
+        });
+    }
+
     render() {
         document.title = "Create a Post - The Spritas";
         const id = this.props.match.params.id;
         const type = new URLSearchParams(new URL(window.location.href).search).get('type');
 
-        const link = (type === "VIDO") ?
-        <div className="CreatePost-item">
-            <label htmlFor="link">Link: </label>
-            <input type="text" name="link" id="link" pattern={regex_video}
-                onChange={this.handleLink}
-                ref={this.linkRef} />
-        </div>
-        : <input type="hidden" name="link" id="link" value="null" />;
+        var fileLink;
+        if (type === "VIDO" && this.state.videoUp) {
+            fileLink = (
+                <div className='CreatePost-options'>
+                    <span className='CreatePost-option CreatePost-selected'>Video Upload</span>
+                    <span className='CreatePost-option' onClick={this.clickVideoLink}>Video Link</span>
+                </div>
+            );
+        } else if (type === "VIDO" && !this.state.videoUp) {
+            fileLink = (
+                <div className='CreatePost-options'>
+                    <span className='CreatePost-option' onClick={this.clickVideoUp}>Video Upload</span>
+                    <span className='CreatePost-option CreatePost-selected'>Video Link</span>
+                </div>
+            );
+        }
 
-        const videoFile = (type === "VIDO") ?
-        <div className="CreatePost-item">
-            <label htmlFor="videoFile">Video File: </label>
-            <input type="file" name="videoFile" id="videoFile"
-                onChange={this.handleImg}
-                accept="video/mp4, video/webm"
-                ref={this.fileRef} />
-        </div>
-        : <input type="hidden" name="videoFile" id="videoFile" value="null" />;
+        var file = <input type="hidden" name="file" id="file" value="null" />;
+        var link = <input type="hidden" name="link" id="link" value="null" />;
+        if (type === "VIDO" && this.state.videoUp) {
+            file = (
+            <div className="CreatePost-item">
+                <label htmlFor="file">Video File: </label>
+                <input type="file" name="file" id="file"
+                    onChange={this.handleImg}
+                    accept="video/mp4, video/webm" />
+            </div>);
+        } else if (type === "VIDO" && !this.state.videoUp) {
+            link = (
+            <div className="CreatePost-item">
+                <label htmlFor="link">Link: </label>
+                <input type="text" name="link" id="link" pattern={regex_video}
+                    onChange={this.handleLink} />
+            </div>);
+        } else if (type === "IMG") {
+            file = (
+            <div className="CreatePost-item">
+                <label htmlFor="file">File: </label>
+                <input type="file" name="file" id="file" required
+                    onChange={this.handleImg}
+                    accept="image/png, image/jpeg, image/gif" />
+            </div>);
+        }
 
-        const file = (type === "IMG") ?
-        <div className="CreatePost-item">
-            <label htmlFor="file">File: </label>
-            <input type="file" name="file" id="file" required
-                onChange={this.handleImg}
-                accept="image/png, image/jpeg, image/gif" />
-        </div> : <input type="hidden" name="file" id="file" value="null" />;
         const imgPreview = (type === "IMG" && this.state.imgPreview) ?
         <img className="CreatePost-imgPreview" src={this.state.imgPreview} alt="Preview" /> : null;
 
@@ -139,9 +164,9 @@ export default class CreatePost extends React.Component {
                         <label htmlFor="subtitle">Subtitle: </label>
                         <input type="text" name="subtitle" id="subtitle" maxLength="30" />
                     </div>
-                    {videoFile}
-                    {link}
+                    {fileLink}
                     {file}
+                    {link}
                     <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" />
                     {this.state.vidLink}
                     {imgPreview}

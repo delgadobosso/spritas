@@ -10,3 +10,32 @@
 .CreatePost-vidLinkPreview {
     border: 0;
 }
+
+.CreatePost-options {
+    display: flex;
+}
+
+.CreatePost-option {
+    width: 150px;
+    text-align: center;
+    color: white;
+    background-color: var(--darkest-grey);
+    padding: 10px;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    transition: background-color 0.1s;
+}
+@media (hover: hover) {
+    .CreatePost-option:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
+    }
+}
+
+.CreatePost-selected {
+    background-color: var(--light-grey);
+    font-weight: bold;
+}
