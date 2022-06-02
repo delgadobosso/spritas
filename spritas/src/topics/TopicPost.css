@@ -118,6 +118,17 @@
 
     transition: filter 0.5s;
 }
+.TopicPost-thumbAni {
+    animation-name: breathe;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+@keyframes breathe {
+    from { background-color: var(--mid-grey); }
+    to { background-color: var(--light-grey); }
+}
+
 @media (hover: hover) {
     .TopicPost-link:hover .TopicPost-thumb {
         filter: brightness(1.1);

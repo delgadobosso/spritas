@@ -69,21 +69,45 @@ export default class TopicPost extends React.Component {
                         thumb = <div className="TopicPost-thumb" style={style} />;
                     }
                 } else if (post.link) {
-                    const link_img = he.decode(post.link);
-                    const dot = post.link.lastIndexOf('.');
-                    const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
-                    const style = { backgroundImage: `url(${embedSrc})` };
-                    thumb = <div className='TopicPost-thumb' style={style} />
+                    // let thumbnail load
+                    var currentTime = new Date();
+                    var postedTime = new Date(post.ts);
+                    var elapsed = currentTime - postedTime;
+                    var seconds = 10 * 1000;
+
+                    if (elapsed > seconds) {
+                        const link_img = he.decode(post.link);
+                        const dot = post.link.lastIndexOf('.');
+                        const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
+                        const style = { backgroundImage: `url(${embedSrc})` };
+                        thumb = <div className='TopicPost-thumb' style={style} />;
+                    } else {
+                        thumb = <div className='TopicPost-thumb TopicPost-thumbAni'></div>;
+                    }
+                } else {
+                    thumb = <div className='TopicPost-thumb TopicPost-thumbAni'></div>;
                 }
                 break;
 
             case 'IMG':
                 if (post.link) {
-                    const link_img = he.decode(post.link);
-                    const dot = post.link.lastIndexOf('.');
-                    const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
-                    const style = { backgroundImage: `url(${embedSrc})` };
-                    thumb = <div className='TopicPost-thumb' style={style} />
+                    // let thumbnail load
+                    var currentTime = new Date();
+                    var postedTime = new Date(post.ts);
+                    var elapsed = currentTime - postedTime;
+                    var seconds = 10 * 1000;
+
+                    if (elapsed > seconds) {
+                        const link_img = he.decode(post.link);
+                        const dot = post.link.lastIndexOf('.');
+                        const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
+                        const style = { backgroundImage: `url(${embedSrc})` };
+                        thumb = <div className='TopicPost-thumb' style={style} />;
+                    } else {
+                        thumb = <div className='TopicPost-thumb TopicPost-thumbAni'></div>;
+                    }
+                } else {
+                    thumb = <div className='TopicPost-thumb TopicPost-thumbAni'></div>;
                 }
                 break;
 
