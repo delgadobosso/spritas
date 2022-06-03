@@ -71,7 +71,7 @@ export default class TopicPost extends React.Component {
                 } else if (post.link) {
                     // let thumbnail load
                     var currentTime = new Date();
-                    var postedTime = new Date(post.ts);
+                    var postedTime = new Date(post.lastTs);
                     var elapsed = currentTime - postedTime;
                     var seconds = 10 * 1000;
 
@@ -93,7 +93,7 @@ export default class TopicPost extends React.Component {
                 if (post.link) {
                     // let thumbnail load
                     var currentTime = new Date();
-                    var postedTime = new Date(post.ts);
+                    var postedTime = new Date(post.lastTs);
                     var elapsed = currentTime - postedTime;
                     var seconds = 10 * 1000;
 

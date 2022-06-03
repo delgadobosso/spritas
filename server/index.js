@@ -571,7 +571,7 @@ app.post('/update/post',
                                     return res.redirect('/');
                                 })
                             })
-                        } else if (result[0].type === "IMG" && req.file.buffer) {
+                        } else if ((result[0].type === "IMG" && req.file && req.file.buffer) || result[0].type === "VIDO" && req.file && req.file.buffer) {
                             // Upload file to imgur and update
                             if (imgurCurrent <= imgurLimit) {
                                 imgurCurrent++;

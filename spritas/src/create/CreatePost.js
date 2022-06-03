@@ -96,7 +96,7 @@ export default class CreatePost extends React.Component {
     }
 
     render() {
-        document.title = "Create a Post - The Spritas";
+        document.title = "Create a Post";
         const id = this.props.match.params.id;
         const type = new URLSearchParams(new URL(window.location.href).search).get('type');
 

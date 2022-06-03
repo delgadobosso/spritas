@@ -63,6 +63,7 @@
 .Reply-submit {
     width: 100px;
     background-color: var(--info-grey);
+    color: black;
     border: none;
 
     transition: background-color 0.1s;

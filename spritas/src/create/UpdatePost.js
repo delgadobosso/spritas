@@ -1,29 +1,105 @@
 import React from 'react';
 import './UpdatePost.css';
 import { regex_video } from '../functions/constants';
+import he from 'he';
 
 export default class UpdatePost extends React.Component {
     constructor(props) {
         super(props);
         this.expand = this.expand.bind(this);
         this.handleImg = this.handleImg.bind(this);
+        this.handleLink = this.handleLink.bind(this);
+        this.clickVideoLink = this.clickVideoLink.bind(this);
+        this.clickVideoUp = this.clickVideoUp.bind(this);
+        this.videoRef = React.createRef();
         this.delete = this.delete.bind(this);
         this.state = ({
             open: false,
-            imgPreview: null
+            imgPreview: null,
+            videoUp: true,
+            vidLink: null
         });
     }
 
-    expand() { this.setState(state => ({ open: !state.open })); }
+    expand() {
+        this.setState(state => ({ open: !state.open }));
+    }
 
     handleImg(e) {
         const file = e.target.files[0];
-        const reader = new FileReader();
 
-        if (!file.type.startsWith('image/')) return;
-    
-        reader.onload = ((e) => { this.setState({ imgPreview: e.target.result }); });
-        reader.readAsDataURL(file);
+        // Check file size
+        if (file.size > 20971520) {
+            e.target.value = '';
+            alert('The file you selected is too large. Image must be 20 MB or less.');
+        } else {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = ((e) => {
+                    this.setState({
+                        imgPreview: e.target.result,
+                        isLink: false
+                    });
+                });
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.videoRef.current.src = e.target.result;
+                    this.videoRef.current.load();
+                    this.videoRef.current.classList.remove('CreatePost-hide');
+                    this.setState({ videoUp: true });
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    }
+
+    handleLink(e) {
+        var video;
+        const re = new RegExp(regex_video);
+        const link = he.decode(e.target.value);
+        if (e.target.value && re.test(link)) {
+            const matches = link.match(regex_video).groups;
+            var source;
+            for (const thisSrc in matches) {
+                if (thisSrc.includes('source') && matches[thisSrc]) source = matches[thisSrc];
+            }
+            var id;
+            for (const thisId in matches) {
+                if (thisId.includes('id') && matches[thisId]) id = matches[thisId];
+            }
+            if (id) {
+                var embedSrc;
+                if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
+                else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
+                video =
+                <iframe width="640" height="360"
+                    className='CreatePost-vidLinkPreview'
+                    id={`PostMainVideo`}
+                    title="Embedded-Video" allowFullScreen
+                    src={embedSrc}>
+                </iframe>
+            }
+
+            this.setState({ vidLink: video });
+        }
+    }
+
+    clickVideoUp() {
+        this.setState({
+            videoUp: true,
+            vidLink: null
+        });
+    }
+
+    clickVideoLink() {
+        this.setState({ videoUp: false }, () => {
+            this.videoRef.current.classList.add('CreatePost-hide');
+            this.videoRef.current.pause();
+            this.videoRef.current.removeAttribute('src');
+            this.videoRef.current.load();
+        });
     }
 
     delete() {
@@ -55,23 +131,54 @@ export default class UpdatePost extends React.Component {
         else controls.push(<div className="UpdatePost-controlItem" onClick={this.expand} key='0'>Update Post</div>);
         controls.push(<div className='UpdatePost-controlItem UpdatePost-delete' onClick={this.delete} key='1'>Delete Post</div>);
 
-        const link = (type === "VIDO") ?
-        <div className="CreatePost-item">
-            <label htmlFor="link">Link: </label>
-            <input type="text" name="link" id="link" required pattern={regex_video} />
-        </div> : <input type="hidden" name="link" id="link" value="null" />;
+        var fileLink;
+        if (type === "VIDO" && this.state.videoUp) {
+            fileLink = (
+                <div className='CreatePost-options'>
+                    <span className='CreatePost-option CreatePost-selected'>Video Upload</span>
+                    <span className='CreatePost-option' onClick={this.clickVideoLink}>Video Link</span>
+                </div>
+            );
+        } else if (type === "VIDO" && !this.state.videoUp) {
+            fileLink = (
+                <div className='CreatePost-options'>
+                    <span className='CreatePost-option' onClick={this.clickVideoUp}>Video Upload</span>
+                    <span className='CreatePost-option CreatePost-selected'>Video Link</span>
+                </div>
+            );
+        }
 
-        const file = (type === "IMG") ?
-        <div className='CreatePost-item'>
-            <label htmlFor="file">File: </label>
-            <input type="file" name="file" id="file" required
-                onChange={this.handleImg}
-                accept="image/png, image/jpeg, image/gif" />
-        </div> : <input type="hidden" name="file" id="file" value="null" />;
-        const imgPreview = (type === "IMG") ?
+        var file = <input type="hidden" name="file" id="file" value="null" />;
+        var link = <input type="hidden" name="link" id="link" value="null" />;
+        if (type === "VIDO" && this.state.videoUp) {
+            file = (
+            <div className="CreatePost-item">
+                <label htmlFor="file">Video File: </label>
+                <input type="file" name="file" id="file"
+                    onChange={this.handleImg}
+                    accept="video/mp4, video/webm" />
+            </div>);
+        } else if (type === "VIDO" && !this.state.videoUp) {
+            link = (
+            <div className="CreatePost-item">
+                <label htmlFor="link">Link: </label>
+                <input type="text" name="link" id="link" pattern={regex_video}
+                    onChange={this.handleLink} />
+            </div>);
+        } else if (type === "IMG") {
+            file = (
+            <div className="CreatePost-item">
+                <label htmlFor="file">File: </label>
+                <input type="file" name="file" id="file" required
+                    onChange={this.handleImg}
+                    accept="image/png, image/jpeg, image/gif" />
+            </div>);
+        }
+
+        const imgPreview = (type === "IMG" && this.state.imgPreview) ?
         <img className="CreatePost-imgPreview" src={this.state.imgPreview} alt="Preview" /> : null;
 
-        const enctype = (type === "IMG") ? "multipart/form-data" : null;
+        const enctype = (type === "IMG" || this.state.videoUp) ? "multipart/form-data" : null;
 
         return (
             <div className="UpdatePost">
@@ -79,8 +186,11 @@ export default class UpdatePost extends React.Component {
                 <form action="/update/post/" className={"UpdatePost-form" + open} 
                     method="POST" encType={enctype}>
                     <input type="hidden" name="id" id="id" value={id} />
-                    {link}
+                    {fileLink}
                     {file}
+                    {link}
+                    <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" />
+                    {this.state.vidLink}
                     {imgPreview}
                     <div className="CreatePost-item">
                         <label htmlFor="subtitle">Subtitle: </label>
