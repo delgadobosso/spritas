@@ -186,7 +186,7 @@ export default class PostMain extends React.PureComponent {
                 } else if (currentPost.link) {
                     video = (
                         <div className='PostMain-video'>
-                            <video src={link} controls width="100%"></video>
+                            <video src={link} controls width="100%" height="100%"></video>
                         </div>
                     )
                 }
