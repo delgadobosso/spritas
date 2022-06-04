@@ -151,6 +151,13 @@ export default class CreatePost extends React.Component {
             </div>);
         }
 
+        const vidContainer = (type === "VIDO") ? (
+            <div className='CreatePost-videoContainer'>
+                <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" />
+                {this.state.vidLink}
+            </div>
+        ) : null;
+
         const imgPreview = (type === "IMG" && this.state.imgPreview) ?
         <img className="CreatePost-imgPreview" src={this.state.imgPreview} alt="Preview" /> : null;
 
@@ -174,10 +181,7 @@ export default class CreatePost extends React.Component {
                     {fileLink}
                     {file}
                     {link}
-                    <div className='CreatePost-videoContainer'>
-                        <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" />
-                        {this.state.vidLink}
-                    </div>
+                    {vidContainer}
                     {imgPreview}
                     <div className="CreatePost-item">
                         <label htmlFor="body">Body: </label>
