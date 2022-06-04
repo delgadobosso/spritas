@@ -87,6 +87,8 @@ export default class UpdatePost extends React.Component {
             }
 
             this.setState({ vidLink: video });
+        } else {
+            this.setState({ vidLink: null });
         }
     }
 
