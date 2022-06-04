@@ -17,7 +17,8 @@ export default class UpdatePost extends React.Component {
             open: false,
             imgPreview: null,
             videoUp: true,
-            vidLink: null
+            vidLink: null,
+            fileName: 'Select File'
         });
     }
 
@@ -48,7 +49,10 @@ export default class UpdatePost extends React.Component {
                     this.videoRef.current.src = e.target.result;
                     this.videoRef.current.load();
                     this.videoRef.current.classList.remove('CreatePost-hide');
-                    this.setState({ videoUp: true });
+                    this.setState({
+                        videoUp: true,
+                        fileName: file.name
+                    });
                 }
                 reader.readAsDataURL(file);
             }
@@ -94,7 +98,10 @@ export default class UpdatePost extends React.Component {
     }
 
     clickVideoLink() {
-        this.setState({ videoUp: false }, () => {
+        this.setState({
+            videoUp: false,
+            fileName: 'Select File'
+        }, () => {
             this.videoRef.current.classList.add('CreatePost-hide');
             this.videoRef.current.pause();
             this.videoRef.current.removeAttribute('src');
@@ -153,8 +160,8 @@ export default class UpdatePost extends React.Component {
         if (type === "VIDO" && this.state.videoUp) {
             file = (
             <div className="CreatePost-item">
-                <label htmlFor="file">Video File: </label>
-                <input type="file" name="file" id="file"
+                <label className='CreatePost-file' htmlFor="file">{this.state.fileName}</label>
+                <input className='CreatePost-fileIn' type="file" name="file" id="file"
                     onChange={this.handleImg}
                     accept="video/mp4, video/webm" />
             </div>);
