@@ -137,9 +137,7 @@ export default class CreatePost extends React.Component {
         } else if (type === "VIDO" && !this.state.videoUp) {
             link = (
             <div className="CreatePost-item">
-                <label htmlFor="link">Link: </label>
-                <input type="text" name="link" id="link" pattern={regex_video}
-                    onChange={this.handleLink} />
+                <input className='CreatePost-link' type="text" name="link" id="link" pattern={regex_video} onChange={this.handleLink} placeholder="Enter Link Here" />
             </div>);
         } else if (type === "IMG") {
             file = (
@@ -174,8 +172,10 @@ export default class CreatePost extends React.Component {
                     {fileLink}
                     {file}
                     {link}
-                    <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" />
-                    {this.state.vidLink}
+                    <div className='CreatePost-videoContainer'>
+                        <video className='CreatePost-hide' controls ref={this.videoRef} width="640" height="360" />
+                        {this.state.vidLink}
+                    </div>
                     {imgPreview}
                     <div className="CreatePost-item">
                         <label htmlFor="body">Body: </label>

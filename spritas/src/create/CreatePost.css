@@ -3,6 +3,12 @@
     max-height: 500px;
 }
 
+.CreatePost-videoContainer {
+    width: 640px;
+    height: 360px;
+    background-color: var(--darkest-grey);
+}
+
 .CreatePost-hide {
     display: none;
 }
@@ -50,6 +56,17 @@
     width: 0;
     height: 0;
     opacity: 0;
+}
+
+.CreatePost-link {
+    width: 640px;
+    padding: 10px 0;
+    text-align: center;
+    border: 0;
+    font-size: 16px;
+}
+.CreatePost-link:invalid {
+    color: var(--spritan-red);
 }
 
 @media (hover: hover) {
