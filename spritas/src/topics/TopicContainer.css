@@ -20,6 +20,7 @@
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    transition: background-color 0.1s;
 }
 
 .Container-title {
@@ -55,5 +56,11 @@
     .Container {
         width: 100%;
         border-radius: 0;
+    }
+}
+
+@media (hover: hover) {
+    .Container-header:hover {
+        background-color: var(--lightest-grey);
     }
 }
