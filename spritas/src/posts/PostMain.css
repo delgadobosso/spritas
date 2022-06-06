@@ -1,3 +1,88 @@
+.PostMain-container {
+    display: flex;
+}
+
+.PostMain-post {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: var(--mid-grey);
+}
+
+.PostMain-title {
+    margin: 0;
+    padding: 10px 10px;
+    background-color: var(--darkest-grey);
+}
+
+.PostMain-info {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.PostMain-user {
+    display: flex;
+    width: max-content;
+    max-width: 100%;
+    align-items: center;
+    padding-right: 5px;
+    border-radius: 10px;
+    margin-left: 5px;
+
+    transition: background-color 0.1s;
+}
+.PostMain-user:active {
+    background-color: var(--darkest-grey);
+}
+.PostMain-user:active .TopicPost-img {
+    border-radius: 5px;
+    filter: brightness(1.1);
+}
+
+.PostMain-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+
+    transition: filter 0.5s, border-radius 0.25s;
+}
+@media (hover: hover) {
+    .PostMain-user:hover {
+        cursor: pointer;
+        background-color: var(--darkest-grey);
+    }
+    .PostMain-user:hover .PostMain-img {
+        border-radius: 10px;
+        filter: brightness(1.1);
+    }
+}
+
+.PostMain-nickname {
+    margin-left: 5px;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.PostMain-ts {
+    margin-left: 5px;
+    color: var(--info-grey);
+}
+
+.PostMain-subtitle {
+    width: max-content;
+    color: black;
+    background-color: var(--info-grey);
+    border-radius: 5px;
+    margin: 10px 5px;
+    padding: 5px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .PostMain-controls {
     display: flex;
     width: 1200px;
@@ -48,7 +133,7 @@
     }
 }
 
-.PostMain-post, .PostMain-video, .PostMain-imageContainer, .PostMain-subtitleContainer {
+.PostMain-video, .PostMain-imageContainer, .PostMain-subtitleContainer {
     width: 1200px;
     max-width: 100%;
     margin: auto;
@@ -67,24 +152,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--mid-grey);
-    max-height: 40vh;
+    background-color: var(--darkest-grey);
+    height: 675px;
     overflow: hidden;
     cursor: pointer;
 
     transition: background-color 0.5s;
 }
 
-.PostMain-img {
-    max-width: 100%;
-    margin: 15px;
-}
-
 .PostMain-gradientTop, .PostMain-gradientBot {
     position: absolute;
     width: 1200px;
     max-width: 100%;
-    height: 40vh;
+    height: 675px;
 }
 .PostMain-gradientTop {
     background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0) 30px);
@@ -105,13 +185,6 @@
 @keyframes fadeout {
     from { opacity: 1; }
     to { opacity: 0; }
-}
-
-.PostMain-subtitle {
-    background-color: var(--spritan-red);
-    color: white;
-    margin: 0;
-    padding: 8px 20px;
 }
 
 @media screen and (max-width: 1200px) {

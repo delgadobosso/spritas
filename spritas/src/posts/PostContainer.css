@@ -1,33 +1,3 @@
-.PostContainer-header {
-    position: sticky;
-    position: -webkit-sticky;
-    top: -1px;
-    text-align: center;
-    color: white;
-    background-color: var(--spritan-red);
-    padding: 8px 20px;
-    overflow: hidden;
-    z-index: 1;
-
-    transition: filter 0.5s;
-}
-@media (hover: hover) {
-    .PostContainer-header:hover {
-        cursor: pointer;
-        filter: brightness(1.15);
-    }
-}
-
-.PostContainer-title {
-    white-space: nowrap;
-    margin: 0;
-
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 .PostContainer .Reply, .PostContainer .UpdatePost, .PostContainer-controls {
     width: 1200px;
     max-width: 100%;

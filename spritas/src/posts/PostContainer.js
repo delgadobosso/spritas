@@ -173,14 +173,7 @@ export default class PostContainer extends React.Component {
 
         return (
             <div className="PostContainer">
-                <div className="PostContainer-header" onClick={this.scrollTop}
-                    title={title}>
-                    <h2 className="PostContainer-title" id={"PostName-" + id}>
-                        {title}
-                    </h2>
-                </div>
                 {main}
-                {update}
                 <h2 className="PostContainer-reply-header">{comment}</h2>
                 {reply}
                 <div className="PostContainer-replies" id="Replies">

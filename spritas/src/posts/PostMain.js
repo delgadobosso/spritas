@@ -4,6 +4,8 @@ import Post from './Post';
 import he from 'he';
 import { regex_video } from '../functions/constants';
 import PostModal from './PostModal';
+import pfp from '../images/pfp.png';
+import relativeTime from '../functions/relativeTime';
 
 export default class PostMain extends React.PureComponent {
     constructor(props) {
@@ -153,9 +155,20 @@ export default class PostMain extends React.PureComponent {
             )
         }
 
+        const subtitle = (currentPost.subtitle) ?
+        <div className='PostMain-subtitleContainer'>
+            <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3>
+        </div> : null;
+
+        var ts = new Date(currentPost.ts);
+        var relTime = relativeTime(currentPost.ts);
+        ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        relTime = `Posted ${relTime}`;
+
         var modal;
         var video;
         var image;
+        var media;
         switch(currentPost.type) {
             case "VIDO":
                 const re = new RegExp(regex_video);
@@ -190,6 +203,7 @@ export default class PostMain extends React.PureComponent {
                         </div>
                     )
                 }
+                media = video;
                 break;
 
             case "IMG":
@@ -202,7 +216,7 @@ export default class PostMain extends React.PureComponent {
                     <div className='PostMain-imagePreview'>
                         <div className='PostMain-imageContainer'
                             onClick={this.toggleModal}>
-                            <img className='PostMain-img'
+                            <img className='PostMain-image'
                                 src={currentPost.link}
                                 alt="Main Post" />
                             <div className='PostMain-gradientTop'></div>
@@ -211,25 +225,41 @@ export default class PostMain extends React.PureComponent {
                         </div>
                     </div>
                 }
+                media = image;
                 break;
 
             default:
                 break;
         }
 
-        const subtitle = (currentPost.subtitle) ?
-        <div className='PostMain-subtitleContainer'>
-            <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3>
-        </div> : null;
+        var postMain;
+        const avatar = (currentPost.avatar) ? `/media/avatars/${currentPost.avatar}` : pfp;
+        if (currentPost.type === "IMG" || currentPost.type === "VIDO") {
+            postMain = (
+                <div className='PostMain-container'>
+                    {media}
+                    <div className='PostMain-post'>
+                        <h2 className='PostMain-title'>{currentPost.title}</h2>
+                        <div className='PostMain-info'>
+                            <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}>
+                                <div className="PostMain-user">
+                                    <img className="PostMain-img" src={avatar}
+                                    alt="Topic icon" />
+                                    <p className="PostMain-nickname">{currentPost.nickname}</p>
+                                </div>
+                            </a>
+                            <div className='PostMain-ts' title={ts}>{relTime}</div>
+                        </div>
+                        <div className='PostMain-subtitle'>{currentPost.subtitle}</div>
+                    </div>
+                </div>
+            )
+        }
 
         return (
             <div className="PostMain">
                 {modal}
-                {controls}
-                {video}
-                {image}
-                {subtitle}
-                <div className="PostMain-post">{currentElem}</div>
+                {postMain}
             </div>
         )
     }
