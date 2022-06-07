@@ -1,13 +1,18 @@
 .PostMain-container {
     display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .PostMain-post {
     display: flex;
+    width: 600px;
     height: 675px;
     flex-direction: column;
-    flex-grow: 1;
     background-color: var(--mid-grey);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-left: 20px;
 }
 
 .PostMain-title {
@@ -148,10 +153,11 @@
     }
 }
 
-.PostMain-video, .PostMain-imageContainer, .PostMain-subtitleContainer {
+.PostMain-video, .PostMain-imageContainer {
     width: 1200px;
     max-width: 100%;
-    margin: auto;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .PostMain-video {
