@@ -7,7 +7,7 @@
     padding: 10px 0;
     flex: 1;
     text-align: center;
-    background-color: var(--dark-grey);
+    background-color: var(--light-grey);
     color: white;
 
     transition: background-color 0.1s;

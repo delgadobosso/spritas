@@ -189,7 +189,7 @@ export default class PostMain extends React.PureComponent {
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
                         video = (
                         <div className="PostMain-video">
-                            <iframe width="100%" height="675"
+                            <iframe className='PostMain-videoElem' width="100%" height="675"
                                 id={`PostMainVideo-${currentPost.id}`}
                                 title="Embedded-Video" allowFullScreen
                                 src={embedSrc}>
@@ -199,7 +199,7 @@ export default class PostMain extends React.PureComponent {
                 } else if (currentPost.link) {
                     video = (
                         <div className='PostMain-video'>
-                            <video src={link} controls width="100%"></video>
+                            <video className='PostMain-videoElem' src={link} controls width="100%"></video>
                         </div>
                     )
                 }
@@ -241,7 +241,7 @@ export default class PostMain extends React.PureComponent {
                 <div className='PostMain-container'>
                     {media}
                     <div className='PostMain-post'>
-                        <h2 className='PostMain-title'>{currentPost.title}</h2>
+                        <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
                         <div className='PostMain-info'>
                             <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}>
                                 <div className="PostMain-user">
@@ -253,6 +253,8 @@ export default class PostMain extends React.PureComponent {
                             {time}
                         </div>
                         {subtitle}
+                        <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
+                        {this.props.update}
                     </div>
                 </div>
             )

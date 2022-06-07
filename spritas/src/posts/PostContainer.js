@@ -144,9 +144,6 @@ export default class PostContainer extends React.Component {
     render() {
         const id = (this.state.post) ? this.state.post.id : "";
 
-        const title = (this.state.post && this.state.post.title) ? he.decode(this.state.post.title) : "";
-        const main = (this.state.main) ? <PostMain posts={this.state.main} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} /> : null;
-
         if (this.state.post) {
             var update;
             if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update !== 'DELE' && this.props.user.type !== "BAN") {
@@ -158,6 +155,8 @@ export default class PostContainer extends React.Component {
                     </div>);
             }
         }
+
+        const main = (this.state.main) ? <PostMain posts={this.state.main} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} update={update} /> : null;
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <h2 className="PostContainer-reply-header">You Are Banned</h2>;
