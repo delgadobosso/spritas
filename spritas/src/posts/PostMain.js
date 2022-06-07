@@ -16,7 +16,8 @@ export default class PostMain extends React.PureComponent {
         this.goToPost = this.goToPost.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.state = ({
-            modal: false
+            modal: false,
+            toggleTime: false
         });
     }
 
@@ -155,15 +156,14 @@ export default class PostMain extends React.PureComponent {
             )
         }
 
-        const subtitle = (currentPost.subtitle) ?
-        <div className='PostMain-subtitleContainer'>
-            <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3>
-        </div> : null;
-
         var ts = new Date(currentPost.ts);
         var relTime = relativeTime(currentPost.ts);
         ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
         relTime = `Posted ${relTime}`;
+
+        const time = (!this.state.toggleTime) ?
+        <p className="PostMain-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
+        <p className="PostMain-ts" title={relTime} onClick={() => this.setState({ toggleTime: false})}>{ts}</p>;
 
         var modal;
         var video;
@@ -234,6 +234,8 @@ export default class PostMain extends React.PureComponent {
 
         var postMain;
         const avatar = (currentPost.avatar) ? `/media/avatars/${currentPost.avatar}` : pfp;
+        const subtitle = (currentPost.subtitle) ?
+            <h4 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h4> : null;
         if (currentPost.type === "IMG" || currentPost.type === "VIDO") {
             postMain = (
                 <div className='PostMain-container'>
@@ -248,9 +250,9 @@ export default class PostMain extends React.PureComponent {
                                     <p className="PostMain-nickname">{currentPost.nickname}</p>
                                 </div>
                             </a>
-                            <div className='PostMain-ts' title={ts}>{relTime}</div>
+                            {time}
                         </div>
-                        <div className='PostMain-subtitle'>{currentPost.subtitle}</div>
+                        {subtitle}
                     </div>
                 </div>
             )
