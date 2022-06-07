@@ -50,7 +50,8 @@
 }
 
 .PostModal-imageButton {
-    background-color: white;
+    color: white;
+    background-color: var(--light-grey);
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 10px;
@@ -63,6 +64,7 @@
 }
 @media (hover: hover) {
     .PostModal-imageButton:hover {
-        background-color: red;
+        color: black;
+        background-color: var(--spritan-gold);
     }
 }

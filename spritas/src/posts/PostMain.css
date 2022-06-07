@@ -184,6 +184,11 @@
     transition: background-color 0.5s;
 }
 
+.PostMain-image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
 .PostMain-gradientTop, .PostMain-gradientBot {
     position: absolute;
     width: 1200px;
