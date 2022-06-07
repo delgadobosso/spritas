@@ -6,8 +6,9 @@ import { regex_video } from '../functions/constants';
 import PostModal from './PostModal';
 import pfp from '../images/pfp.png';
 import relativeTime from '../functions/relativeTime';
+import PureIframe from '../other/PureIframe';
 
-export default class PostMain extends React.PureComponent {
+export default class PostMain extends React.Component {
     constructor(props) {
         super(props);
         this.hashHandle = this.hashHandle.bind(this);
@@ -23,15 +24,6 @@ export default class PostMain extends React.PureComponent {
 
     componentDidMount() {
         window.addEventListener('hashchange', this.hashHandle);
-    }
-
-    componentDidUpdate() {
-        const currentPost = this.props.posts[this.props.current - 1];
-        var ifram = document.getElementById(`PostMainVideo-${currentPost.id}`);
-        if (ifram) {
-            ifram.remove();
-            document.getElementsByClassName('PostMain-video')[0].appendChild(ifram);
-        }
     }
 
     componentWillUnmount() {
@@ -189,11 +181,7 @@ export default class PostMain extends React.PureComponent {
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
                         video = (
                         <div className="PostMain-video">
-                            <iframe className='PostMain-videoElem' width="100%" height="675"
-                                id={`PostMainVideo-${currentPost.id}`}
-                                title="Embedded-Video" allowFullScreen
-                                src={embedSrc}>
-                            </iframe>
+                            <PureIframe src={embedSrc} width="100%" height="675" />
                         </div>);
                     }
                 } else if (currentPost.link) {

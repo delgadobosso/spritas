@@ -7,7 +7,8 @@
 .PostMain-post {
     display: flex;
     width: 600px;
-    height: 675px;
+    height: max-content;
+    max-height: 675px;
     flex-direction: column;
     background-color: var(--mid-grey);
     border-radius: 10px;
