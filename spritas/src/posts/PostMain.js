@@ -232,12 +232,13 @@ export default class PostMain extends React.PureComponent {
                 break;
         }
 
-        var postMain;
         const avatar = (currentPost.avatar) ? `/media/avatars/${currentPost.avatar}` : pfp;
         const subtitle = (currentPost.subtitle) ?
             <h4 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h4> : null;
-        if (currentPost.type === "IMG" || currentPost.type === "VIDO") {
-            postMain = (
+
+        return (
+            <div className="PostMain">
+                {modal}
                 <div className='PostMain-container'>
                     {media}
                     <div className='PostMain-post'>
@@ -257,13 +258,6 @@ export default class PostMain extends React.PureComponent {
                         {this.props.update}
                     </div>
                 </div>
-            )
-        }
-
-        return (
-            <div className="PostMain">
-                {modal}
-                {postMain}
             </div>
         )
     }
