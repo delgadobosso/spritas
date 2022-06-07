@@ -16,6 +16,7 @@ export default class PostMain extends React.Component {
         this.right = this.right.bind(this);
         this.goToPost = this.goToPost.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
+        this.delete = this.delete.bind(this);
         this.state = ({
             modal: false,
             toggleTime: false
@@ -80,6 +81,24 @@ export default class PostMain extends React.Component {
                 window.history.go(-1);
             }
         });
+    }
+
+    delete(post) {
+        var answer = prompt(`Are you sure you want to delete this post?\nType "${post.title}" to confirm:`, '');
+        if (answer === post.title) {
+            var myBody = new URLSearchParams();
+            myBody.append('ogid', this.props.posts[0].id);
+            myBody.append('currentid', post.id);
+
+            fetch('/delete/post', {
+                method: 'POST',
+                body: myBody
+            })
+            .then((resp) => {
+                if (resp.ok) window.location.href = '/';
+                else console.error('Post deletion error');
+            });
+        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
 
     render() {
@@ -224,26 +243,48 @@ export default class PostMain extends React.Component {
         const subtitle = (currentPost.subtitle) ?
             <h4 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h4> : null;
 
+        var update;
+        var deletePost;
+        var report;
+        if (this.props.user && this.props.user.id === currentPost.idUser && currentPost.update !== 'DELE' && this.props.user.type !== 'BAN') {
+            update = <div className='PostMain-optionItem'>Update Post</div>;
+            deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post</div>;
+        } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.update !== 'DELE') {
+            deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post As Admin</div>;
+        } else if (this.props.user && this.props.user.type !== 'BAN') {
+            report = <div className='PostMain-optionItem PostMain-optionItemRed'>Report Post</div>;
+        }
+
+        const options = (update || deletePost || report) ? (
+            <div className='PostMain-option'>
+                {update}
+                {deletePost}
+                {report}
+            </div>
+        ) : null;
+
         return (
             <div className="PostMain">
                 {modal}
                 <div className='PostMain-container'>
                     {media}
-                    <div className='PostMain-post'>
-                        <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
-                        <div className='PostMain-info'>
-                            <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}>
-                                <div className="PostMain-user">
-                                    <img className="PostMain-img" src={avatar}
-                                    alt="Topic icon" />
-                                    <p className="PostMain-nickname">{currentPost.nickname}</p>
-                                </div>
-                            </a>
-                            {time}
+                    <div className='PostMain-postOption'>
+                        <div className='PostMain-post'>
+                            <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
+                            <div className='PostMain-info'>
+                                <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}>
+                                    <div className="PostMain-user">
+                                        <img className="PostMain-img" src={avatar}
+                                        alt="Topic icon" />
+                                        <p className="PostMain-nickname">{currentPost.nickname}</p>
+                                    </div>
+                                </a>
+                                {time}
+                            </div>
+                            {subtitle}
+                            <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
                         </div>
-                        {subtitle}
-                        <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
-                        {this.props.update}
+                        {options}
                     </div>
                 </div>
             </div>

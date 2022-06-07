@@ -13,7 +13,6 @@ export default class PostContainer extends React.Component {
         this.scrollTop = this.scrollTop.bind(this);
         this.loadReplies = this.loadReplies.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
-        this.delete = this.delete.bind(this);
         this.setCurrent = this.setCurrent.bind(this);
         this.state = {
             main: null,
@@ -118,25 +117,6 @@ export default class PostContainer extends React.Component {
         }
     }
 
-    delete() {
-        const post = (this.state.main) ? this.state.main[this.state.current - 1] : null;
-        var answer = prompt(`Are you sure you want to delete this post?\nType "${this.state.post.title}" to confirm:`, '');
-        if (answer === this.state.post.title) {
-            var myBody = new URLSearchParams();
-            myBody.append('ogid', this.state.post.id);
-            myBody.append('currentid', post.id);
-
-            fetch('/delete/post', {
-                method: 'POST',
-                body: myBody
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/';
-                else console.error('Post deletion error');
-            });
-        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
-    }
-
     setCurrent(value) {
         this.setState({ current: value });
     }
@@ -144,19 +124,7 @@ export default class PostContainer extends React.Component {
     render() {
         const id = (this.state.post) ? this.state.post.id : "";
 
-        if (this.state.post) {
-            var update;
-            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update !== 'DELE' && this.props.user.type !== "BAN") {
-                update = <UpdatePost post={this.state.post} user={this.props.user} currentPost={this.state.main[this.state.current - 1]} />;
-            } else if (this.props.user && this.props.user.type === 'ADMN' && this.state.post.update !== 'DELE') {
-                update = (
-                    <div className='PostContainer-controls'>
-                        <div className='UpdatePost-controlItem UpdatePost-delete' onClick={this.delete}>Delete Post As Admin</div>
-                    </div>);
-            }
-        }
-
-        const main = (this.state.main) ? <PostMain posts={this.state.main} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} update={update} /> : null;
+        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} /> : null;
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <h2 className="PostContainer-reply-header">You Are Banned</h2>;
