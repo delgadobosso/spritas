@@ -191,19 +191,6 @@
     max-height: 100%;
 }
 
-.PostMain-gradientTop, .PostMain-gradientBot {
-    position: absolute;
-    width: 1200px;
-    max-width: 100%;
-    height: 675px;
-}
-.PostMain-gradientTop {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0) 30px);
-}
-.PostMain-gradientBot {
-    background: linear-gradient(to top, rgba(0,0,0,0.2), rgba(0, 0, 0, 0) 30px);
-}
-
 .PostMain-view {
     position: absolute;
     color: white;
