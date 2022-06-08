@@ -31,6 +31,15 @@ export default class PostMain extends React.Component {
         window.removeEventListener('hashchange', this.hashHandle);
     }
 
+    componentDidUpdate() {
+        const currentPost = this.props.posts[this.props.current - 1];
+        var ifram = document.getElementById(`PostMainVideo-${currentPost.id}`);
+        if (ifram) {
+            ifram.remove();
+            document.getElementsByClassName('PostMain-video')[0].appendChild(ifram);
+        }
+    }
+
     hashHandle(e) {
         if (e.oldURL.split('#')[1] === `image${this.props.current}`) {
             const modal = document.getElementById('PostModal-' + this.props.posts[this.props.current - 1].id);
@@ -112,10 +121,10 @@ export default class PostMain extends React.Component {
             const nodes = posts.map((post, index) => {
                 var fill, r;
                 if (this.props.current - 1 === index) {
-                    fill = 'red';
+                    fill = 'var(--spritan-gold)';
                     r = '15';
                 } else {
-                    fill = 'black';
+                    fill = 'var(--darkest-grey)';
                     r = '8';
                 }
 
@@ -132,17 +141,17 @@ export default class PostMain extends React.Component {
 
             const nodeStyle = { transform: `translate(-${60 * (this.props.current - 1)}px)` };
             const leftArrow = (this.props.current === 1)
-            ? { backgroundColor: 'grey' } : { backgroundColor: 'var(--spritan-red)' };
+            ? 'var(--darkest-grey)' : 'white';
             const rightArrow = (this.props.current === length)
-            ? { backgroundColor: 'grey' } : { backgroundColor: 'var(--spritan-red)' };
+            ? 'var(--darkest-grey)' : 'white' ;
 
             var controls = (
                 <div className="PostMain-controls">
                     <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
-                        viewBox='0 0 80 40' onClick={this.left} style={leftArrow}>
+                        viewBox='0 0 80 40' onClick={this.left}>
                         <title>Previous Update</title>
                         <path className='PostMain-arrowL' d='M 40 10 L 30 20 L 40 30'
-                            stroke='white' strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
+                            stroke={leftArrow} strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
                             fill='none' />
                     </svg>
 
@@ -150,17 +159,17 @@ export default class PostMain extends React.Component {
                         <svg overflow='visible' x='50%'>
                             <g className='PostMain-nodeContainer' style={nodeStyle}>
                                 <line x1='0' y1='50%' x2={60 * (length - 1)} y2='50%'
-                                    stroke='black' strokeWidth='3px' />
+                                    stroke='var(--darkest-grey)' strokeWidth='3px' />
                                 {nodes}
                             </g>
                         </svg>
                     </svg>
 
                     <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
-                        viewBox='0 0 80 40' onClick={this.right} style={rightArrow}>
+                        viewBox='0 0 80 40' onClick={this.right}>
                         <title>Next Update</title>
                         <path className='PostMain-arrowR' d='M 35 10 L 45 20 L 35 30'
-                            stroke='white' strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
+                            stroke={rightArrow} strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
                             fill='none' />
                     </svg>
                 </div>
@@ -200,7 +209,7 @@ export default class PostMain extends React.Component {
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
                         video = (
                         <div className="PostMain-video">
-                            <PureIframe src={embedSrc} width="100%" height="675" />
+                            <PureIframe src={embedSrc} width="100%" height="675" id={currentPost.id} />
                         </div>);
                     }
                 } else if (currentPost.link) {
@@ -281,6 +290,7 @@ export default class PostMain extends React.Component {
                                 </a>
                                 {time}
                             </div>
+                            {controls}
                             {subtitle}
                             <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
                         </div>
