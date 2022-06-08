@@ -43,7 +43,7 @@ export default class TopicPortal extends React.Component {
 
         return (
             <div className="TopicPortal" id={`TopicPortal-${this.props.id}`}>
-                {controls}
+                {/* {controls} */}
                 {this.props.topics}
                 <div className='TopicPortal-posts'>
                     {this.props.posts}

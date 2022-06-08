@@ -15,11 +15,6 @@ export default class TopicContainer extends React.Component {
     }
 
     render() {
-        var controls = [];
-        // if (this.props.user && this.props.user.type === "ADMN") {
-        //     controls.push(<a className="TopicPortal-control-item" href={`/create/topic`} key="0">Create Root Topic</a>);
-        // }
-
         return (
             <div id={`TopicContainer-${this.props.topic.id}`} className="Container">
                 <div className="Container-header" onClick={this.scrollTo}>

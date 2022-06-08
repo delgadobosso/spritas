@@ -5,8 +5,6 @@ a {
 
 
 .Topic {
-    border-left: thick solid var(--spritan-gold);
-    margin-bottom: 10px;
     overflow-y: scroll;
 
     -moz-user-select: none;

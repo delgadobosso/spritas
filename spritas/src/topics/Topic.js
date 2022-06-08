@@ -191,7 +191,6 @@ export default class Topic extends React.Component {
 
     render() {
         const topic = this.props.topic;
-        const title = he.decode(topic.name);
 
         const subtopics = (this.state.subtopics) ?
         <div className="Subtopic" id={"Subtopic-" + topic.name.replace(" ", "")}>
