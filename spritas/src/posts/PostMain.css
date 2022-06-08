@@ -10,7 +10,6 @@
     width: 600px;
     height: max-content;
     max-height: 675px;
-    margin-left: 20px;
 }
 
 .PostMain-post {
@@ -165,6 +164,7 @@
     max-width: 100%;
     border-radius: 10px;
     overflow: hidden;
+    margin-right: 20px;
     background-color: var(--mid-grey);
 }
 
@@ -246,6 +246,7 @@
     .PostMain-video, .PostMain-imageContainer {
         width: 960px;
         height: 540px;
+        margin-right: 0;
     }
 }
 

@@ -31,15 +31,6 @@ export default class PostMain extends React.Component {
         window.removeEventListener('hashchange', this.hashHandle);
     }
 
-    componentDidUpdate() {
-        const currentPost = this.props.posts[this.props.current - 1];
-        var ifram = document.getElementById(`PostMainVideo-${currentPost.id}`);
-        if (ifram) {
-            ifram.remove();
-            document.getElementsByClassName('PostMain-video')[0].appendChild(ifram);
-        }
-    }
-
     hashHandle(e) {
         if (e.oldURL.split('#')[1] === `image${this.props.current}`) {
             const modal = document.getElementById('PostModal-' + this.props.posts[this.props.current - 1].id);
