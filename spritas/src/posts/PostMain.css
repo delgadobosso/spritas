@@ -152,7 +152,7 @@
     transition: transform 0.5s;
 }
 
-.PostMain-node {
+.PostMain-node, .PostMain-nodeCurrent {
     transition: fill 0.25s, r 0.25s;
 }
 .PostMain-nodeHit {

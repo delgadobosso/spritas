@@ -73,7 +73,7 @@ export default class PostMain extends React.Component {
     }
 
     goToPost(index) {
-        this.props.setCurrent(index);
+        if (this.props.current !== index) this.props.setCurrent(index);
     }
 
     toggleModal() {
@@ -132,6 +132,7 @@ export default class PostMain extends React.Component {
                 if (this.props.current - 1 === index) {
                     fill = 'var(--spritan-gold)';
                     r = '15';
+                    nClass = 'PostMain-nodeCurrent';
                 } else {
                     fill = 'var(--darkest-grey)';
                     r = '8';
