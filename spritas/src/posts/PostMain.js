@@ -116,25 +116,37 @@ export default class PostMain extends React.Component {
         const currentPost = posts[this.props.current - 1];
         const currentElem = <Post post={currentPost} op={true} />;
 
+        var ts = new Date(currentPost.ts);
+        var relTime = relativeTime(currentPost.ts);
+        ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        relTime = `Posted ${relTime}`;
+
+        const time = (!this.state.toggleTime) ?
+        <p className="PostMain-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
+        <p className="PostMain-ts" title={relTime} onClick={() => this.setState({ toggleTime: false})}>{ts}</p>;
+
         // Update controls
         if (length > 1) {
             const nodes = posts.map((post, index) => {
-                var fill, r;
+                var fill, r, nClass;
                 if (this.props.current - 1 === index) {
                     fill = 'var(--spritan-gold)';
                     r = '15';
                 } else {
                     fill = 'var(--darkest-grey)';
                     r = '8';
+                    nClass = 'PostMain-node'
                 }
+
+                const nodeTime = (!this.state.toggleTime) ? relTime : ts;
 
                 return (
                     <g key={index} className='PostMain-nodeHit'
                         onClick={() => this.goToPost(index + 1)}>
                         <circle cx={60 * index} cy='50%' r='25' fillOpacity='0' />
-                        <circle className='PostMain-node'
+                        <circle className={nClass}
                             cx={60 * index} cy='50%' r={r} fill={fill} />
-                        <title>{post.subtitle}</title>
+                        <title>{`"${post.subtitle}" ${nodeTime}`}</title>
                     </g>
                 )
             });
@@ -175,15 +187,6 @@ export default class PostMain extends React.Component {
                 </div>
             )
         }
-
-        var ts = new Date(currentPost.ts);
-        var relTime = relativeTime(currentPost.ts);
-        ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        relTime = `Posted ${relTime}`;
-
-        const time = (!this.state.toggleTime) ?
-        <p className="PostMain-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
-        <p className="PostMain-ts" title={relTime} onClick={() => this.setState({ toggleTime: false})}>{ts}</p>;
 
         var modal;
         var video;

@@ -132,13 +132,13 @@
 }
 
 .PostMain-arrowL, .PostMain-arrowR {
-    transition: transform 0.1s;
+    transition: transform 0.1s, stroke 0.1s;
 }
 .PostMain-arrowContainer:active .PostMain-arrowL {
-    transform: translate(-15px);
+    transform: translate(-10px);
 }
 .PostMain-arrowContainer:active .PostMain-arrowR {
-    transform: translate(15px);
+    transform: translate(10px);
 }
 
 .PostMain-update {
