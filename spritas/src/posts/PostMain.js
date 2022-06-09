@@ -279,7 +279,8 @@ export default class PostMain extends React.Component {
                         <div className='PostMain-post'>
                             <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
                             <div className='PostMain-info'>
-                                <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}>
+                                <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}
+                                className="PostMain-a">
                                     <div className="PostMain-user">
                                         <img className="PostMain-img" src={avatar}
                                         alt="Topic icon" />

@@ -50,13 +50,17 @@
     white-space: nowrap;
 }
 
+.TopicPost-a {
+    display: block;
+    max-width: 100%;
+    margin: 10px 5px 0 4px;
+}
+
 .TopicPost-user {
     display: flex;
     width: max-content;
     max-width: 100%;
     align-items: center;
-    margin-top: 5px;
-    padding: 0 5px;
     border-radius: 10px;
 
     transition: background-color 0.1s;
@@ -65,7 +69,7 @@
     background-color: var(--darkest-grey);
 }
 .TopicPost-user:active .TopicPost-img {
-    border-radius: 5px;
+    border-radius: 10px;
     filter: brightness(1.1);
 }
 
@@ -82,13 +86,13 @@
         background-color: var(--darkest-grey);
     }
     .TopicPost-user:hover .TopicPost-img {
-        border-radius: 5px;
+        border-radius: 10px;
         filter: brightness(1.1);
     }
 }
 
 .TopicPost-nickname {
-    margin-left: 5px;
+    margin: 0 5px;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -96,7 +100,7 @@
 }
 
 .TopicPost-ts {
-    margin: 0 5px 10px 5px;
+    margin: 5px 5px 10px 5px;
     font-size: 0.9rem;
     color: var(--info-grey);
     overflow: hidden;

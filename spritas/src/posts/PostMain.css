@@ -52,7 +52,12 @@
 .PostMain-info {
     display: flex;
     align-items: center;
-    margin-top: 10px;
+    margin: 10px 10px 0 10px;
+    flex-wrap: wrap;
+}
+
+.PostMain-a {
+    max-width: 100%;
 }
 
 .PostMain-user {
@@ -62,7 +67,7 @@
     align-items: center;
     padding-right: 5px;
     border-radius: 10px;
-    margin-left: 10px;
+    margin-left: -2px;
 
     transition: background-color 0.1s;
 }
@@ -83,7 +88,7 @@
 }
 
 .PostMain-nickname {
-    margin-left: 5px;
+    margin: 0 5px;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -91,8 +96,9 @@
 }
 
 .PostMain-ts {
-    margin-left: 5px;
     color: var(--info-grey);
+    font-size: 0.9rem;
+    margin: 10px 0;
 
     transition: color 0.1s;
 }
