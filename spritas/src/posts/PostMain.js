@@ -184,7 +184,12 @@ export default class PostMain extends React.Component {
         var video;
         var image;
         var media;
+        var postOp = "";
         switch(currentPost.type) {
+            case "TEXT":
+                postOp = " PostMain-postOptionText";
+                break;
+
             case "VIDO":
                 const re = new RegExp(regex_video);
                 const link = he.decode(currentPost.link);
@@ -270,7 +275,7 @@ export default class PostMain extends React.Component {
                 {modal}
                 <div className='PostMain-container'>
                     {media}
-                    <div className='PostMain-postOption'>
+                    <div className={'PostMain-postOption' + postOp}>
                         <div className='PostMain-post'>
                             <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
                             <div className='PostMain-info'>

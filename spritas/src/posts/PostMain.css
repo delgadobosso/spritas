@@ -213,21 +213,31 @@
 }
 
 @media screen and (max-width: 1620px) {
+    .PostMain-postOption {
+        width: 500px;
+    }
+    .PostMain-postOptionText {
+        width: 600px;
+    }
+
     .PostMain-video, .PostMain-imageContainer {
-        width: 640px;
-        height: 360px;
+        width: 800px;
+        height: 450px;
     }
 }
 
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 1350px) {
     .PostMain-container {
         flex-direction: column;
         align-items: center;
     }
 
     .PostMain-postOption {
+        width: 600px;
         margin-top: 20px;
-        max-height: none;
+    }
+    .PostMain-postOptionText {
+        margin-top: 0;
     }
 
     .PostMain-video, .PostMain-imageContainer {
@@ -253,6 +263,10 @@
         width: 100%;
         margin: 0;
     }
+    
+    .PostMain-postOptionText {
+        border-top: solid 5px var(--mid-grey);
+    }
 
     .PostMain-post, .PostMain-option {
         border-radius: 0;
@@ -273,6 +287,10 @@
         top: 0;
         border-radius: 0;
     }
+}
+
+.PostMain-postOptionText {
+    max-height: none;
 }
 
 @media (hover: hover) {
