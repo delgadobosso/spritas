@@ -150,7 +150,7 @@ export default class Post extends React.Component {
 
         var reply;
         if ((this.props.user && this.props.user.type === "BAN") || (this.props.blockers && this.props.blockers.includes(this.props.opid))) reply = null;
-        else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <h2 className="PostContainer-reply-header">{post.nickname} Has Blocked You From Replying</h2>;
+        else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <p className="PostContainer-banBlock">{post.nickname} Has Blocked You From Replying</p>;
         else if (this.props.user) reply = <Reply parentId={post.id} user={this.props.user} />;
 
         const replies = (this.props.reply) ?
@@ -188,18 +188,20 @@ export default class Post extends React.Component {
         return (
             <div className={"Post" + op + opreply} id={"p" + post.id}>
                 <div className="Post-main">
-                    <div className='Post-info'>
-                        <a href={`/u/${post.username}`} title={"@" + post.username}>
-                            <div className="Post-user">
-                                <img className="Post-user-img" src={avatar} alt="User" />
-                                <p className="Post-nickname">{post.nickname}{optag}</p>
-                            </div>
-                        </a>
-                        {time}
+                    <div className='Post-top'>
+                        <div className='Post-info'>
+                            <a href={`/u/${post.username}`} title={"@" + post.username}>
+                                <div className="Post-user">
+                                    <img className="Post-user-img" src={avatar} alt="User" />
+                                    <p className="Post-nickname">{post.nickname}{optag}</p>
+                                </div>
+                            </a>
+                            {time}
+                        </div>
+                        {deleteReply}
                     </div>
                     <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
                 </div>
-                {deleteReply}
                 <div className="Post-controls">
                     {collapse}
                     {load}

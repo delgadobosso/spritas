@@ -127,8 +127,8 @@ export default class PostContainer extends React.Component {
         const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} /> : null;
 
         var reply;
-        if (this.props.user && this.props.user.type === "BAN") reply = <h2 className="PostContainer-reply-header">You Are Banned</h2>;
-        else if (this.state.blockers.includes(this.state.opid)) reply = <h2 className="PostContainer-reply-header">{this.state.post.nickname} Has Blocked You From Commenting</h2>;
+        if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
+        else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Replying</p>;
         else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply parentId={id} main={true} user={this.props.user} />
 
         const loaded = (this.state.ever) ?
@@ -136,12 +136,12 @@ export default class PostContainer extends React.Component {
         const load = (this.state.more) ?
         <div className="PostContainer-load" onClick={this.loadReplies}>Load More Replies</div> : loaded;
 
-        const comment = (this.state.replies.length > 0) ? "Comments" : "No Comments";
+        const comment = (this.state.replies.length > 0) ? "Replies" : "No Replies";
 
         return (
             <div className="PostContainer">
                 {main}
-                <h2 className="PostContainer-reply-header">{comment}</h2>
+                <h2 className="PostContainer-replyHeader">{comment}</h2>
                 {reply}
                 <div className="PostContainer-replies" id="Replies">
                     {this.state.replies}
