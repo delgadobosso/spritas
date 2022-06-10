@@ -46,7 +46,7 @@ export default class PostContainer extends React.Component {
                         this.loadReplies();
                     });
                     const title = (data[0].title) ? data[0].title : '';
-                    document.title = he.decode(title) + " - The Spritas";
+                    document.title = he.decode(title);
                 }
             })
 
