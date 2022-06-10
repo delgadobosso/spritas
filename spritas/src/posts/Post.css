@@ -1,70 +1,63 @@
 .Post {
-    border-left: thick solid var(--spritan-red);
-    margin: 0 10px 50px 10px;
-    border-radius: 5px;
+    margin: 0 10px 30px 10px;
+    border-radius: 10px;
     background-color: var(--mid-grey);
-    padding: 5px;
 
     transition: border-radius 0.5s;
 }
 
-.Post-op {
-    margin: 0;
-    border-radius: 0;
-    border-color: var(--spritan-gold);
-}
-@media screen and (max-width: 1200px) {
-    .Post-op {
-        border-radius: 0;
-    }
-}
-
-.Post-replyop {
-    border-color: var(--spritan-gold);
-}
 .Post-optag {
-    font-size: 0.8em;
+    font-size: 0.9em;
     color: var(--spritan-gold);
 }
 
 .Post-main {
     display: flex;
+    flex-direction: column;
+}
+
+.Post-info {
+    display: flex;
+    align-items: center;
+    margin: 10px 5px 0 5px;
+    flex-wrap: wrap;
 }
 
 .Post-user {
     display: flex;
     align-items: center;
-    border-right: solid grey;
-    width: 200px;
+    width: max-content;
+    max-width: 100%;
+    border-radius: 10px;
 }
 
 .Post-user-img {
-    width: 64px;
-    height: 64px;
-    border-radius: 32px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
 
     transition: filter 0.5s, border-radius 0.25s;
 }
-@media (hover: hover) {
-    .Post-user-img:hover {
-        cursor: pointer;
-        border-radius: 10px;
-        filter: brightness(1.1);
-    }
+
+.Post-nickname {
+    margin: 0 5px;
+    font-weight: bold;
 }
 
-.Post-right {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+.Post-ts {
+    color: var(--info-grey);
+    font-size: 0.9rem;
+    margin: 10px 0;
+
+    transition: color 0.1s;
 }
 
 .Post-body {
-    flex-grow: 1;
+    margin: 10px;
 }
 .Post-bodyDel {
     font-style: italic;
-    color: grey;
+    color: var(--info-grey);
 }
 
 .Post-replies {
@@ -75,8 +68,13 @@
 }
 
 .Post-replies .Post {
-    margin: 5px 0;
+    margin: 0;
     border-radius: 0;
+    background-color: var(--light-grey);
+}
+
+.Post-replyop {
+    background-color: var(--lightest-grey) !important;
 }
 
 .Post-controls {
@@ -90,7 +88,7 @@
     flex-grow: 1;
     flex-basis: 0;
     padding: 10px 0;
-    background-color: var(--dark-grey);
+    background-color: var(--darkest-grey);
     color: white;
 
     transition: background-color 0.1s;
@@ -100,20 +98,14 @@
     user-select: none;
 }
 
-@media (hover: hover) {
-    .Post-collapse:hover, .Post-load:hover {
-        cursor: pointer;
-        background-color: var(--lightest-grey);
-    }
-}
-
 .Post-delete {
-    width: 64px;
-    text-align: center;
+    width: max-content;
     cursor: pointer;
-    color: black;
+    color: white;
+    background-color: var(--light-grey);
     border-radius: 5px;
-    margin-top: 10px;
+    padding: 5px;
+    margin: 0 5px;
 
     transition: color 0.1s, background-color 0.1s;
     -moz-user-select: none;
@@ -122,21 +114,28 @@
     user-select: none;
 }
 @media (hover: hover) {
+    .Post-collapse:hover, .Post-load:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
+    }
+
     .Post-delete:hover {
         color: white;
-        background-color: red;
-    }
-}
-
-
-@media screen and (max-width: 900px) {
-    .Post-main {
-        flex-direction: column;
+        background-color: var(--spritan-red);
     }
 
-    .Post-user {
-        width: initial;
-        border-right: none;
-        border-bottom: solid grey;
+    .Post-ts:hover {
+        cursor: pointer;
+        color: white;
+    }
+
+    .Post-user:hover {
+        cursor: pointer;
+        background-color: var(--darkest-grey);
+    }
+
+    .Post-user:hover .Post-user-img {
+        border-radius: 10px;
+        filter: brightness(1.1);
     }
 }

@@ -17,7 +17,8 @@ export default class Post extends React.Component {
             offset: 0,
             amount: 4,
             more: true,
-            collapsed: false
+            collapsed: false,
+            toggleTime: false
          });
     }
 
@@ -138,8 +139,12 @@ export default class Post extends React.Component {
 
         var ts = new Date(post.ts);
         var relTime = relativeTime(post.ts);
-        ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        relTime = `Posted ${relTime}`;
+        ts = `Replied at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        relTime = `Replied ${relTime}`;
+
+        const time = (!this.state.toggleTime) ?
+        <p className="Post-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
+        <p className="Post-ts" title={relTime} onClick={() => this.setState({ toggleTime: false})}>{ts}</p>;
 
         const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
@@ -177,27 +182,24 @@ export default class Post extends React.Component {
 
         const deleteReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user &&
         (this.props.user.id === post.idUser || this.props.user.type === 'ADMN') && this.props.user.type !== "BAN") ? (
-            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>X</div>
+            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>Delete</div>
         ) : null;
 
         return (
             <div className={"Post" + op + opreply} id={"p" + post.id}>
-                {deleteReply}
                 <div className="Post-main">
-                    <div className="Post-user">
-                        <a href={`/u/${post.username}`}>
-                            <img className="Post-user-img" src={avatar} title={post.username} alt="User" />
+                    <div className='Post-info'>
+                        <a href={`/u/${post.username}`} title={"@" + post.username}>
+                            <div className="Post-user">
+                                <img className="Post-user-img" src={avatar} alt="User" />
+                                <p className="Post-nickname">{post.nickname}{optag}</p>
+                            </div>
                         </a>
-                        <div className="Post-user-info">
-                            <p className="Post-user-name">{post.nickname}{optag}</p>
-                            <p className="Post-user-type">{post.userType}</p>
-                        </div>
+                        {time}
                     </div>
-                    <div className="Post-right">
-                        <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
-                        <p className="Post-footer" title={ts}>{relTime}</p>
-                    </div>
+                    <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
                 </div>
+                {deleteReply}
                 <div className="Post-controls">
                     {collapse}
                     {load}

@@ -22,7 +22,7 @@
     width: 100%;
     text-align: center;
     padding: 15px 0;
-    background-color: var(--dark-grey);
+    background-color: var(--mid-grey);
     color: white;
 
     transition: background-color 0.1s;
@@ -42,7 +42,8 @@
     width: 100%;
     text-align: center;
     padding: 15px 0;
-    background-color: var(--info-grey);
+    color: white;
+    background-color: var(--darkest-grey);
 
     -moz-user-select: none;
     -webkit-user-select: none;
