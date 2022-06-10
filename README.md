@@ -9,6 +9,9 @@
 ### Picture Post (Mobile)
 ![Screenshot_20220610-192004](https://user-images.githubusercontent.com/15951232/173161879-8f43c00d-e64c-4080-a2d2-ea0cb4055044.jpg)
 
+### Post Navigation (Desktop)
+![f13ba5ec3b804befce9f3b2e2ec886db](https://user-images.githubusercontent.com/15951232/173162548-82ea3498-79c7-4eac-b27c-373e2c5b21bd.gif)
+
 ### Post Version History
 ![fbd1f4a0563e2d75e3df71c6684bdf24](https://user-images.githubusercontent.com/15951232/173162144-c4a9e0c8-a47d-4100-aee1-356469e307c7.gif)
 
