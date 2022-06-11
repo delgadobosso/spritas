@@ -19,16 +19,21 @@
 
 .Reply-form {
     display: flex;
-    width: 1200px;
+    width: 600px;
     height: 0px;
-    margin: 0 auto;
+    margin: 0 auto 20px auto;
     overflow: hidden;
     background-color: var(--lightest-grey);
+    border-radius: 10px;
 
     transition: border-radius 0.5s, height 0.5s;
 }
 .Reply-form-open {
     height: 110px;
+}
+.Post .Reply-form {
+    border-radius: 0;
+    margin: 0;
 }
 
 .PostContainer > .Reply {

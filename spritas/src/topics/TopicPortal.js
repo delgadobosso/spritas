@@ -30,9 +30,9 @@ export default class TopicPortal extends React.Component {
 
     render() {
         const loaded = (this.state.ever) ?
-        <div className="TopicPortal-loaded" title="All Posts Loaded">All Posts Loaded</div> : null;
+        <div className="TopicPortal-loaded" title="All Posts Shown">All Posts Shown</div> : null;
         const load = (this.props.more) ?
-        <div className="TopicPortal-load" onClick={this.loadPosts} title="Load More Posts">Load More Posts</div> 
+        <div className="TopicPortal-load" onClick={this.loadPosts} title="Show More Posts">Show More Posts</div> 
         : loaded;
 
         const controls = (this.props.controls) ? (

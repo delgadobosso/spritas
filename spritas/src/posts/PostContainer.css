@@ -1,12 +1,15 @@
+.PostContainer-textType {
+    display: flex;
+    justify-content: center;
+}
+
+.PostContainer-rest {
+    margin-top: 20px;
+}
+
 .PostContainer .Reply, .PostContainer .UpdatePost, .PostContainer-controls {
     width: 100%;
     margin: auto;
-}
-
-.PostContainer-replyHeader {
-    text-align: center;
-    color: white;
-    margin: 20px;
 }
 
 .PostContainer-banBlock {
@@ -28,7 +31,7 @@
 .PostContainer-load, .PostContainer-loaded {
     width: 600px;
     text-align: center;
-    margin: 0 auto 30px auto;
+    margin: 0 auto 20px auto;
     padding: 15px 0;
     background-color: var(--mid-grey);
     color: white;
@@ -49,6 +52,14 @@
 
 .PostContainer-loaded {
     background-color: var(--darkest-grey);
+}
+
+@media screen and (max-width: 1280px) {
+    .PostContainer-textType {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
 }
 
 @media screen and (max-width: 700px) {

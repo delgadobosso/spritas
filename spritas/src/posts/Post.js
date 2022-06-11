@@ -164,7 +164,7 @@ export default class Post extends React.Component {
 
         var load = null;
         if (this.props.reply && this.state.more) {
-            load = <div className="Post-load" onClick={this.loadReplies}>Load More</div>;
+            load = <div className="Post-load" onClick={this.loadReplies}>Older Replies</div>;
         }
 
         var collapse = null;

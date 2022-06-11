@@ -270,8 +270,10 @@ export default class PostMain extends React.Component {
             </div>
         ) : null;
 
+        const typeText = (currentPost.type === "TEXT") ? " PostMain-typeText" : "";
+
         return (
-            <div className="PostMain">
+            <div className={"PostMain" + typeText}>
                 {modal}
                 <div className='PostMain-container'>
                     {media}

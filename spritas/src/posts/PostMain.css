@@ -1,3 +1,7 @@
+.PostMain-typeText {
+    margin: 0 15px 20px 0;
+}
+
 .PostMain-container {
     display: flex;
     justify-content: center;
@@ -47,6 +51,7 @@
     padding: 10px 10px;
     background-color: var(--darkest-grey);
     text-align: center;
+    word-break: break-word;
 }
 
 .PostMain-info {
@@ -241,6 +246,7 @@
 
     .PostMain-postOption {
         width: 600px;
+        max-height: none;
         margin-top: 20px;
     }
     .PostMain-postOptionText {
@@ -251,6 +257,12 @@
         width: 960px;
         height: 540px;
         margin-right: 0;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    .PostMain-typeText {
+        margin: initial;
     }
 }
 

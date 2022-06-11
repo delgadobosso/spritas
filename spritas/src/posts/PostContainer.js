@@ -132,21 +132,22 @@ export default class PostContainer extends React.Component {
         else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply parentId={id} main={true} user={this.props.user} />
 
         const loaded = (this.state.ever) ?
-        <div className="PostContainer-loaded">All Replies Loaded</div> : null;
+        <div className="PostContainer-loaded">All Replies Shown</div> : null;
         const load = (this.state.more) ?
-        <div className="PostContainer-load" onClick={this.loadReplies}>Load More Replies</div> : loaded;
+        <div className="PostContainer-load" onClick={this.loadReplies}>Show More Replies</div> : loaded;
 
-        const comment = (this.state.replies.length > 0) ? "Replies" : "No Replies";
+        const textType = (this.state.post && this.state.post.type === "TEXT") ? ' PostContainer-textType' : '';
 
         return (
-            <div className="PostContainer">
+            <div className={"PostContainer" + textType}>
                 {main}
-                <h2 className="PostContainer-replyHeader">{comment}</h2>
-                {reply}
-                <div className="PostContainer-replies" id="Replies">
-                    {this.state.replies}
+                <div className='PostContainer-rest'>
+                    {reply}
+                    <div className="PostContainer-replies" id="Replies">
+                        {this.state.replies}
+                    </div>
+                    {load}
                 </div>
-                {load}
             </div>
         )
     }
