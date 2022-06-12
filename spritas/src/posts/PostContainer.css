@@ -16,6 +16,10 @@
     color: var(--info-grey);
     font-size: 0.9em;
     text-align: center;
+    margin: 20px;
+}
+.Post .PostContainer-banBlock {
+    margin: 10px;
 }
 
 .PostContainer-replies {
@@ -57,9 +61,7 @@
 
 @media screen and (max-width: 1280px) {
     .PostContainer-textType {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
+        display: initial;
     }
 }
 
