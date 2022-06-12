@@ -51,7 +51,8 @@
 }
 
 .PostContainer-loaded {
-    background-color: var(--darkest-grey);
+    color: var(--info-grey);
+    background-color: transparent;
 }
 
 @media screen and (max-width: 1280px) {

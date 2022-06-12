@@ -139,8 +139,8 @@ export default class Post extends React.Component {
 
         var ts = new Date(post.ts);
         var relTime = relativeTime(post.ts);
-        ts = `Replied at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        relTime = `Replied ${relTime}`;
+        ts = `${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        relTime = `${relTime}`;
 
         const time = (!this.state.toggleTime) ?
         <p className="Post-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
@@ -188,10 +188,14 @@ export default class Post extends React.Component {
             <div className='Post-delete' onClick={this.delete} title='Delete Reply'>Delete</div>
         ) : null;
 
+        const reportReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user && this.props.user.id !== post.idUser && this.props.user.type !== 'ADMN' && this.props.user.type !== 'BAN') ? (
+            <div className='Post-delete' title='Report Reply'>Report</div>
+        ) : null;
+
         const actions = (
             <div className='Post-actions'>
                 {deleteReply}
-                <div className='Post-delete' title='Report Reply'>Report</div>
+                {reportReply}
             </div>
         )
 

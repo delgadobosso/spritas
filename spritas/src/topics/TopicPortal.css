@@ -68,8 +68,8 @@
 }
 
 .TopicPortal-loaded {
-    color: white;
-    background-color: var(--dark-grey);
+    color: var(--info-grey);
+    background-color: transparent;
 }
 
 .Subtopic > .TopicPortal, .UserContainer-topics > .TopicPortal {
