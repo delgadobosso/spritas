@@ -25,7 +25,7 @@ export default class Reply extends React.Component {
         var avatar = (this.props.user && this.props.user.avatar) ? `/media/avatars/${this.props.user.avatar}` : pfp;
 
         var expand = (this.state.open) ?
-        <div className="Reply-expand" onClick={this.expand}>Close Reply</div> :
+        <div className="Reply-expand" onClick={this.expand}>Close</div> :
         <div className="Reply-expand" onClick={this.expand}>Reply</div>;
         var open = (this.state.open || this.props.main) ? " Reply-form-open" : "";
         if (this.props.main) expand = null;
