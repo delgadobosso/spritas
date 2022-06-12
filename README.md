@@ -3,11 +3,14 @@
 ### Main Page
 ![Screenshot 2022-06-10 at 19-17-38 The Spritas](https://user-images.githubusercontent.com/15951232/173161714-e6f5b54f-711e-47ad-8ade-9befa3374bd5.png)
 
-### Picture Post (Desktop)
+### Image Post (Desktop)
 ![Screenshot 2022-06-10 at 19-18-57 cat](https://user-images.githubusercontent.com/15951232/173161791-65615d00-63af-47da-a5e3-9b680374c8da.png)
 
-### Picture Post (Mobile)
+### Image Post (Mobile)
 ![Screenshot_20220610-192004](https://user-images.githubusercontent.com/15951232/173161879-8f43c00d-e64c-4080-a2d2-ea0cb4055044.jpg)
+
+### Post Replies
+![comments](https://user-images.githubusercontent.com/15951232/173250261-631afa7c-b9ea-4c24-b71c-2b40a4ec9334.png)
 
 ### Post Navigation (Desktop)
 ![f13ba5ec3b804befce9f3b2e2ec886db](https://user-images.githubusercontent.com/15951232/173162548-82ea3498-79c7-4eac-b27c-373e2c5b21bd.gif)
