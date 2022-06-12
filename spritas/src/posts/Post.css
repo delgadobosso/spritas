@@ -36,6 +36,14 @@
     max-width: 100%;
     border-radius: 10px;
 }
+.Post-user:active {
+    cursor: pointer;
+    background-color: var(--darkest-grey);
+}
+.Post-user:active .Post-user-img {
+    border-radius: 10px;
+    filter: brightness(1.1);
+}
 
 .Post-user-img {
     width: 40px;
@@ -155,7 +163,6 @@
         cursor: pointer;
         background-color: var(--darkest-grey);
     }
-
     .Post-user:hover .Post-user-img {
         border-radius: 10px;
         filter: brightness(1.1);
