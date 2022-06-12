@@ -174,9 +174,12 @@ export default class Post extends React.Component {
             <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
         }
 
+        const youreply = (this.props.user.id === post.idUser) ? " Post-replyyou" : "";
+        const youtag = (youreply) ? <span className="Post-youtag" title="You"> YOU</span> : null;
+
         const op = (this.props.op) ? " Post-op" : "";
         const opreply = (this.props.opid === post.idUser) ? " Post-replyop" : "";
-        const optag = (op || opreply) ? <span className="Post-optag" title="Original Poster"> OP</span> : null;
+        const optag = ((op || opreply) && !youreply) ? <span className="Post-optag" title="Original Poster"> OP</span> : null;
 
         const deleted = (post.update === 'DELE') ? ' Post-bodyDel' : '';
 
@@ -185,22 +188,27 @@ export default class Post extends React.Component {
             <div className='Post-delete' onClick={this.delete} title='Delete Reply'>Delete</div>
         ) : null;
 
+        const actions = (
+            <div className='Post-actions'>
+                {deleteReply}
+                <div className='Post-delete' title='Report Reply'>Report</div>
+            </div>
+        )
+
         return (
-            <div className={"Post" + op + opreply} id={"p" + post.id}>
+            <div className={"Post" + op + opreply + youreply} id={"p" + post.id}>
                 <div className="Post-main">
-                    <div className='Post-top'>
-                        <div className='Post-info'>
-                            <a href={`/u/${post.username}`} title={"@" + post.username}>
-                                <div className="Post-user">
-                                    <img className="Post-user-img" src={avatar} alt="User" />
-                                    <p className="Post-nickname">{post.nickname}{optag}</p>
-                                </div>
-                            </a>
-                            {time}
-                        </div>
-                        {deleteReply}
+                    <div className='Post-info'>
+                        <a className='Post-a' href={`/u/${post.username}`} title={"@" + post.username}>
+                            <div className="Post-user">
+                                <img className="Post-user-img" src={avatar} alt="User" />
+                                <p className="Post-nickname">{post.nickname}{optag}{youtag}</p>
+                            </div>
+                        </a>
+                        {time}
                     </div>
                     <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
+                    {actions}
                 </div>
                 <div className="Post-controls">
                     {collapse}

@@ -7,7 +7,7 @@
     transition: border-radius 0.5s;
 }
 
-.Post-optag {
+.Post-optag, .Post-youtag {
     font-size: 0.9em;
     color: var(--spritan-gold);
 }
@@ -17,17 +17,16 @@
     flex-direction: column;
 }
 
-.Post-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-}
-
 .Post-info {
     display: flex;
     align-items: center;
     margin: 10px 5px 0 5px;
     flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.Post-a {
+    max-width: 100%;
 }
 
 .Post-user {
@@ -111,20 +110,29 @@
     user-select: none;
 }
 
+.Post-actions {
+    display: flex;
+}
+
 .Post-delete {
     width: max-content;
     cursor: pointer;
     color: white;
-    background-color: var(--lightest-grey);
+    background-color: var(--light-grey);
     border-radius: 10px;
     padding: 5px 10px;
-    margin: 10px;
+    margin: 0 5px 10px 5px;
+    font-size: 0.9em;
 
     transition: color 0.1s, background-color 0.1s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.Post-replyop .Post-delete {
+    background-color: var(--lightest-grey);
 }
 
 @media (hover: hover) {
