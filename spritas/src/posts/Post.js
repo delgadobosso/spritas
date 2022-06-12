@@ -174,7 +174,7 @@ export default class Post extends React.Component {
             <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
         }
 
-        const youreply = (this.props.user.id === post.idUser) ? " Post-replyyou" : "";
+        const youreply = (this.props.user && this.props.user.id === post.idUser) ? " Post-replyyou" : "";
         const youtag = (youreply) ? <span className="Post-youtag" title="You"> YOU</span> : null;
 
         const op = (this.props.op) ? " Post-op" : "";
