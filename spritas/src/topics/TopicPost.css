@@ -70,7 +70,6 @@
 }
 .TopicPost-user:active .TopicPost-img {
     border-radius: 10px;
-    filter: brightness(1.1);
 }
 
 .TopicPost-img {
@@ -78,7 +77,7 @@
     height: 40px;
     border-radius: 20px;
 
-    transition: filter 0.5s, border-radius 0.25s;
+    transition: border-radius 0.25s;
 }
 @media (hover: hover) {
     .TopicPost-user:hover {
@@ -87,7 +86,6 @@
     }
     .TopicPost-user:hover .TopicPost-img {
         border-radius: 10px;
-        filter: brightness(1.1);
     }
 }
 
@@ -119,8 +117,6 @@
     background-repeat: no-repeat;
     background-size: 300px;
     margin-top: 10px;
-
-    transition: filter 0.5s;
 }
 .TopicPost-thumbAni {
     animation-name: breathe;
@@ -134,10 +130,6 @@
 }
 
 @media (hover: hover) {
-    .TopicPost-link:hover .TopicPost-thumb {
-        filter: brightness(1.1);
-    }
-
     .TopicPost-ts:hover {
         color: white;
     }

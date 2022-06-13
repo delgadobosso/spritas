@@ -24,18 +24,6 @@ export default class UserContainer extends React.Component {
     }
 
     componentDidMount() {
-        var con = document.getElementById('UserContainer-scroll');
-        var naviTime = false;
-        var prevScroll = con.scrollTop;
-        con.onscroll = () => {
-          clearTimeout(naviTime);
-          naviTime = setTimeout(() => {
-            var down = prevScroll < con.scrollTop;
-            this.props.naviHide(down);
-            prevScroll = con.scrollTop;
-          }, 50);
-        }
-
         const name = this.props.match.params.name;
 
         fetch(`/user/info/${name}`)
