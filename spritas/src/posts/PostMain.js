@@ -109,8 +109,8 @@ export default class PostMain extends React.Component {
 
         var ts = new Date(currentPost.ts);
         var relTime = relativeTime(currentPost.ts);
-        ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        relTime = `Posted ${relTime}`;
+        ts = `${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        relTime = `${relTime}`;
 
         const time = (!this.state.toggleTime) ?
         <p className="PostMain-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :

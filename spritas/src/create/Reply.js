@@ -37,7 +37,7 @@ export default class Reply extends React.Component {
                     <img className="Reply-img" src={avatar} alt="You" />
                     <input type="hidden" name="id" id="id" value={parentId} />
                     <textarea className="Reply-text" name="reply" id="reply" rows="6" required placeholder='Reply' />
-                    <input className="Reply-submit" type="submit" value="Reply" />
+                    <input className="Reply-submit" type="submit" value="Send" />
                 </form>
             </div>
         )
