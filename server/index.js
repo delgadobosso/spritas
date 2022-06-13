@@ -668,7 +668,7 @@ app.post('/delete/post',
 
             if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
                 var deletehash = result[0].deletehash;
-                var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
+                var byWho = (req.session.user.type === 'ADMN') ? 'Deleted By Admin' : 'Deleted By User';
                 pool.query(`UPDATE posts AS p
                 SET subtitle = NULL, body = ?, p.update = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
                 WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
@@ -703,7 +703,7 @@ app.post('/delete/reply',
             if (error) return res.status(500).send(error);
 
             if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
-                var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
+                var byWho = (req.session.user.type === 'ADMN') ? 'Deleted By Admin' : 'Deleted By User';
                 pool.query(`UPDATE posts AS p
                 SET body = ?, p.update = 'DELE'
                 WHERE id = ?`, [byWho, req.body.id], (error, result, fields) => {

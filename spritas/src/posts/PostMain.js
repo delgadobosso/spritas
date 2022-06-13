@@ -184,10 +184,12 @@ export default class PostMain extends React.Component {
         var video;
         var image;
         var media;
-        var postOp = "";
+        var cardsClass = "";
+        var postOpClass = ""
         switch(currentPost.type) {
             case "TEXT":
-                postOp = " PostMain-postOptionText";
+                cardsClass = " PostMain-cardsText";
+                postOpClass = " PostMain-postOptionText";
                 break;
 
             case "VIDO":
@@ -270,32 +272,33 @@ export default class PostMain extends React.Component {
             </div>
         ) : null;
 
-        const typeText = (currentPost.type === "TEXT") ? " PostMain-typeText" : "";
-
         return (
-            <div className={"PostMain" + typeText}>
+            <div className={"PostMain"}>
                 {modal}
                 <div className='PostMain-container'>
                     {media}
-                    <div className={'PostMain-postOption' + postOp}>
-                        <div className='PostMain-post'>
-                            <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
-                            <div className='PostMain-info'>
-                                <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}
-                                className="PostMain-a">
-                                    <div className="PostMain-user">
-                                        <img className="PostMain-img" src={avatar}
-                                        alt="Topic icon" />
-                                        <p className="PostMain-nickname">{currentPost.nickname}</p>
-                                    </div>
-                                </a>
-                                {time}
+                    <div className={"PostMain-cards" + cardsClass}>
+                        <div className={"PostMain-postOption" + postOpClass}>
+                            <div className='PostMain-post'>
+                                <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
+                                <div className='PostMain-info'>
+                                    <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}
+                                    className="PostMain-a">
+                                        <div className="PostMain-user">
+                                            <img className="PostMain-img" src={avatar}
+                                            alt="Topic icon" />
+                                            <p className="PostMain-nickname">{currentPost.nickname}</p>
+                                        </div>
+                                    </a>
+                                    {time}
+                                </div>
+                                {controls}
+                                {subtitle}
+                                <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
                             </div>
-                            {controls}
-                            {subtitle}
-                            <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
+                            {options}
                         </div>
-                        {options}
+                        {this.props.rest}
                     </div>
                 </div>
             </div>

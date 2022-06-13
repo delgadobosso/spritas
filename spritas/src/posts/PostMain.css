@@ -1,19 +1,25 @@
-.PostMain-typeText {
-    margin: 0 15px 20px 0;
-}
-
 .PostMain-container {
     display: flex;
     justify-content: center;
     margin-top: 20px;
 }
 
-.PostMain-postOption {
+.PostMain-cards {
+    width: 600px;
+}
+.PostMain-cardsText {
+    display: flex;
+    justify-content: center;
+    width: initial;
+}
+
+.PostMain-postOption, .PostMain-postOptionText {
     display: flex;
     flex-direction: column;
+}
+.PostMain-postOptionText {
     width: 600px;
-    height: max-content;
-    max-height: 675px;
+    margin-bottom: 20px;
 }
 
 .PostMain-post {
@@ -124,8 +130,6 @@
     color: white;
     margin-top: 10px;
     padding: 0 15px 15px 15px;
-    flex-grow: 1;
-    overflow-y: auto;
 }
 
 .PostMain-controls {
@@ -172,30 +176,30 @@
     cursor: pointer;
 }
 
-.PostMain-video, .PostMain-imageContainer {
+.PostMain-video, .PostMain-imagePreview {
+    position: sticky;
+    top: 20px;
     width: 1200px;
     height: 675px;
     max-width: 100%;
     border-radius: 10px;
     overflow: hidden;
     margin-right: 20px;
-    background-color: var(--mid-grey);
-}
-
-.PostMain-video {
+    background-color: var(--darkest-grey);
     flex-shrink: 0;
 }
+
 .PostMain-videoElem {
     max-height: 100%;
     border: 0;
 }
 
 .PostMain-imageContainer {
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    height: 100%;
 
     transition: background-color 0.5s;
 }
@@ -220,21 +224,21 @@
 }
 
 @media screen and (max-width: 1860px) {
-    .PostMain-video, .PostMain-imageContainer {
+    .PostMain-video, .PostMain-imagePreview {
         width: 960px;
         height: 540px;
     }
 }
 
 @media screen and (max-width: 1620px) {
-    .PostMain-postOption {
+    .PostMain-cards {
         width: 500px;
     }
-    .PostMain-postOptionText {
-        width: 600px;
+    .PostMain-cardsText {
+        width: initial;
     }
 
-    .PostMain-video, .PostMain-imageContainer {
+    .PostMain-video, .PostMain-imagePreview {
         width: 800px;
         height: 450px;
     }
@@ -246,30 +250,25 @@
         align-items: center;
     }
 
-    .PostMain-postOption {
+    .PostMain-cards {
         width: 600px;
-        max-height: none;
         margin-top: 20px;
     }
-    .PostMain-postOptionText {
+    .PostMain-cardsText {
+        display: initial;
         margin-top: 0;
     }
 
-    .PostMain-video, .PostMain-imageContainer {
+    .PostMain-video, .PostMain-imagePreview {
         width: 960px;
         height: 540px;
         margin-right: 0;
-    }
-}
-
-@media screen and (max-width: 1280px) {
-    .PostMain-typeText {
-        margin: initial;
+        top: -1px;
     }
 }
 
 @media screen and (max-width: 1000px) {
-    .PostMain-video, .PostMain-imageContainer {
+    .PostMain-video, .PostMain-imagePreview {
         width: 640px;
         height: 360px;
     }
@@ -280,13 +279,16 @@
         margin: 0;
     }
 
-    .PostMain-postOption {
+    .PostMain-cards {
         width: 100%;
         margin: 0;
     }
-    
+    .PostMain-cardsText {
+        display: initial;
+    }
+
     .PostMain-postOptionText {
-        border-top: solid 5px var(--mid-grey);
+        width: initial;
     }
 
     .PostMain-post, .PostMain-option {
@@ -294,7 +296,6 @@
     }
 
     .PostMain-video, .PostMain-imagePreview {
-        position: relative;
         width: 100%;
         height: 0;
         padding-bottom: 56.25%;
@@ -308,10 +309,6 @@
         top: 0;
         border-radius: 0;
     }
-}
-
-.PostMain-postOptionText {
-    max-height: none;
 }
 
 @media (hover: hover) {

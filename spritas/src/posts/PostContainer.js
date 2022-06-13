@@ -85,8 +85,10 @@ export default class PostContainer extends React.Component {
                         blockers={this.state.blockers} />
                 );
                 var rep = document.getElementById('Replies');
-                let maxHeight = rep.scrollHeight;
-                rep.style.height = maxHeight + "px";
+                if (rep) {
+                    let maxHeight = rep.scrollHeight;
+                    rep.style.height = maxHeight + "px";
+                }
                 this.setState(state => ({
                     replies: [...state.replies, ...moreReplies]
                 }), () => this.extendReplies())
@@ -124,8 +126,6 @@ export default class PostContainer extends React.Component {
     render() {
         const id = (this.state.post) ? this.state.post.id : "";
 
-        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} /> : null;
-
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
         else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Replying</p>;
@@ -136,18 +136,24 @@ export default class PostContainer extends React.Component {
         const load = (this.state.more) ?
         <div className="PostContainer-load" onClick={this.loadReplies}>Show More Replies</div> : loaded;
 
-        const textType = (this.state.post && this.state.post.type === "TEXT") ? ' PostContainer-textType' : '';
+        var restClass = "";
+        if (this.state.post && this.state.post.type === "TEXT") restClass = " PostContainer-restText";
+
+        const rest = (this.state.replies.length > 0 || reply) ? (
+            <div className={'PostContainer-rest' + restClass}>
+                {reply}
+                <div className="PostContainer-replies" id="Replies">
+                    {this.state.replies}
+                </div>
+                {load}
+            </div>
+        ) : null;
+
+        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} /> : null;
 
         return (
-            <div className={"PostContainer" + textType}>
+            <div className={"PostContainer"}>
                 {main}
-                <div className='PostContainer-rest'>
-                    {reply}
-                    <div className="PostContainer-replies" id="Replies">
-                        {this.state.replies}
-                    </div>
-                    {load}
-                </div>
             </div>
         )
     }

@@ -28,7 +28,12 @@ export default class Reply extends React.Component {
         <div className="Reply-expand" onClick={this.expand}>Close</div> :
         <div className="Reply-expand" onClick={this.expand}>Reply</div>;
         var open = (this.state.open || this.props.main) ? " Reply-form-open" : "";
-        if (this.props.main) expand = null;
+
+        var placeholder = "Reply";
+        if (this.props.main) {
+            expand = null;
+            placeholder = "Comment";
+        }
 
         return (
             <div className="Reply">
@@ -36,7 +41,7 @@ export default class Reply extends React.Component {
                 <form action="/create/reply" className={"Reply-form" + open} method="POST">
                     <img className="Reply-img" src={avatar} alt="You" />
                     <input type="hidden" name="id" id="id" value={parentId} />
-                    <textarea className="Reply-text" name="reply" id="reply" rows="6" required placeholder='Reply' />
+                    <textarea className="Reply-text" name="reply" id="reply" rows="6" required placeholder={placeholder} />
                     <input className="Reply-submit" type="submit" value="Send" />
                 </form>
             </div>
