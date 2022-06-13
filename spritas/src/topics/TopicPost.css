@@ -1,14 +1,14 @@
 .TopicPost {
     width: 300px;
-    margin: 0 10px 20px 10px;
-    background-color: #d5c19c;
+    margin: 0 0 20px 20px;
+    background-color: var(--dark-grey);
     border-radius: 10px;
     overflow: hidden;
 }
 
 .TopicPost-link {
     display: block;
-    background-color: wheat;
+    background-color: var(--light-grey);
     border-radius: 10px;
     overflow: hidden;
 
@@ -16,7 +16,7 @@
 }
 @media (hover: hover) {
     .TopicPost-link:hover {
-        background-color: lightskyblue;
+        background-color: var(--lightest-grey);
         cursor: pointer;
     }
 }
@@ -32,7 +32,7 @@
 }
 
 .TopicPost-name {
-    color: #ab0f26;
+    color: white;
     margin: 0 10px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -40,8 +40,8 @@
 }
 
 .TopicPost-subName {
-    color: white;
-    background-color: #ab0f26;
+    color: black;
+    background-color: var(--info-grey);
     border-radius: 5px;
     margin: 0 5px;
     padding: 0 10px;
@@ -50,22 +50,26 @@
     white-space: nowrap;
 }
 
+.TopicPost-a {
+    display: block;
+    max-width: 100%;
+    margin: 10px 5px 0 4px;
+}
+
 .TopicPost-user {
     display: flex;
     width: max-content;
     max-width: 100%;
     align-items: center;
-    margin-top: 5px;
-    padding: 0 5px;
-    border-radius: 5px;
+    border-radius: 10px;
 
     transition: background-color 0.1s;
 }
 .TopicPost-user:active {
-    background-color: lightsalmon;
+    background-color: var(--darkest-grey);
 }
 .TopicPost-user:active .TopicPost-img {
-    border-radius: 5px;
+    border-radius: 10px;
     filter: brightness(1.1);
 }
 
@@ -79,16 +83,16 @@
 @media (hover: hover) {
     .TopicPost-user:hover {
         cursor: pointer;
-        background-color: lightsalmon;
+        background-color: var(--darkest-grey);
     }
     .TopicPost-user:hover .TopicPost-img {
-        border-radius: 5px;
+        border-radius: 10px;
         filter: brightness(1.1);
     }
 }
 
 .TopicPost-nickname {
-    margin-left: 5px;
+    margin: 0 5px;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -96,9 +100,9 @@
 }
 
 .TopicPost-ts {
-    margin: 0 5px 5px 5px;
+    margin: 5px 5px 10px 5px;
     font-size: 0.9rem;
-    color: rgb(96, 96, 96);
+    color: var(--info-grey);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -111,12 +115,24 @@
     width: 100%;
     height: 150px;
     background-position: center;
-    background-color: black;
+    background-color: var(--mid-grey);
     background-repeat: no-repeat;
+    background-size: 300px;
     margin-top: 10px;
 
     transition: filter 0.5s;
 }
+.TopicPost-thumbAni {
+    animation-name: breathe;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+@keyframes breathe {
+    from { background-color: var(--mid-grey); }
+    to { background-color: var(--light-grey); }
+}
+
 @media (hover: hover) {
     .TopicPost-link:hover .TopicPost-thumb {
         filter: brightness(1.1);
@@ -124,5 +140,16 @@
 
     .TopicPost-ts:hover {
         color: white;
+    }
+}
+
+@media screen and (max-width: 716px) {
+    .TopicPost, .TopicPost-link {
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .TopicPost {
+        margin: 0 0 20px 0;
     }
 }

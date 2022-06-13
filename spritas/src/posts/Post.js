@@ -17,7 +17,8 @@ export default class Post extends React.Component {
             offset: 0,
             amount: 4,
             more: true,
-            collapsed: false
+            collapsed: false,
+            toggleTime: false
          });
     }
 
@@ -138,14 +139,18 @@ export default class Post extends React.Component {
 
         var ts = new Date(post.ts);
         var relTime = relativeTime(post.ts);
-        ts = `Posted at ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        relTime = `Posted ${relTime}`;
+        ts = `${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        relTime = `${relTime}`;
+
+        const time = (!this.state.toggleTime) ?
+        <p className="Post-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
+        <p className="Post-ts" title={relTime} onClick={() => this.setState({ toggleTime: false})}>{ts}</p>;
 
         const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
         var reply;
         if ((this.props.user && this.props.user.type === "BAN") || (this.props.blockers && this.props.blockers.includes(this.props.opid))) reply = null;
-        else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <h2 className="PostContainer-reply-header">{post.nickname} Has Blocked You From Replying</h2>;
+        else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <p className="PostContainer-banBlock">{post.nickname} Has Blocked You From Replying</p>;
         else if (this.props.user) reply = <Reply parentId={post.id} user={this.props.user} />;
 
         const replies = (this.props.reply) ?
@@ -159,7 +164,7 @@ export default class Post extends React.Component {
 
         var load = null;
         if (this.props.reply && this.state.more) {
-            load = <div className="Post-load" onClick={this.loadReplies}>Load More</div>;
+            load = <div className="Post-load" onClick={this.loadReplies}>Older Replies</div>;
         }
 
         var collapse = null;
@@ -167,36 +172,47 @@ export default class Post extends React.Component {
             collapse = (this.state.collapsed) ?
             <div className="Post-collapse" onClick={this.collapse}>Show Replies</div> :
             <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
-        } else if (this.props.reply) collapse = <div className="Post-gap" />;
+        }
+
+        const youreply = (this.props.user && this.props.user.id === post.idUser) ? " Post-replyyou" : "";
+        const youtag = (youreply) ? <span className="Post-youtag" title="You"> YOU</span> : null;
 
         const op = (this.props.op) ? " Post-op" : "";
         const opreply = (this.props.opid === post.idUser) ? " Post-replyop" : "";
-        const optag = (op || opreply) ? <span className="Post-optag" title="Original Poster"> OP</span> : null;
+        const optag = ((op || opreply) && !youreply) ? <span className="Post-optag" title="Original Poster"> OP</span> : null;
 
         const deleted = (post.update === 'DELE') ? ' Post-bodyDel' : '';
 
         const deleteReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user &&
         (this.props.user.id === post.idUser || this.props.user.type === 'ADMN') && this.props.user.type !== "BAN") ? (
-            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>X</div>
+            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>Delete</div>
         ) : null;
 
-        return (
-            <div className={"Post" + op + opreply} id={"p" + post.id}>
+        const reportReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user && this.props.user.id !== post.idUser && this.props.user.type !== 'ADMN' && this.props.user.type !== 'BAN') ? (
+            <div className='Post-delete' title='Report Reply'>Report</div>
+        ) : null;
+
+        const actions = (
+            <div className='Post-actions'>
                 {deleteReply}
+                {reportReply}
+            </div>
+        )
+
+        return (
+            <div className={"Post" + op + opreply + youreply} id={"p" + post.id}>
                 <div className="Post-main">
-                    <div className="Post-user">
-                        <a href={`/u/${post.username}`}>
-                            <img className="Post-user-img" src={avatar} title={post.username} alt="User" />
+                    <div className='Post-info'>
+                        <a className='Post-a' href={`/u/${post.username}`} title={"@" + post.username}>
+                            <div className="Post-user">
+                                <img className="Post-user-img" src={avatar} alt="User" />
+                                <p className="Post-nickname">{post.nickname}{optag}{youtag}</p>
+                            </div>
                         </a>
-                        <div className="Post-user-info">
-                            <p className="Post-user-name">{post.nickname}{optag}</p>
-                            <p className="Post-user-type">{post.userType}</p>
-                        </div>
+                        {time}
                     </div>
-                    <div className="Post-right">
-                        <div className={"Post-body" + deleted}>{he.decode(post.body)}</div>
-                        <div className="Post-footer" title={ts}>{relTime}</div>
-                    </div>
+                    <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
+                    {actions}
                 </div>
                 <div className="Post-controls">
                     {collapse}

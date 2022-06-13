@@ -8,6 +8,20 @@ export default class TopicPortal extends React.Component {
         this.state = {ever: false};
     }
 
+    componentDidMount() {
+        var con = document.getElementById(`TopicPortal-${this.props.id}`);
+        var naviTime = false;
+        var prevScroll = con.scrollTop;
+        con.onscroll = () => {
+          clearTimeout(naviTime);
+          naviTime = setTimeout(() => {
+            var down = prevScroll < con.scrollTop;
+            this.props.naviHide(down);
+            prevScroll = con.scrollTop;
+          }, 50);
+        }
+    }
+
     loadPosts() {
         this.props.load();
 
@@ -16,12 +30,10 @@ export default class TopicPortal extends React.Component {
 
     render() {
         const loaded = (this.state.ever) ?
-        <div className="TopicPortal-loaded" title="All Posts Loaded">All Posts Loaded</div> : null;
+        <div className="TopicPortal-loaded" title="All Posts Shown">All Posts Shown</div> : null;
         const load = (this.props.more) ?
-        <div className="TopicPortal-load" onClick={this.loadPosts} title="Load More Posts">Load More Posts</div> 
+        <div className="TopicPortal-load" onClick={this.loadPosts} title="Show More Posts">Show More Posts</div> 
         : loaded;
-
-        const top = (this.props.top) ? "TopicPortal-top" : null;
 
         const controls = (this.props.controls) ? (
             <div className="TopicPortal-controls">
@@ -30,8 +42,8 @@ export default class TopicPortal extends React.Component {
         ) : null;
 
         return (
-            <div className="TopicPortal" id={top}>
-                {controls}
+            <div className="TopicPortal" id={`TopicPortal-${this.props.id}`}>
+                {/* {controls} */}
                 {this.props.topics}
                 <div className='TopicPortal-posts'>
                     {this.props.posts}

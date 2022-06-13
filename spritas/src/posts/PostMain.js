@@ -4,8 +4,11 @@ import Post from './Post';
 import he from 'he';
 import { regex_video } from '../functions/constants';
 import PostModal from './PostModal';
+import pfp from '../images/pfp.png';
+import relativeTime from '../functions/relativeTime';
+import PureIframe from '../other/PureIframe';
 
-export default class PostMain extends React.PureComponent {
+export default class PostMain extends React.Component {
     constructor(props) {
         super(props);
         this.hashHandle = this.hashHandle.bind(this);
@@ -13,22 +16,15 @@ export default class PostMain extends React.PureComponent {
         this.right = this.right.bind(this);
         this.goToPost = this.goToPost.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
+        this.delete = this.delete.bind(this);
         this.state = ({
-            modal: false
+            modal: false,
+            toggleTime: false
         });
     }
 
     componentDidMount() {
         window.addEventListener('hashchange', this.hashHandle);
-    }
-
-    componentDidUpdate() {
-        const currentPost = this.props.posts[this.props.current - 1];
-        var ifram = document.getElementById(`PostMainVideo-${currentPost.id}`);
-        if (ifram) {
-            ifram.remove();
-            document.getElementsByClassName('PostMain-video')[0].appendChild(ifram);
-        }
     }
 
     componentWillUnmount() {
@@ -68,7 +64,7 @@ export default class PostMain extends React.PureComponent {
     }
 
     goToPost(index) {
-        this.props.setCurrent(index);
+        if (this.props.current !== index) this.props.setCurrent(index);
     }
 
     toggleModal() {
@@ -87,48 +83,79 @@ export default class PostMain extends React.PureComponent {
         });
     }
 
+    delete(post) {
+        var answer = prompt(`Are you sure you want to delete this post?\nType "${post.title}" to confirm:`, '');
+        if (answer === post.title) {
+            var myBody = new URLSearchParams();
+            myBody.append('ogid', this.props.posts[0].id);
+            myBody.append('currentid', post.id);
+
+            fetch('/delete/post', {
+                method: 'POST',
+                body: myBody
+            })
+            .then((resp) => {
+                if (resp.ok) window.location.href = '/';
+                else console.error('Post deletion error');
+            });
+        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+    }
+
     render() {
         const posts = this.props.posts;
         const length = posts.length;
         const currentPost = posts[this.props.current - 1];
         const currentElem = <Post post={currentPost} op={true} />;
 
+        var ts = new Date(currentPost.ts);
+        var relTime = relativeTime(currentPost.ts);
+        ts = `${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        relTime = `${relTime}`;
+
+        const time = (!this.state.toggleTime) ?
+        <p className="PostMain-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
+        <p className="PostMain-ts" title={relTime} onClick={() => this.setState({ toggleTime: false})}>{ts}</p>;
+
         // Update controls
         if (length > 1) {
             const nodes = posts.map((post, index) => {
-                var fill, r;
+                var fill, r, nClass;
                 if (this.props.current - 1 === index) {
-                    fill = 'red';
+                    fill = 'var(--spritan-gold)';
                     r = '15';
+                    nClass = 'PostMain-nodeCurrent';
                 } else {
-                    fill = 'black';
+                    fill = 'var(--darkest-grey)';
                     r = '8';
+                    nClass = 'PostMain-node'
                 }
+
+                const nodeTime = (!this.state.toggleTime) ? relTime : ts;
 
                 return (
                     <g key={index} className='PostMain-nodeHit'
                         onClick={() => this.goToPost(index + 1)}>
                         <circle cx={60 * index} cy='50%' r='25' fillOpacity='0' />
-                        <circle className='PostMain-node'
+                        <circle className={nClass}
                             cx={60 * index} cy='50%' r={r} fill={fill} />
-                        <title>{post.subtitle}</title>
+                        <title>{`"${post.subtitle}" ${nodeTime}`}</title>
                     </g>
                 )
             });
 
             const nodeStyle = { transform: `translate(-${60 * (this.props.current - 1)}px)` };
             const leftArrow = (this.props.current === 1)
-            ? { backgroundColor: 'grey' } : { backgroundColor: '#ab0f26' };
+            ? 'var(--darkest-grey)' : 'white';
             const rightArrow = (this.props.current === length)
-            ? { backgroundColor: 'grey' } : { backgroundColor: '#ab0f26' };
+            ? 'var(--darkest-grey)' : 'white' ;
 
             var controls = (
                 <div className="PostMain-controls">
                     <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
-                        viewBox='0 0 80 40' onClick={this.left} style={leftArrow}>
+                        viewBox='0 0 80 40' onClick={this.left}>
                         <title>Previous Update</title>
                         <path className='PostMain-arrowL' d='M 40 10 L 30 20 L 40 30'
-                            stroke='white' strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
+                            stroke={leftArrow} strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
                             fill='none' />
                     </svg>
 
@@ -136,17 +163,17 @@ export default class PostMain extends React.PureComponent {
                         <svg overflow='visible' x='50%'>
                             <g className='PostMain-nodeContainer' style={nodeStyle}>
                                 <line x1='0' y1='50%' x2={60 * (length - 1)} y2='50%'
-                                    stroke='black' strokeWidth='3px' />
+                                    stroke='var(--darkest-grey)' strokeWidth='3px' />
                                 {nodes}
                             </g>
                         </svg>
                     </svg>
 
                     <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
-                        viewBox='0 0 80 40' onClick={this.right} style={rightArrow}>
+                        viewBox='0 0 80 40' onClick={this.right}>
                         <title>Next Update</title>
                         <path className='PostMain-arrowR' d='M 35 10 L 45 20 L 35 30'
-                            stroke='white' strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
+                            stroke={rightArrow} strokeWidth='5px' strokeLinecap='round' strokeLinejoin='round'
                             fill='none' />
                     </svg>
                 </div>
@@ -156,7 +183,15 @@ export default class PostMain extends React.PureComponent {
         var modal;
         var video;
         var image;
+        var media;
+        var cardsClass = "";
+        var postOpClass = ""
         switch(currentPost.type) {
+            case "TEXT":
+                cardsClass = " PostMain-cardsText";
+                postOpClass = " PostMain-postOptionText";
+                break;
+
             case "VIDO":
                 const re = new RegExp(regex_video);
                 const link = he.decode(currentPost.link);
@@ -174,16 +209,19 @@ export default class PostMain extends React.PureComponent {
                         var embedSrc;
                         if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
-                        video =
+                        video = (
                         <div className="PostMain-video">
-                            <iframe width="100%" height="675"
-                                id={`PostMainVideo-${currentPost.id}`}
-                                title="Embedded-Video" allowFullScreen
-                                src={embedSrc}>
-                            </iframe>
-                        </div>
+                            <PureIframe src={embedSrc} width="100%" height="675" id={currentPost.id} />
+                        </div>);
                     }
+                } else if (currentPost.link) {
+                    video = (
+                        <div className='PostMain-video'>
+                            <video className='PostMain-videoElem' src={link} controls width="100%"></video>
+                        </div>
+                    )
                 }
+                media = video;
                 break;
 
             case "IMG":
@@ -196,34 +234,73 @@ export default class PostMain extends React.PureComponent {
                     <div className='PostMain-imagePreview'>
                         <div className='PostMain-imageContainer'
                             onClick={this.toggleModal}>
-                            <img className='PostMain-img'
+                            <img className='PostMain-image'
                                 src={currentPost.link}
                                 alt="Main Post" />
-                            <div className='PostMain-gradientTop'></div>
-                            <div className='PostMain-gradientBot'></div>
                             <p className='PostMain-view'>Click To View Full Image</p>
                         </div>
                     </div>
                 }
+                media = image;
                 break;
 
             default:
                 break;
         }
 
+        const avatar = (currentPost.avatar) ? `/media/avatars/${currentPost.avatar}` : pfp;
         const subtitle = (currentPost.subtitle) ?
-        <div className='PostMain-subtitleContainer'>
-            <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3>
-        </div> : null;
+            <h4 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h4> : null;
+
+        var update;
+        var deletePost;
+        var report;
+        if (this.props.user && this.props.user.id === currentPost.idUser && currentPost.update !== 'DELE' && this.props.user.type !== 'BAN') {
+            update = <div className='PostMain-optionItem'>Update Post</div>;
+            deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post</div>;
+        } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.update !== 'DELE') {
+            deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post As Admin</div>;
+        } else if (this.props.user && this.props.user.type !== 'BAN') {
+            report = <div className='PostMain-optionItem PostMain-optionItemRed'>Report Post</div>;
+        }
+
+        const options = (update || deletePost || report) ? (
+            <div className='PostMain-option'>
+                {update}
+                {deletePost}
+                {report}
+            </div>
+        ) : null;
 
         return (
-            <div className="PostMain">
+            <div className={"PostMain"}>
                 {modal}
-                {controls}
-                {video}
-                {image}
-                {subtitle}
-                <div className="PostMain-post">{currentElem}</div>
+                <div className='PostMain-container'>
+                    {media}
+                    <div className={"PostMain-cards" + cardsClass}>
+                        <div className={"PostMain-postOption" + postOpClass}>
+                            <div className='PostMain-post'>
+                                <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
+                                <div className='PostMain-info'>
+                                    <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}
+                                    className="PostMain-a">
+                                        <div className="PostMain-user">
+                                            <img className="PostMain-img" src={avatar}
+                                            alt="Topic icon" />
+                                            <p className="PostMain-nickname">{currentPost.nickname}</p>
+                                        </div>
+                                    </a>
+                                    {time}
+                                </div>
+                                {controls}
+                                {subtitle}
+                                <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
+                            </div>
+                            {options}
+                        </div>
+                        {this.props.rest}
+                    </div>
+                </div>
             </div>
         )
     }

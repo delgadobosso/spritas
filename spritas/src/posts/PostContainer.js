@@ -13,7 +13,6 @@ export default class PostContainer extends React.Component {
         this.scrollTop = this.scrollTop.bind(this);
         this.loadReplies = this.loadReplies.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
-        this.delete = this.delete.bind(this);
         this.setCurrent = this.setCurrent.bind(this);
         this.state = {
             main: null,
@@ -47,7 +46,7 @@ export default class PostContainer extends React.Component {
                         this.loadReplies();
                     });
                     const title = (data[0].title) ? data[0].title : '';
-                    document.title = he.decode(title) + " - The Spritas";
+                    document.title = he.decode(title);
                 }
             })
 
@@ -86,8 +85,10 @@ export default class PostContainer extends React.Component {
                         blockers={this.state.blockers} />
                 );
                 var rep = document.getElementById('Replies');
-                let maxHeight = rep.scrollHeight;
-                rep.style.height = maxHeight + "px";
+                if (rep) {
+                    let maxHeight = rep.scrollHeight;
+                    rep.style.height = maxHeight + "px";
+                }
                 this.setState(state => ({
                     replies: [...state.replies, ...moreReplies]
                 }), () => this.extendReplies())
@@ -118,25 +119,6 @@ export default class PostContainer extends React.Component {
         }
     }
 
-    delete() {
-        const post = (this.state.main) ? this.state.main[this.state.current - 1] : null;
-        var answer = prompt(`Are you sure you want to delete this post?\nType "${this.state.post.title}" to confirm:`, '');
-        if (answer === this.state.post.title) {
-            var myBody = new URLSearchParams();
-            myBody.append('ogid', this.state.post.id);
-            myBody.append('currentid', post.id);
-
-            fetch('/delete/post', {
-                method: 'POST',
-                body: myBody
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/';
-                else console.error('Post deletion error');
-            });
-        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
-    }
-
     setCurrent(value) {
         this.setState({ current: value });
     }
@@ -144,49 +126,34 @@ export default class PostContainer extends React.Component {
     render() {
         const id = (this.state.post) ? this.state.post.id : "";
 
-        const title = (this.state.post && this.state.post.title) ? he.decode(this.state.post.title) : "";
-        const main = (this.state.main) ? <PostMain posts={this.state.main} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} /> : null;
-
-        if (this.state.post) {
-            var update;
-            if (this.props.user && this.props.user.id === this.state.opid && this.state.post.update !== 'DELE' && this.props.user.type !== "BAN") {
-                update = <UpdatePost post={this.state.post} user={this.props.user} currentPost={this.state.main[this.state.current - 1]} />;
-            } else if (this.props.user && this.props.user.type === 'ADMN' && this.state.post.update !== 'DELE') {
-                update = (
-                    <div className='PostContainer-controls'>
-                        <div className='UpdatePost-controlItem UpdatePost-delete' onClick={this.delete}>Delete Post As Admin</div>
-                    </div>);
-            }
-        }
-
         var reply;
-        if (this.props.user && this.props.user.type === "BAN") reply = <h2 className="PostContainer-reply-header">You Are Banned</h2>;
-        else if (this.state.blockers.includes(this.state.opid)) reply = <h2 className="PostContainer-reply-header">{this.state.post.nickname} Has Blocked You From Commenting</h2>;
+        if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
+        else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Replying</p>;
         else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply parentId={id} main={true} user={this.props.user} />
 
         const loaded = (this.state.ever) ?
-        <div className="PostContainer-loaded">All Replies Loaded</div> : null;
+        <div className="PostContainer-loaded">All Replies Shown</div> : null;
         const load = (this.state.more) ?
-        <div className="PostContainer-load" onClick={this.loadReplies}>Load More Replies</div> : loaded;
+        <div className="PostContainer-load" onClick={this.loadReplies}>Show More Replies</div> : loaded;
 
-        const comment = (this.state.replies.length > 0) ? "Comments" : "No Comments";
+        var restClass = "";
+        if (this.state.post && this.state.post.type === "TEXT") restClass = " PostContainer-restText";
 
-        return (
-            <div className="PostContainer">
-                <div className="PostContainer-header" onClick={this.scrollTop}
-                    title={title}>
-                    <h2 className="PostContainer-title" id={"PostName-" + id}>
-                        {title}
-                    </h2>
-                </div>
-                {main}
-                {update}
-                <h2 className="PostContainer-reply-header">{comment}</h2>
+        const rest = (this.state.replies.length > 0 || reply) ? (
+            <div className={'PostContainer-rest' + restClass}>
                 {reply}
                 <div className="PostContainer-replies" id="Replies">
                     {this.state.replies}
                 </div>
                 {load}
+            </div>
+        ) : null;
+
+        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} /> : null;
+
+        return (
+            <div className={"PostContainer"}>
+                {main}
             </div>
         )
     }

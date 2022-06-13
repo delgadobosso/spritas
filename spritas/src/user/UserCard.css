@@ -1,6 +1,6 @@
 .UserCard {
     width: 300px;
-    background-color: white;
+    background-color: var(--darkest-grey);
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 20px;
@@ -21,16 +21,17 @@
 
 .UserCard-nickname {
     margin-bottom: 0;
+    color: white;
 }
 
 .UserCard-username {
-    color: rgb(96, 96, 96);
+    color: var(--info-grey);
     margin-top: 0;
     font-size: 18px;
 }
 
 .UserCard-ts {
-    color: rgb(96, 96, 96);
+    color: var(--info-grey);
     font-size: 0.9rem;
 }
 

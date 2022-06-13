@@ -3,7 +3,7 @@
 }
 
 .Featured-header {
-    background-color: #ab0f26;
+    background-color: var(--darkest-grey);
     padding: 10px 20px;
     text-align: center;
     cursor: pointer;
@@ -35,6 +35,17 @@
 .Featured-update {
     max-width: 1200px;
     margin: auto;
+}
+
+.Featured .UpdatePost-controlItem {
+    background-color: var(--mid-grey);
+    color: white;
+}
+
+@media (hover: hover) {
+    .Featured .UpdatePost-controlItem:hover {
+        background-color: var(--lightest-grey);
+    }
 }
 
 .Featured-form {

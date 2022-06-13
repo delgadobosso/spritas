@@ -2,6 +2,8 @@
     cursor: pointer;
     padding: 10px 0;
     text-align: center;
+    background-color: var(--light-grey);
+    color: white;
 
     transition: background-color 0.1s;
     -moz-user-select: none;
@@ -11,33 +13,32 @@
 }
 @media (hover: hover) {
     .Reply-expand:hover {
-        background-color: lightgreen;
+        background-color: var(--lightest-grey);
     }
 }
 
 .Reply-form {
     display: flex;
-    width: 100%;
     height: 0px;
-    border-radius: 0 0 10px 10px;
+    margin: 0 auto 20px auto;
     overflow: hidden;
-    background-color: white;
+    background-color: var(--darkest-grey);
+    border-radius: 10px;
 
     transition: border-radius 0.5s, height 0.5s;
 }
 .Reply-form-open {
     height: 110px;
 }
+.Post .Reply-form {
+    border-radius: 0;
+    margin: 0;
+}
 
 .PostContainer > .Reply {
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 50px;
-}
-@media screen and (max-width: 1200px) {
-    .PostContainer > .Reply, .PostContainer > .Reply > .Reply-form {
-        border-radius: 0;
-    }
 }
 
 .Reply-img {
@@ -53,15 +54,30 @@
     border: none;
     outline: none;
     padding: 5px;
+    font-size: 16px;
+    color: white;
+    background-color: var(--darkest-grey);
 }
 
 .Reply-submit {
     width: 100px;
-    background-color: lightgoldenrodyellow;
+    background-color: var(--info-grey);
+    color: black;
     border: none;
+
+    transition: background-color 0.1s;
 }
+
 @media (hover: hover) {
     .Reply-submit:hover {
         cursor: pointer;
+        background-color: var(--spritan-gold);
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .Reply-form {
+        width: 100%;
+        border-radius: 0;
     }
 }

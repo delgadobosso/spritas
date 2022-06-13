@@ -2,3 +2,81 @@
     max-width: 500px;
     max-height: 500px;
 }
+
+.CreatePost-videoContainer {
+    width: 640px;
+    height: 360px;
+    background-color: var(--darkest-grey);
+}
+
+.CreatePost-hide {
+    display: none;
+}
+
+.CreatePost-vidLinkPreview {
+    border: 0;
+}
+
+.CreatePost-options {
+    display: flex;
+    width: 640px;
+}
+
+.CreatePost-option {
+    width: 150px;
+    text-align: center;
+    color: white;
+    background-color: var(--darkest-grey);
+    padding: 10px;
+    flex-grow: 1;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    transition: background-color 0.1s;
+}
+
+.CreatePost-selected {
+    background-color: var(--light-grey);
+    font-weight: bold;
+}
+
+.CreatePost-file {
+    display: block;
+    width: 640px;
+    padding: 10px 0;
+    text-align: center;
+    background-color: var(--light-grey);
+
+    transition: background-color 0.1s;
+}
+.CreatePost-fileIn {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.CreatePost-link {
+    width: 640px;
+    padding: 10px 0;
+    text-align: center;
+    border: 0;
+    font-size: 16px;
+}
+.CreatePost-link:invalid {
+    color: var(--spritan-red);
+}
+
+@media (hover: hover) {
+    .CreatePost-option:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
+    }
+
+    .CreatePost-file:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
+    }
+}

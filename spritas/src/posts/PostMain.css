@@ -1,32 +1,166 @@
+.PostMain-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.PostMain-cards {
+    width: 600px;
+}
+.PostMain-cardsText {
+    display: flex;
+    justify-content: center;
+    width: initial;
+}
+
+.PostMain-postOption, .PostMain-postOptionText {
+    display: flex;
+    flex-direction: column;
+}
+.PostMain-postOptionText {
+    width: 600px;
+    margin-bottom: 20px;
+}
+
+.PostMain-post {
+    display: flex;
+    height: max-content;
+    flex-direction: column;
+    background-color: var(--mid-grey);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.PostMain-option {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: var(--mid-grey);
+}
+
+.PostMain-optionItem {
+    color: white;
+    padding: 10px 5px;
+    background-color: var(--mid-grey);
+    border-radius: 10px;
+    text-align: center;
+
+    transition: background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.PostMain-title {
+    margin: 0;
+    padding: 10px 10px;
+    background-color: var(--darkest-grey);
+    text-align: center;
+    word-break: break-word;
+}
+
+.PostMain-info {
+    display: flex;
+    align-items: center;
+    margin: 10px 10px 0 10px;
+    flex-wrap: wrap;
+}
+
+.PostMain-a {
+    max-width: 100%;
+}
+
+.PostMain-user {
+    display: flex;
+    width: max-content;
+    max-width: 100%;
+    align-items: center;
+    padding-right: 5px;
+    border-radius: 10px;
+    margin-left: -2px;
+
+    transition: background-color 0.1s;
+}
+.PostMain-user:active {
+    background-color: var(--darkest-grey);
+}
+.PostMain-user:active .TopicPost-img {
+    border-radius: 5px;
+    filter: brightness(1.1);
+}
+
+.PostMain-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+
+    transition: filter 0.5s, border-radius 0.25s;
+}
+
+.PostMain-nickname {
+    margin: 0 5px;
+    font-weight: bold;
+    overflow: hidden;
+    padding-left: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.PostMain-ts {
+    color: var(--info-grey);
+    font-size: 0.9em;
+    margin: 11px 0 10px 0;
+
+    transition: color 0.1s;
+}
+
+.PostMain-subtitle {
+    width: max-content;
+    color: black;
+    background-color: var(--info-grey);
+    border-radius: 5px;
+    margin: 10px 10px 0 10px;
+    padding: 5px 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.PostMain-body {
+    color: white;
+    margin-top: 10px;
+    padding: 0 15px 15px 15px;
+}
+
 .PostMain-controls {
     display: flex;
-    width: 1200px;
-    max-width: 100%;
-    margin: auto;
+    width: 100%;
+    height: 30px;
     align-items: center;
-    justify-content: space-between;
+    margin-top: 10px;
+    padding: 10px 0;
+    background-color: var(--light-grey);
 }
 
 .PostMain-arrowContainer {
     cursor: pointer;
-    background-color: #ab0f26;
     width: 80px;
     height: 40px;
 }
 
 .PostMain-arrowL, .PostMain-arrowR {
-    transition: transform 0.1s;
+    transition: transform 0.1s, stroke 0.1s;
 }
 .PostMain-arrowContainer:active .PostMain-arrowL {
-    transform: translate(-15px);
+    transform: translate(-10px);
 }
 .PostMain-arrowContainer:active .PostMain-arrowR {
-    transform: translate(15px);
+    transform: translate(10px);
 }
 
 .PostMain-update {
     width: 100%;
-    height: 30px;
+    height: 40px;
 }
 
 .PostMain-nodeContainer {
@@ -35,62 +169,44 @@
     transition: transform 0.5s;
 }
 
-.PostMain-node {
+.PostMain-node, .PostMain-nodeCurrent {
     transition: fill 0.25s, r 0.25s;
 }
 .PostMain-nodeHit {
     cursor: pointer;
 }
-@media (hover: hover) {
-    .PostMain-nodeHit:hover .PostMain-node {
-        fill: red;
-        r: 10px;
-    }
-}
 
-.PostMain-post, .PostMain-video, .PostMain-imageContainer, .PostMain-subtitleContainer {
+.PostMain-video, .PostMain-imagePreview {
+    position: sticky;
+    top: 20px;
     width: 1200px;
+    height: 675px;
     max-width: 100%;
-    margin: auto;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-right: 20px;
+    background-color: var(--darkest-grey);
+    flex-shrink: 0;
 }
 
-.PostMain-video {
-    height: 675px;
-    background-color: black;
-}
-.PostMain-video iframe {
+.PostMain-videoElem {
+    max-height: 100%;
     border: 0;
 }
 
 .PostMain-imageContainer {
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: black;
-    max-height: 40vh;
-    overflow: hidden;
     cursor: pointer;
+    height: 100%;
 
     transition: background-color 0.5s;
 }
 
-.PostMain-img {
+.PostMain-image {
     max-width: 100%;
-    margin: 15px;
-}
-
-.PostMain-gradientTop, .PostMain-gradientBot {
-    position: absolute;
-    width: 1200px;
-    max-width: 100%;
-    height: 40vh;
-}
-.PostMain-gradientTop {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0) 15px);
-}
-.PostMain-gradientBot {
-    background: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0, 0, 0, 0) 15px);
+    max-height: 100%;
 }
 
 .PostMain-view {
@@ -107,25 +223,120 @@
     to { opacity: 0; }
 }
 
-.PostMain-subtitle {
-    background-color: #ab0f26;
-    color: white;
-    margin: 0;
-    padding: 8px 20px;
+@media screen and (max-width: 1860px) {
+    .PostMain-video, .PostMain-imagePreview {
+        width: 960px;
+        height: 540px;
+    }
 }
 
-@media screen and (max-width: 1200px) {
-    .PostMain-video {
-        position: relative;
+@media screen and (max-width: 1620px) {
+    .PostMain-cards {
+        width: 500px;
+    }
+    .PostMain-cardsText {
+        width: initial;
+    }
+
+    .PostMain-video, .PostMain-imagePreview {
+        width: 800px;
+        height: 450px;
+    }
+}
+
+@media screen and (max-width: 1350px) {
+    .PostMain-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .PostMain-cards {
+        width: 600px;
+        margin-top: 20px;
+    }
+    .PostMain-cardsText {
+        display: initial;
+        margin-top: 0;
+    }
+
+    .PostMain-video, .PostMain-imagePreview {
+        width: 960px;
+        height: 540px;
+        margin-right: 0;
+        top: -1px;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .PostMain-video, .PostMain-imagePreview {
+        width: 640px;
+        height: 360px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .PostMain-container {
+        margin: 0;
+    }
+
+    .PostMain-cards {
+        width: 100%;
+        margin: 0;
+    }
+    .PostMain-cardsText {
+        display: initial;
+    }
+
+    .PostMain-postOptionText {
+        width: initial;
+    }
+
+    .PostMain-post, .PostMain-option {
+        border-radius: 0;
+    }
+
+    .PostMain-video, .PostMain-imagePreview {
         width: 100%;
         height: 0;
         padding-bottom: 56.25%;
+        border-radius: 0;
     }
-    .PostMain-video iframe {
+    .PostMain-videoElem, .PostMain-imageContainer {
         position: absolute;
         width: 100%;
         height: 100%;
         left: 0;
         top: 0;
+        border-radius: 0;
+    }
+}
+
+@media (hover: hover) {
+    .PostMain-user:hover {
+        cursor: pointer;
+        background-color: var(--darkest-grey);
+    }
+    .PostMain-user:hover .PostMain-img {
+        border-radius: 10px;
+        filter: brightness(1.1);
+    }
+
+    .PostMain-nodeHit:hover .PostMain-node {
+        fill: var(--spritan-gold);
+        r: 10px;
+    }
+
+    .PostMain-ts:hover {
+        cursor: pointer;
+        color: white;
+    }
+
+    .PostMain-optionItem:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
+    }
+
+    .PostMain-optionItemRed:hover {
+        background-color: var(--spritan-red);
     }
 }

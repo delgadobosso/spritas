@@ -1,7 +1,6 @@
 .Header {
     display: block;
     position: relative;
-    margin: 50px 0;
     
     transition: filter 0.5s;
 }
@@ -41,10 +40,11 @@
 
 .Header-logo {
     position: absolute;
+    height: 90%;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    image-rendering: crisp-edges;
+    image-rendering: pixelated;
     
     -moz-user-select: none;
     -webkit-user-select: none;

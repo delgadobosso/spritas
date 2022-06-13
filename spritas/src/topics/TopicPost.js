@@ -68,16 +68,54 @@ export default class TopicPost extends React.Component {
                         const style = { backgroundImage: `url(${embedSrc})` };
                         thumb = <div className="TopicPost-thumb" style={style} />;
                     }
+                } else if (post.link) {
+                    // let thumbnail load
+                    var currentTime = new Date();
+                    var postedTime = new Date(post.lastTs);
+                    var elapsed = currentTime - postedTime;
+                    var seconds = 5 * 1000;
+
+                    const link_img = he.decode(post.link);
+                    const dot = post.link.lastIndexOf('.');
+                    const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
+                    const style = { backgroundImage: `url(${embedSrc})` };
+
+                    if (elapsed > seconds) {
+                        thumb = <div className='TopicPost-thumb' style={style} />;
+                    } else {
+                        thumb = <div className='TopicPost-thumb TopicPost-thumbAni'></div>;
+                        setTimeout(() => {
+                            this.forceUpdate();
+                        }, seconds + 1000);
+                    }
+                } else {
+                    thumb = <div className='TopicPost-thumb TopicPost-thumbAni'></div>;
                 }
                 break;
 
             case 'IMG':
                 if (post.link) {
+                    // let thumbnail load
+                    var currentTime = new Date();
+                    var postedTime = new Date(post.lastTs);
+                    var elapsed = currentTime - postedTime;
+                    var seconds = 5 * 1000;
+
                     const link_img = he.decode(post.link);
                     const dot = post.link.lastIndexOf('.');
                     const embedSrc = link_img.slice(0, dot) + 'm' + link_img.slice(dot);
                     const style = { backgroundImage: `url(${embedSrc})` };
-                    thumb = <div className='TopicPost-thumb' style={style} />
+
+                    if (elapsed > seconds) {
+                        thumb = <div className='TopicPost-thumb' style={style} />;
+                    } else {
+                        thumb = <div className='TopicPost-thumb TopicPost-thumbAni'></div>;
+                        setTimeout(() => {
+                            this.forceUpdate();
+                        }, seconds + 1000);
+                    }
+                } else {
+                    thumb = <div className='TopicPost-thumb TopicPost-thumbAni'></div>;
                 }
                 break;
 
@@ -93,7 +131,8 @@ export default class TopicPost extends React.Component {
                     </div>
                     {thumb}
                     {subtitle}
-                    <a href={`/u/${post.username}`} title={post.username}>
+                    <a href={`/u/${post.username}`} title={post.username}
+                    className="TopicPost-a">
                         <div className="TopicPost-user">
                             <img className="TopicPost-img" src={avatar}
                             alt="Topic icon" />

@@ -27,7 +27,7 @@ const memStorage = multer.memoryStorage();
 const memUpload = multer({
     storage: memStorage,
     limits: {
-        fileSize: 1048576 // THIS IS FOR REGULAR IMAGE UPLOADS CHANGE THIS THIS ONLY 1MB
+        fileSize: 20971520
     }
 });
 const avatarStore = multer.diskStorage({
@@ -417,7 +417,7 @@ app.post('/create/post',
                 if (req.body.type.toUpperCase() != result[0].type) return res.status(400).json({error: "Type of this post does not match the parent topic's type."});
                 if (result[0].perm === "ADMN" && req.session.user.type != "ADMN") return res.sendStatus(403);
 
-                // Add link if it's a VIDO
+                // Upload file to Imgur and add that link
                 if (result[0].type === "VIDO" && req.body.link !== "null") {
                     pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
                     VALUES(?,?,?,?,?,?,?)`,
@@ -425,12 +425,9 @@ app.post('/create/post',
                         if (error) return res.status(500).send(error);
 
                         res.redirect('/');
-                    })
-                // Upload file to Imgur and add that link
-                } else if (result[0].type === "IMG" && req.file.buffer) {
+                    });
+                } else if ((result[0].type === "IMG" && req.file && req.file.buffer) || (result[0].type === "VIDO" && req.file && req.file.buffer)) {
                     if (imgurCurrent <= imgurLimit) {
-                        imgurCurrent++;
-                        console.log('Current Imgur upload: ' + imgurCurrent);
                         const file64 = req.file.buffer.toString('base64');
                         imgur.uploadBase64(file64,
                                 undefined,
@@ -442,6 +439,9 @@ app.post('/create/post',
                                     VALUES(?,?,?,?,?,?,?,?)`,
                                     [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type], (error, result, fields) => {
                                         if (error) return res.status(500).send(error);
+
+                                        imgurCurrent++;
+                                        console.log('Current Imgur upload: ' + imgurCurrent);
 
                                         res.redirect('/');
                                     })
@@ -571,7 +571,7 @@ app.post('/update/post',
                                     return res.redirect('/');
                                 })
                             })
-                        } else if (result[0].type === "IMG" && req.file.buffer) {
+                        } else if ((result[0].type === "IMG" && req.file && req.file.buffer) || result[0].type === "VIDO" && req.file && req.file.buffer) {
                             // Upload file to imgur and update
                             if (imgurCurrent <= imgurLimit) {
                                 imgurCurrent++;
@@ -668,7 +668,7 @@ app.post('/delete/post',
 
             if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
                 var deletehash = result[0].deletehash;
-                var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
+                var byWho = (req.session.user.type === 'ADMN') ? 'Deleted By Admin' : 'Deleted By User';
                 pool.query(`UPDATE posts AS p
                 SET subtitle = NULL, body = ?, p.update = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
                 WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
@@ -703,7 +703,7 @@ app.post('/delete/reply',
             if (error) return res.status(500).send(error);
 
             if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
-                var byWho = (req.session.user.type === 'ADMN') ? 'Post Deleted By Admin' : 'Post Deleted By User';
+                var byWho = (req.session.user.type === 'ADMN') ? 'Deleted By Admin' : 'Deleted By User';
                 pool.query(`UPDATE posts AS p
                 SET body = ?, p.update = 'DELE'
                 WHERE id = ?`, [byWho, req.body.id], (error, result, fields) => {

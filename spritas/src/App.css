@@ -1,5 +1,32 @@
+:root {
+    --darkest-grey: #161616;
+    --dark-grey: #262626;
+    --mid-grey: #363636;
+    --light-grey: #464646;
+    --lightest-grey: #565656;
+
+    --info-grey: rgb(196, 196, 196);
+
+    --spritan-red: #ab0f26;
+    --spritan-gold: #ffe289;
+}
+
 body {
-    background: antiquewhite;
+    background: var(--dark-grey);
+}
+
+h1, h2, h3, p, label {
+    color: white;
+}
+
+input, textarea {
+    color: white;
+    background-color: var(--lightest-grey);
+}
+
+::selection {
+    background-color: var(--spritan-red);
+    color: var(--spritan-gold);
 }
 
 

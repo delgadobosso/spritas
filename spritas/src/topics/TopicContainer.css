@@ -1,26 +1,26 @@
 .Container {
     display: flex;
     flex-direction: column;
-    height: 98vh;
-    width: 1942px;
+    max-height: 80vh;
+    width: 1958px;
     max-width: 100%;
-    margin: 10px auto;
+    margin: 0 auto 30px auto;
     border-radius: 10px;
-    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
+    background-color: var(--darkest-grey);
     overflow: hidden;
 }
 
 .Container-header {
-    background-color: #ab0f26;
+    background-color: var(--darkest-grey);
     padding: 10px 20px;
     text-align: center;
-    box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.3);
     cursor: pointer;
 
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    transition: background-color 0.1s;
 }
 
 .Container-title {
@@ -28,33 +28,39 @@
     margin: 0;
 }
 
-@media screen and (max-width: 1960px) {
+@media screen and (max-width: 1976px) {
     .Container {
-        width: 1622px;
+        width: 1638px;
     }
 }
 
-@media screen and (max-width: 1640px) {
+@media screen and (max-width: 1656px) {
     .Container {
-        width: 1302px;
+        width: 1318px;
     }
 }
 
-@media screen and (max-width: 1320px) {
+@media screen and (max-width: 1336px) {
     .Container {
-        width: 982px;
+        width: 998px;
     }
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1016px) {
     .Container {
-        width: 662px;
+        width: 678px;
     }
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 716px) {
     .Container {
         width: 100%;
         border-radius: 0;
+    }
+}
+
+@media (hover: hover) {
+    .Container-header:hover {
+        background-color: var(--lightest-grey);
     }
 }
