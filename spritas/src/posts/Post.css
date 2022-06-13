@@ -51,6 +51,10 @@
     border-radius: 10px;
     filter: brightness(1.1);
 }
+.Post-replies .Post-user:active {
+    cursor: pointer;
+    background-color: var(--mid-grey);
+}
 
 .Post-user-img {
     width: 40px;
