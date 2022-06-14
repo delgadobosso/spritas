@@ -12,8 +12,9 @@
     left: 10px;
     bottom: 10px;
     overflow: hidden;
+    box-shadow: 0 0 0 0 var(--darkest-grey);
 
-    transition: width, height, border-radius, left, bottom;
+    transition: width, height, border-radius, left, bottom, box-shadow;
     transition-duration: 0.25s;
 }
 .Navi-open {
@@ -22,6 +23,7 @@
     border-radius: 0 10px 10px 0;
     left: 0;
     bottom: 0;
+    box-shadow: 0 0 0 0 var(--darkest-grey) !important;
 }
 .Navi-hide {
     bottom: -90px;
@@ -43,6 +45,10 @@
     bottom: 10px;
 }
 @media (hover: hover) {
+    .Navi:hover {
+        box-shadow: 0 0 0 10px var(--darkest-grey);
+    }
+
     .Navi-toggle:hover {
         cursor: pointer;
     }

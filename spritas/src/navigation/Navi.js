@@ -25,6 +25,7 @@ export default class Navi extends React.Component {
                 window.history.pushState(prevState, "", "#navi");
                 window.history.scrollRestoration = 'manual';
             } else if (!this.state.open) window.history.go(-1);
+            window.navigator.vibrate(10);
         });
     }
 
