@@ -17,7 +17,7 @@
     transition-duration: 0.25s;
 }
 .Navi-open {
-    width: 540px;
+    width: 600px;
     height: 100%;
     border-radius: 0 10px 10px 0;
     left: 0;
@@ -59,8 +59,8 @@
 
 .Navi-item {
     display: block;
-    width: 540px;
-    padding: 30px 10px;
+    width: 100%;
+    padding: 30px 0;
     color: var(--darkest-grey);
     background-color: var(--darkest-grey);
     margin-bottom: 10px;
@@ -85,14 +85,10 @@
     }
 }
 
-@media screen and (max-width: 560px) {
+@media screen and (max-width: 600px) {
     .Navi-open {
         width: 100%;
         border-radius: 0;
-    }
-
-    .Navi-item {
-        width: 100%;
     }
 }
 
