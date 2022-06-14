@@ -260,17 +260,10 @@
     }
 
     .PostMain-video, .PostMain-imagePreview {
-        width: 960px;
-        height: 540px;
-        margin-right: 0;
-        top: -1px;
-    }
-}
-
-@media screen and (max-width: 1000px) {
-    .PostMain-video, .PostMain-imagePreview {
         width: 640px;
         height: 360px;
+        margin-right: 0;
+        top: -1px;
     }
 }
 
