@@ -8,17 +8,16 @@
     position: fixed;
     width: 80px;
     height: 80px;
-    border-radius: 40px 40px 40px 40px;
+    border-radius: 40px;
     left: 10px;
     bottom: 10px;
     overflow: hidden;
 
-    transition: width 0.25s, height 0.25s, border-radius 0.25s,
-        left 0.25s, bottom 0.25s;
+    transition: width, height, border-radius, left, bottom;
+    transition-duration: 0.25s;
 }
 .Navi-open {
     width: 540px;
-    max-width: 100%;
     height: 100%;
     border-radius: 0 10px 10px 0;
     left: 0;
@@ -27,11 +26,6 @@
 .Navi-hide {
     bottom: -90px;
 }
-@media screen and (max-width: 600px) {
-    .Navi-open {
-        border-radius: 0;
-    }
-}
 
 .Navi-toggle {
     position: absolute;
@@ -39,15 +33,18 @@
     bottom: 0;
     width: 80px;
     height: 80px;
-    border-radius: 0 10px 0 0;
+    border-radius: 40px;
     overflow: hidden;
 
-    transition: filter 0.5s;
+    transition: left 0.25s, bottom 0.25s;
+}
+.Navi-toggleOpen {
+    left: 10px;
+    bottom: 10px;
 }
 @media (hover: hover) {
     .Navi-toggle:hover {
         cursor: pointer;
-        filter: brightness(1.15);
     }
 }
 
@@ -63,23 +60,39 @@
 .Navi-item {
     display: block;
     width: 540px;
-    max-width: 100%;
     padding: 30px 10px;
-    background-color: var(--mid-grey);
+    color: var(--darkest-grey);
+    background-color: var(--darkest-grey);
     margin-bottom: 10px;
     text-align: center;
     white-space: nowrap;
     font-weight: bold;
 
-    transition: background-color 0.1s;
+    transition: color 0.75s, background-color 0.75s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
+.Navi-itemOpen {
+    color: white;
+    background-color: var(--mid-grey);
+}
+
 @media (hover: hover) {
     .Navi-item:hover {
         background-color: var(--lightest-grey);
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .Navi-open {
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .Navi-item {
+        width: 100%;
     }
 }
 
@@ -98,5 +111,5 @@
 }
 .Navi-backing-open {
     pointer-events: auto;
-    opacity: 0.75;
+    opacity: 0.80;
 }

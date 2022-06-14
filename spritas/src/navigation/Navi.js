@@ -47,26 +47,29 @@ export default class Navi extends React.Component {
     render() {
         const user = this.props.user;
 
+        var itemOpen = (this.state.open) ? " Navi-itemOpen" : "";
+
         var avatar;
         var userItem;
         var logout;
         if (user) {
             avatar = (user.avatar) ? `/media/avatars/${user.avatar}` : pfp;
-            userItem = <a className="Navi-item" href={"/u/" + user.username}>{user.nickname}</a>;
-            logout = <a className="Navi-item" href="/logout">Logout</a>;
+            userItem = <a className={"Navi-item" + itemOpen} href={"/u/" + user.username}>{user.nickname}</a>;
+            logout = <a className={"Navi-item" + itemOpen} href="/logout">Logout</a>;
         } else {
             avatar = pfp;
-            userItem = <a className="Navi-item" href="/login">Login</a>;
+            userItem = <a className={"Navi-item" + itemOpen} href="/login">Login</a>;
         }
         var open = (this.state.open) ? " Navi-open" : "";
         var hide = (this.props.hide && !this.state.open) ? " Navi-hide" : "";
+        var avatarOpen = (this.state.open) ? " Navi-toggleOpen" : "";
 
         return (
             <div className="Navi-full">
                 <div className={"Navi-backing" + (this.state.open ? " Navi-backing-open" : "")}
                 onClick={this.toggleClick} />
                 <div className={"Navi" + open + hide}>
-                    <div className="Navi-toggle" onClick={this.toggleClick}>
+                    <div className={"Navi-toggle" + avatarOpen} onClick={this.toggleClick}>
                         <img className="Navi-img" src={avatar} alt="Navigation" />
                     </div>
                     {userItem}
