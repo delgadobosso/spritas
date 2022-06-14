@@ -15,12 +15,15 @@
 .UserContainer-postContainer {
     display: flex;
     flex-direction: column;
-    width: 1620px;
-    max-width: 100%;
     border-radius: 10px;
     margin: 0 20px;
     overflow: clip;
     background-color: var(--darkest-grey);
+}
+
+.UserContainer-container {
+    width: 1620px;
+    margin: auto;
 }
 
 .UserContainer-topics {
@@ -50,19 +53,19 @@
 }
 
 @media screen and (max-width: 2050px) {
-    .UserContainer-postContainer {
+    .UserContainer-container {
         width: 1300px;
     }
 }
 
 @media screen and (max-width: 1730px) {
-    .UserContainer-postContainer {
+    .UserContainer-container {
         width: 980px;
     }
 }
 
 @media screen and (max-width: 1410px) {
-    .UserContainer-postContainer {
+    .UserContainer-container {
         width: 660px;
     }
 }
@@ -71,10 +74,16 @@
     .UserContainer {
         flex-direction: column;
         align-items: center;
+        padding: 20px 0 0 0;
     }
 
     .UserContainer-cards {
         position: initial;
+    }
+
+    .UserContainer-postContainer {
+        width: 100%;
+        border-radius: 0;
     }
 }
 
@@ -83,9 +92,8 @@
         padding: 20px 0 0 0;
     }
 
-    .UserContainer-postContainer {
+    .UserContainer-container {
         width: 100%;
-        border-radius: 0;
         margin: 0;
     }
 }
