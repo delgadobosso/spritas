@@ -103,6 +103,10 @@
     background-color: var(--darkest-grey);
 }
 
+.Post-replies .Post:last-child {
+    border-bottom: none;
+}
+
 .Post-controls {
     display: flex;
     width: 100%;
