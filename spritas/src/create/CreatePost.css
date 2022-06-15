@@ -4,8 +4,6 @@
 }
 
 .CreatePost-videoContainer {
-    width: 640px;
-    height: 360px;
     background-color: var(--darkest-grey);
 }
 
@@ -19,13 +17,11 @@
 
 .CreatePost-options {
     display: flex;
-    width: 640px;
 }
 
 .CreatePost-option {
-    width: 150px;
     text-align: center;
-    color: white;
+    color: var(--info-grey);
     background-color: var(--darkest-grey);
     padding: 10px;
     flex-grow: 1;
@@ -38,16 +34,17 @@
 }
 
 .CreatePost-selected {
+    color: white;
     background-color: var(--light-grey);
     font-weight: bold;
 }
 
 .CreatePost-file {
     display: block;
-    width: 640px;
     padding: 10px 0;
     text-align: center;
     background-color: var(--light-grey);
+    line-height: 20px;
 
     transition: background-color 0.1s;
 }
@@ -59,14 +56,77 @@
 }
 
 .CreatePost-link {
-    width: 640px;
     padding: 10px 0;
+    width: 100%;
     text-align: center;
     border: 0;
     font-size: 16px;
+    line-height: 20px;
 }
 .CreatePost-link:invalid {
     color: var(--spritan-red);
+}
+
+.CreatePost-createTitle {
+    text-align: center;
+}
+
+.CreatePost-mediaAll {
+    border-radius: 10px;
+    overflow: clip;
+
+    transition: box-shadow 0.25s;
+}
+.CreatePost-mediaAllValid {
+    box-shadow: 0 0 0 5px var(--spritan-gold);
+}
+
+.CreatePost-mediaContainer {
+    position: initial;
+}
+
+.CreatePost-title {
+    font-size: 24px;
+    font-weight: 700;
+    border: solid 5px var(--darkest-grey);
+    border-radius: 10px 10px 0 0;
+}
+.CreatePost-title:valid {
+    border-color: var(--darkest-grey);
+}
+.CreatePost-title:focus:required:valid {
+    border-color: var(--spritan-gold);
+}
+.CreatePost-title:focus:required:invalid {
+    border-color: var(--spritan-red);
+}
+
+.CreatePost-subtitle {
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+}
+
+.CreatePost-body {
+    resize: none;
+    font-size: 16px;
+    margin: 10px;
+    padding: 5px;
+    border: solid 5px var(--lightest-grey);
+    border-radius: 10px;
+}
+.CreatePost-body:focus:required:valid {
+    border-color: var(--spritan-gold);
+}
+.CreatePost-body:focus:required:invalid {
+    border-color: var(--spritan-red);
+}
+
+@media screen and (max-width: 700px) {
+    .CreatePost-title {
+        border-radius: 0;
+    }
 }
 
 @media (hover: hover) {
