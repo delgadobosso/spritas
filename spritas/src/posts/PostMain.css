@@ -176,7 +176,7 @@
     cursor: pointer;
 }
 
-.PostMain-video, .PostMain-imagePreview {
+.PostMain-mediaContainer {
     position: sticky;
     top: 20px;
     width: 1200px;
@@ -224,7 +224,7 @@
 }
 
 @media screen and (max-width: 1860px) {
-    .PostMain-video, .PostMain-imagePreview {
+    .PostMain-mediaContainer {
         width: 960px;
         height: 540px;
     }
@@ -238,7 +238,7 @@
         width: initial;
     }
 
-    .PostMain-video, .PostMain-imagePreview {
+    .PostMain-mediaContainer {
         width: 800px;
         height: 450px;
     }
@@ -259,7 +259,7 @@
         margin-top: 0;
     }
 
-    .PostMain-video, .PostMain-imagePreview {
+    .PostMain-mediaContainer {
         width: 640px;
         height: 360px;
         margin-right: 0;
@@ -288,7 +288,7 @@
         border-radius: 0;
     }
 
-    .PostMain-video, .PostMain-imagePreview {
+    .PostMain-mediaContainer {
         width: 100%;
         height: 0;
         padding-bottom: 56.25%;

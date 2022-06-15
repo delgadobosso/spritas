@@ -5,7 +5,7 @@ export default class PureIframe extends React.PureComponent {
         var ifram = document.getElementById(`PostMainVideo-${this.props.id}`);
         if (ifram) {
             ifram.remove();
-            document.getElementsByClassName('PostMain-video')[0].appendChild(ifram);
+            document.getElementsByClassName('PostMain-mediaContainer')[0].appendChild(ifram);
         }
     }
     

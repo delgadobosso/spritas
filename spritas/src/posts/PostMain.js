@@ -210,13 +210,13 @@ export default class PostMain extends React.Component {
                         if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
                         video = (
-                        <div className="PostMain-video">
+                        <div className="PostMain-mediaContainer">
                             <PureIframe src={embedSrc} width="100%" height="675" id={currentPost.id} />
                         </div>);
                     }
                 } else if (currentPost.link) {
                     video = (
-                        <div className='PostMain-video'>
+                        <div className='PostMain-mediaContainer'>
                             <video className='PostMain-videoElem' src={link} controls width="100%"></video>
                         </div>
                     )
@@ -231,7 +231,7 @@ export default class PostMain extends React.Component {
                         : null;
 
                     image =
-                    <div className='PostMain-imagePreview'>
+                    <div className='PostMain-mediaContainer'>
                         <div className='PostMain-imageContainer'
                             onClick={this.toggleModal}>
                             <img className='PostMain-image'
