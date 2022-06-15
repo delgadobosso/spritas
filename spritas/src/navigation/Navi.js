@@ -52,10 +52,12 @@ export default class Navi extends React.Component {
 
         var avatar;
         var userItem;
+        var createPost;
         var logout;
         if (user) {
             avatar = (user.avatar) ? `/media/avatars/${user.avatar}` : pfp;
             userItem = <a className={"Navi-item" + itemOpen} href={"/u/" + user.username}>{user.nickname}</a>;
+            createPost = <a className={"Navi-item" + itemOpen} href="/create/post">Create Post</a>;
             logout = <a className={"Navi-item" + itemOpen} href="/logout">Logout</a>;
         } else {
             avatar = pfp;
@@ -74,6 +76,7 @@ export default class Navi extends React.Component {
                         <img className="Navi-img" src={avatar} alt="Navigation" />
                     </div>
                     {userItem}
+                    {createPost}
                     {logout}
                 </div>
             </div>
