@@ -47,7 +47,8 @@ export default class CreatePost extends React.Component {
                     this.videoRef.current.classList.remove('CreatePost-hide');
                     this.setState({
                         videoUp: true,
-                        fileName: file.name
+                        fileName: file.name,
+                        vidLink: null
                     });
                 }
                 reader.readAsDataURL(file);
@@ -74,7 +75,8 @@ export default class CreatePost extends React.Component {
                 if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
                 else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
                 video =
-                <iframe className='CreatePost-vidLinkPreview'
+                <iframe width="100%" height="100%"
+                    className='CreatePost-vidLinkPreview'
                     id={`PostMainVideo`}
                     title="Embedded-Video" allowFullScreen
                     src={embedSrc}>
@@ -91,6 +93,7 @@ export default class CreatePost extends React.Component {
         e.preventDefault();
 
         this.dropRef.current.classList.remove('CreatePost-mediaAllValid');
+        this.dropRef.current.lastChild.classList.remove('CreatePost-mediaContainerValid');
         
         if (e.dataTransfer.items) {
             if (e.dataTransfer.items[0].kind === "file") {
@@ -106,8 +109,14 @@ export default class CreatePost extends React.Component {
     handleDrag(e) {
         e.preventDefault();
 
-        if (e.type === "dragover") this.dropRef.current.classList.add('CreatePost-mediaAllValid');
-        else if (e.type === "dragexit") this.dropRef.current.classList.remove('CreatePost-mediaAllValid');
+        if (e.type === "dragover") {
+            this.dropRef.current.classList.add('CreatePost-mediaAllValid');
+            this.dropRef.current.lastChild.classList.add('CreatePost-mediaContainerValid');
+        }
+        else if (e.type === "dragexit") {
+            this.dropRef.current.classList.remove('CreatePost-mediaAllValid');
+            this.dropRef.current.lastChild.classList.remove('CreatePost-mediaContainerValid');
+        }
     }
 
     clickVideoUp() {
@@ -187,7 +196,7 @@ export default class CreatePost extends React.Component {
 
         const vidContainer = (
             <div className='CreatePost-videoContainer'>
-                <video className='CreatePost-hide' controls ref={this.videoRef} />
+                <video className='CreatePost-videoElem CreatePost-hide' controls ref={this.videoRef} />
                 {this.state.vidLink}
             </div>
         );
@@ -226,7 +235,7 @@ export default class CreatePost extends React.Component {
                     </div>
                 </form> */}
                 <h1 className='CreatePost-createTitle'>Create a Post</h1>
-                <div className='PostMain-container'>
+                <div className='PostMain-container CreatePost-container'>
                     <div className='CreatePost-mediaAll' onDrop={this.handleDrop} onDragOver={this.handleDrag} onDragExit={this.handleDrag} ref={this.dropRef}>
                         {fileLink}
                         {file}
@@ -240,7 +249,7 @@ export default class CreatePost extends React.Component {
                             <div className='PostMain-post'>
                                 <input className='PostMain-title CreatePost-title' type="text" name="name" id="name" placeholder='Post Title*' required />
                                 <div className='PostMain-info'>
-                                    <a href={`/u/${username}`} title={'@' + username} className="PostMain-a">
+                                    <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
                                         <div className="PostMain-user">
                                             <img className="PostMain-img" src={avatar}
                                             alt="User icon" />

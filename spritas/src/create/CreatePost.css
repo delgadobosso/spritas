@@ -1,10 +1,10 @@
+.CreatePost-container {
+    margin-bottom: 20px;
+}
+
 .CreatePost-imgPreview {
     max-width: 500px;
     max-height: 500px;
-}
-
-.CreatePost-videoContainer {
-    background-color: var(--darkest-grey);
 }
 
 .CreatePost-hide {
@@ -85,6 +85,22 @@
 
 .CreatePost-mediaContainer {
     position: initial;
+    border-radius: 0;
+
+    transition: background-color 0.25s;
+}
+.CreatePost-mediaContainerValid {
+    background-color: var(--spritan-gold);
+}
+
+.CreatePost-videoContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.CreatePost-videoElem {
+    width: 100%;
+    height: 100%;
 }
 
 .CreatePost-title {
