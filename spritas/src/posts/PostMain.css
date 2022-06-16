@@ -290,7 +290,8 @@
 
     .PostMain-mediaContainer {
         width: 100%;
-        height: 56.25vw;
+        height: 100%;
+        padding-bottom: 56.25%;
         border-radius: 0;
     }
     .PostMain-videoElem, .PostMain-imageContainer {

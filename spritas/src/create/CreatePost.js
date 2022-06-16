@@ -10,14 +10,14 @@ export default class CreatePost extends React.Component {
         this.handleLink = this.handleLink.bind(this);
         this.handleDrop = this.handleDrop.bind(this);
         this.handleDrag = this.handleDrag.bind(this);
-        this.clickVideoLink = this.clickVideoLink.bind(this);
-        this.clickVideoUp = this.clickVideoUp.bind(this);
+        this.clickMediaLink = this.clickMediaLink.bind(this);
+        this.clickMediaUpload = this.clickMediaUpload.bind(this);
         this.videoRef = React.createRef();
         this.dropRef = React.createRef();
         this.state = {
             imgPreview: null,
-            videoUp: true,
-            vidLink: null,
+            mediaUpload: true,
+            mediaLink: null,
             fileName: 'Select File'
         };
     }
@@ -34,8 +34,15 @@ export default class CreatePost extends React.Component {
                 const reader = new FileReader();
                 reader.onload = ((e) => {
                     this.setState({
+                        mediaUpload: true,
+                        fileName: file.name,
                         imgPreview: e.target.result,
-                        isLink: false
+                        mediaLink: null
+                    }, () => {
+                        this.videoRef.current.classList.add('CreatePost-hide');
+                        this.videoRef.current.pause();
+                        this.videoRef.current.removeAttribute('src');
+                        this.videoRef.current.load();
                     });
                 });
                 reader.readAsDataURL(file);
@@ -46,9 +53,10 @@ export default class CreatePost extends React.Component {
                     this.videoRef.current.load();
                     this.videoRef.current.classList.remove('CreatePost-hide');
                     this.setState({
-                        videoUp: true,
+                        mediaUpload: true,
                         fileName: file.name,
-                        vidLink: null
+                        imgPreview: null,
+                        mediaLink: null
                     });
                 }
                 reader.readAsDataURL(file);
@@ -83,9 +91,12 @@ export default class CreatePost extends React.Component {
                 </iframe>
             }
 
-            this.setState({ vidLink: video });
+            this.setState({
+                mediaLink: video,
+                imgPreview: e.target.result
+            });
         } else {
-            this.setState({ vidLink: null });
+            this.setState({ mediaLink: null });
         }
     }
 
@@ -119,16 +130,17 @@ export default class CreatePost extends React.Component {
         }
     }
 
-    clickVideoUp() {
+    clickMediaUpload() {
         this.setState({
-            videoUp: true,
-            vidLink: null
+            mediaUpload: true,
+            mediaLink: null
         });
     }
 
-    clickVideoLink() {
+    clickMediaLink() {
         this.setState({
-            videoUp: false,
+            mediaUpload: false,
+            imgPreview: null,
             fileName: 'Select File'
         }, () => {
             this.videoRef.current.classList.add('CreatePost-hide');
@@ -152,59 +164,53 @@ export default class CreatePost extends React.Component {
             avatar = (this.props.user.avatar) ? `/media/avatars/${this.props.user.avatar}` : null;
         }
 
+        var file = <input type="hidden" name="file" id="file" value="null" />;
+        var link = <input type="hidden" name="link" id="link" value="null" />;
         var fileLink;
-        if (this.state.videoUp) {
+        if (this.state.mediaUpload) {
+            file = (
+                <div className="CreatePost-item">
+                    <label className='CreatePost-file' htmlFor="file">{this.state.fileName}</label>
+                    <input className='CreatePost-fileIn' type="file" name="file" id="file"
+                        onChange={this.handleFile}
+                        accept="video/mp4, video/webm, image/png, image/jpeg, image/gif" />
+                </div>);
+
             fileLink = (
                 <div className='CreatePost-options'>
                     <span className='CreatePost-option CreatePost-selected'>Media Upload</span>
-                    <span className='CreatePost-option' onClick={this.clickVideoLink}>Media Link</span>
+                    <span className='CreatePost-option' onClick={this.clickMediaLink}>Media Link</span>
                 </div>
             );
-        } else if (!this.state.videoUp) {
+        } else if (!this.state.mediaUpload) {
+            link = (
+                <div className="CreatePost-item">
+                    <input className='CreatePost-link' type="text" name="link" id="link" pattern={regex_video} onChange={this.handleLink} placeholder="Enter Link Here" />
+                </div>);
+
             fileLink = (
                 <div className='CreatePost-options'>
-                    <span className='CreatePost-option' onClick={this.clickVideoUp}>Media Upload</span>
+                    <span className='CreatePost-option' onClick={this.clickMediaUpload}>Media Upload</span>
                     <span className='CreatePost-option CreatePost-selected'>Media Link</span>
                 </div>
             );
         }
 
-        var file = <input type="hidden" name="file" id="file" value="null" />;
-        var link = <input type="hidden" name="link" id="link" value="null" />;
-        if (this.state.videoUp) {
-            file = (
-            <div className="CreatePost-item">
-                <label className='CreatePost-file' htmlFor="file">{this.state.fileName}</label>
-                <input className='CreatePost-fileIn' type="file" name="file" id="file"
-                    onChange={this.handleFile}
-                    accept="video/mp4, video/webm" />
-            </div>);
-        } else if (!this.state.videoUp) {
-            link = (
-            <div className="CreatePost-item">
-                <input className='CreatePost-link' type="text" name="link" id="link" pattern={regex_video} onChange={this.handleLink} placeholder="Enter Link Here" />
-            </div>);
-        } else if (type === "IMG") {
-            file = (
-            <div className="CreatePost-item">
-                <label htmlFor="file">File: </label>
-                <input type="file" name="file" id="file" required
-                    onChange={this.handleFile}
-                    accept="image/png, image/jpeg, image/gif" />
-            </div>);
-        }
+        const imgPreview = (this.state.imgPreview) ? (
+            <div className='PostMain-imageContainer CreatePost-imageContainer'>
+                <img className="PostMain-image" src={this.state.imgPreview} alt="Preview" />
+            </div>)
+        : null;
 
-        const vidContainer = (
-            <div className='CreatePost-videoContainer'>
+        const previewContainer = (
+            <div className='CreatePost-previewContainer'>
                 <video className='CreatePost-videoElem CreatePost-hide' controls ref={this.videoRef} />
-                {this.state.vidLink}
+                {this.state.mediaLink}
+                {imgPreview}
             </div>
         );
 
-        const imgPreview = (type === "IMG" && this.state.imgPreview) ?
-        <img className="CreatePost-imgPreview" src={this.state.imgPreview} alt="Preview" /> : null;
-
-        const enctype = (type === "IMG" || this.state.videoUp) ? "multipart/form-data" : null;
+        const enctype = (type === "IMG" || this.state.mediaUpload) ? "multipart/form-data" : null;
 
         return (
             <div className="CreatePost">
@@ -241,13 +247,13 @@ export default class CreatePost extends React.Component {
                         {file}
                         {link}
                         <div className='PostMain-mediaContainer CreatePost-mediaContainer' >
-                            {vidContainer}
+                            {previewContainer}
                         </div>
                     </div>
                     <div className='PostMain-cards'>
                         <div className='PostMain-postOption'>
                             <div className='PostMain-post'>
-                                <input className='PostMain-title CreatePost-title' type="text" name="name" id="name" placeholder='Post Title*' required />
+                                <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Post Title*' required />
                                 <div className='PostMain-info'>
                                     <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
                                         <div className="PostMain-user">

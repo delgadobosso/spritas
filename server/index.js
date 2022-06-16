@@ -399,7 +399,7 @@ app.post('/create/post',
     memUpload.single('file'),
     body('id').isInt(),
     body('type').notEmpty().isIn(["TEXT", "BLOG", "VIDO", "IMG"]),
-    body('name').trim().isLength({ min: 2 }).escape(),
+    body('title').trim().isLength({ min: 2 }).escape(),
     body('subtitle').trim().isLength({ max: 30 }).escape(),
     body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
     body('body').trim().isLength({ min: 2 }).escape(),
@@ -421,7 +421,7 @@ app.post('/create/post',
                 if (result[0].type === "VIDO" && req.body.link !== "null") {
                     pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
                     VALUES(?,?,?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
+                    [req.body.id, req.session.user.id, req.body.title, req.body.subtitle, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
                         res.redirect('/');
@@ -431,13 +431,13 @@ app.post('/create/post',
                         const file64 = req.file.buffer.toString('base64');
                         imgur.uploadBase64(file64,
                                 undefined,
-                                req.body.name,
+                                req.body.title,
                                 req.body.body)
                             .then((json) => {
                                 if (json.link) {
                                     pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,deletehash,type)
                                     VALUES(?,?,?,?,?,?,?,?)`,
-                                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type], (error, result, fields) => {
+                                    [req.body.id, req.session.user.id, req.body.title, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type], (error, result, fields) => {
                                         if (error) return res.status(500).send(error);
 
                                         imgurCurrent++;
@@ -458,7 +458,7 @@ app.post('/create/post',
                 } else {
                     pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,type)
                     VALUES(?,?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, result[0].type], (error, result, fields) => {
+                    [req.body.id, req.session.user.id, req.body.title, req.body.subtitle, req.body.body, result[0].type], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
                         res.redirect('/');

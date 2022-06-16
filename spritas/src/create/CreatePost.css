@@ -2,11 +2,6 @@
     margin-bottom: 20px;
 }
 
-.CreatePost-imgPreview {
-    max-width: 500px;
-    max-height: 500px;
-}
-
 .CreatePost-hide {
     display: none;
 }
@@ -93,9 +88,13 @@
     background-color: var(--spritan-gold);
 }
 
-.CreatePost-videoContainer {
+.CreatePost-previewContainer {
     width: 100%;
     height: 100%;
+}
+
+.CreatePost-imageContainer:hover {
+    cursor: initial;
 }
 
 .CreatePost-videoElem {
@@ -166,6 +165,14 @@
     .CreatePost-mediaAll {
         width: 100%;
         border-radius: 0;
+    }
+
+    .CreatePost-mediaContainer {
+        position: relative;
+    }
+
+    .CreatePost-previewContainer {
+        position: absolute;
     }
 
     .CreatePost-title {
