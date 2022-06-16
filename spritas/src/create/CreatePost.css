@@ -106,10 +106,12 @@
 .CreatePost-title {
     font-size: 24px;
     font-weight: 700;
+    background-color: var(--lightest-grey);
     border: solid 5px var(--darkest-grey);
     border-radius: 10px 10px 0 0;
 }
 .CreatePost-title:valid {
+    background-color: var(--darkest-grey);
     border-color: var(--darkest-grey);
 }
 .CreatePost-title:focus:required:valid {
