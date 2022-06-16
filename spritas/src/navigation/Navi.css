@@ -46,7 +46,7 @@
 }
 @media (hover: hover) {
     .Navi:hover {
-        box-shadow: 0 0 0 5px var(--darkest-grey);
+        box-shadow: 0 0 0 10px var(--darkest-grey);
     }
 
     .Navi-toggle:hover {
