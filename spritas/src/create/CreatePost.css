@@ -72,8 +72,10 @@
 }
 
 .CreatePost-mediaAll {
+    width: 1200px;
     border-radius: 10px;
     overflow: clip;
+    margin-right: 20px;
 
     transition: box-shadow 0.25s;
 }
@@ -123,7 +125,31 @@
     border-color: var(--spritan-red);
 }
 
+@media screen and (max-width: 1860px) {
+    .CreatePost-mediaAll {
+        width: 960px;
+    }
+}
+
+@media screen and (max-width: 1620px) {
+    .CreatePost-mediaAll {
+        width: 800px;
+    }
+}
+
+@media screen and (max-width: 1350px) {
+    .CreatePost-mediaAll {
+        width: 640px;
+        margin: 0;
+    }
+}
+
 @media screen and (max-width: 700px) {
+    .CreatePost-mediaAll {
+        width: 100%;
+        border-radius: 0;
+    }
+
     .CreatePost-title {
         border-radius: 0;
     }

@@ -106,10 +106,8 @@ export default class CreatePost extends React.Component {
     handleDrag(e) {
         e.preventDefault();
 
-        if (e.type === "dragover") {
-            e.dataTransfer.dropEffect = "copy";
-            this.dropRef.current.classList.add('CreatePost-mediaAllValid');
-        } else if (e.type === "dragexit") this.dropRef.current.classList.remove('CreatePost-mediaAllValid');
+        if (e.type === "dragover") this.dropRef.current.classList.add('CreatePost-mediaAllValid');
+        else if (e.type === "dragexit") this.dropRef.current.classList.remove('CreatePost-mediaAllValid');
     }
 
     clickVideoUp() {
