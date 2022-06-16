@@ -116,7 +116,6 @@
     background-color: var(--mid-grey);
     background-repeat: no-repeat;
     background-size: 300px;
-    margin-top: 10px;
 }
 .TopicPost-thumbAni {
     animation-name: breathe;

@@ -126,10 +126,10 @@ export default class TopicPost extends React.Component {
         return (
             <div className="TopicPost" title={title}>
                 <a className="TopicPost-link" href={'/post/' + post.id} onClick={this.handleClick}>
-                    <div className='TopicPost-titles'>
-                        <h2 className="TopicPost-name" id={"TopicPostName-" + post.id}>{title}</h2>
-                    </div>
                     {thumb}
+                    <div className='TopicPost-titles'>
+                        <h3 className="TopicPost-name" id={"TopicPostName-" + post.id}>{title}</h3>
+                    </div>
                     {subtitle}
                     <a href={`/u/${post.username}`} title={post.username}
                     className="TopicPost-a">
