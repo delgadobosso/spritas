@@ -197,9 +197,12 @@ export default class CreatePost extends React.Component {
             method: 'POST',
             body: formData
         })
-        .then(resp => resp.text())
+        .then(resp => {
+            if (resp.ok) return resp.text();
+        })
         .then(data => {
-            console.log(data);
+            var id = parseInt(data);
+            if (id) window.location.href = "/post/" + id;
         })
     }
 

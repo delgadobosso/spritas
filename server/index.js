@@ -149,7 +149,6 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                     pool.query(`
                         SELECT 
                             p1.id,
-                            p1.idTopic,
                             p1.idParent,
                             p1.idUser,
                             p1.title,
@@ -173,15 +172,15 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                             INNER JOIN (
                                 SELECT MAX(id) AS id
                                 FROM posts
-                                WHERE idTopic = ? AND posts.update = 'UPDT'
+                                WHERE posts.update = 'UPDT'
                                 GROUP BY idParent) AS t
                             USING (id)) AS t1
                         ON p1.id = t1.idParent
-                        WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                        WHERE p1.idParent IS NULL
                         AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
                         ORDER BY p1.lastTs DESC
                         LIMIT ?,?`,
-                    [id, id, offset, limit], (error, result, fields) => {
+                    [offset, limit], (error, result, fields) => {
                         if (error) res.status(500).send(error);
 
                         else {
@@ -195,7 +194,6 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
             pool.query(`
                 SELECT 
                     p1.id,
-                    p1.idTopic,
                     p1.idParent,
                     p1.idUser,
                     p1.title,
@@ -219,11 +217,11 @@ app.get('/home/:id.:offset.:limit', (req, res) => {
                     INNER JOIN (
                         SELECT MAX(id) AS id
                         FROM posts
-                        WHERE idTopic = ? AND posts.update = 'UPDT'
+                        WHERE posts.update = 'UPDT'
                         GROUP BY idParent) AS t
                     USING (id)) AS t1
                 ON p1.id = t1.idParent
-                WHERE p1.idTopic = ? AND p1.idParent IS NULL
+                WHERE p1.idParent IS NULL
                 AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
                 ORDER BY p1.lastTs DESC
                 LIMIT ?,?`,
@@ -404,7 +402,7 @@ app.post('/create/post',
     memUpload.single('file'),
     body('title').trim().isLength({ min: 1, max: 64 }).escape(),
     body('subtitle').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
-    body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().escape(),
+    body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().escape(),
     body('body').trim().isLength({ min: 2, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
@@ -412,67 +410,67 @@ app.post('/create/post',
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-        console.log(req.file);
+        const validVid = ["video/mp4", "video/webm"];
+        const validPic = ["image/png", "image/jpeg", "image/gif"];
 
-        return res.sendStatus(200);
+        var type = "TEXT";
+        if (req.file) {
+            if (validVid.includes(req.file.mimetype)) type = "VIDO";
+            else if (validPic.includes(req.file.mimetype)) type = "IMG";
+        } else if (req.body.link) {
+            type = "VIDO";
+        }
 
-        pool.query(`SELECT type, perm FROM topics WHERE id = ?`,
-        req.body.id, (error, result, fields) => {
-            if (error) return res.sendStatus(500);
+        // Upload file to Imgur and add that link
+        if (type === "VIDO" && req.body.link !== "") {
+            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,link,type)
+            VALUES(?,?,?,?,?,?)`,
+            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, req.body.link, type], (error, result, fields) => {
+                if (error) return res.status(500).send(error);
 
-            if (result.length > 0) {
-                if (req.body.type.toUpperCase() != result[0].type) return res.status(400).json({error: "Type of this post does not match the parent topic's type."});
-                if (result[0].perm === "ADMN" && req.session.user.type != "ADMN") return res.sendStatus(403);
+                const resId = result.insertId.toString();
+                return res.status(200).send(resId);
+            });
+        } else if ((type === "IMG" && req.file && req.file.buffer) || (type === "VIDO" && req.file && req.file.buffer)) {
+            if (imgurCurrent <= imgurLimit) {
+                const file64 = req.file.buffer.toString('base64');
+                imgur.uploadBase64(file64,
+                        undefined,
+                        req.body.title,
+                        req.body.body)
+                    .then((json) => {
+                        if (json.link) {
+                            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,link,deletehash,type)
+                            VALUES(?,?,?,?,?,?,?)`,
+                            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, json.link, json.deletehash, type], (error, result, fields) => {
+                                if (error) return res.status(500).send(error);
 
-                // Upload file to Imgur and add that link
-                if (result[0].type === "VIDO" && req.body.link !== "null") {
-                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
-                    VALUES(?,?,?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.title, req.body.subtitle, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
-                        if (error) return res.status(500).send(error);
+                                imgurCurrent++;
+                                console.log('Current Imgur upload: ' + imgurCurrent);
 
+                                const resId = result.insertId.toString();
+                                return res.status(200).send(resId);
+                            })
+                        } else return res.status(500).json({error: "Issue uploading to imgur."});
+                    })
+                    .catch((err) => {
+                        console.error(err.message);
                         res.redirect('/');
                     });
-                } else if ((result[0].type === "IMG" && req.file && req.file.buffer) || (result[0].type === "VIDO" && req.file && req.file.buffer)) {
-                    if (imgurCurrent <= imgurLimit) {
-                        const file64 = req.file.buffer.toString('base64');
-                        imgur.uploadBase64(file64,
-                                undefined,
-                                req.body.title,
-                                req.body.body)
-                            .then((json) => {
-                                if (json.link) {
-                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,deletehash,type)
-                                    VALUES(?,?,?,?,?,?,?,?)`,
-                                    [req.body.id, req.session.user.id, req.body.title, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type], (error, result, fields) => {
-                                        if (error) return res.status(500).send(error);
+            } else {
+                res.status(503).json({error: "Imgur upload capacity reached. Please try again in one hour."});
+            }
+        // No link insert otherwise
+        } else {
+            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,type)
+            VALUES(?,?,?,?,?)`,
+            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, type], (error, result, fields) => {
+                if (error) return res.status(500).send(error);
 
-                                        imgurCurrent++;
-                                        console.log('Current Imgur upload: ' + imgurCurrent);
-
-                                        res.redirect('/');
-                                    })
-                                } else return res.status(500).json({error: "Issue uploading to imgur."});
-                            })
-                            .catch((err) => {
-                                console.error(err.message);
-                                res.redirect('/');
-                            });
-                    } else {
-                        res.status(503).json({error: "Imgur upload capacity reached. Please try again in one hour."});
-                    }
-                // No link insert otherwise
-                } else {
-                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,type)
-                    VALUES(?,?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.title, req.body.subtitle, req.body.body, result[0].type], (error, result, fields) => {
-                        if (error) return res.status(500).send(error);
-
-                        res.redirect('/');
-                    })
-                }
-            } else return res.sendStatus(404);
-        })
+                const resId = result.insertId.toString();
+                return res.status(200).send(resId);
+            })
+        }
     }
 )
 
@@ -522,9 +520,9 @@ app.post('/create/reply',
                         // check if post was made by person trying to comment, don't let them
                         if (parent.type !== "RPLY" && req.session.user.id === parent.idUser) return res.sendStatus(403);
                         else {
-                            pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
-                            VALUES(?,?,?,?,'RPLY')`,
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                            pool.query(`INSERT INTO posts (idParent,idUser,body,type)
+                            VALUES(?,?,?,'RPLY')`,
+                            [parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
                                 pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
@@ -546,7 +544,7 @@ app.post('/update/post',
     memUpload.single('file'),
     body('id').notEmpty().isInt(),
     body('subtitle').trim().isLength({ max: 30 }).escape(),
-    body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
+    body('link').matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().isLength({ min: 2 }).escape(),
     body('body').trim().isLength({ min: 2 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
@@ -566,8 +564,8 @@ app.post('/update/post',
                     if (req.session.user.id === parent.idUser) {
                         // Add link if it's a VIDO
                         if (result[0].type === "VIDO" && req.body.link !== "null") {
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,?,'UPDT',?,?)",
-                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, req.body.link, result[0].type],
+                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
+                            [parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, req.body.link, result[0].type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
@@ -590,8 +588,8 @@ app.post('/update/post',
                                         req.body.subtitle)
                                     .then((json) => {
                                         if (json.link) {
-                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,?,'UPDT',?,?,?)",
-                                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type],
+                                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,'UPDT',?,?,?)",
+                                            [parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
@@ -613,8 +611,8 @@ app.post('/update/post',
                             }
                         } else {
                         // No link insert
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`) VALUES(?,?,?,?,?,?,'UPDT')",
-                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body],
+                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`) VALUES(?,?,?,?,?,'UPDT')",
+                            [parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
@@ -780,7 +778,6 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
         pool.query(`
         SELECT 
             p1.id,
-            p1.idTopic,
             p1.idParent,
             p1.idUser,
             p1.title,
