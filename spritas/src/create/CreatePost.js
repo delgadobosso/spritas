@@ -6,6 +6,7 @@ import he from 'he';
 export default class CreatePost extends React.Component {
     constructor(props) {
         super(props);
+        this.valid = ["video/mp4", "video/webm", "image/png", "image/jpeg", "image/gif"];
         this.handleFile = this.handleFile.bind(this);
         this.handleLink = this.handleLink.bind(this);
         this.handleDrop = this.handleDrop.bind(this);
@@ -111,9 +112,11 @@ export default class CreatePost extends React.Component {
 
         this.dropRef.current.classList.remove('CreatePost-mediaAllValid');
         this.dropRef.current.lastChild.classList.remove('CreatePost-mediaContainerValid');
+        this.dropRef.current.classList.remove('CreatePost-mediaAllInvalid');
+        this.dropRef.current.lastChild.classList.remove('CreatePost-mediaContainerInvalid');
         
-        if (e.dataTransfer.items) {
-            if (e.dataTransfer.items[0].kind === "file") {
+        if (e.dataTransfer.items && e.dataTransfer.items[0].kind === "file") {
+            if (this.valid.includes(e.dataTransfer.items[0].type)) {
                 const file = e.dataTransfer.items[0].getAsFile();
                 this.handleFile(e, file);
             }
@@ -127,12 +130,23 @@ export default class CreatePost extends React.Component {
         e.preventDefault();
 
         if (e.type === "dragover") {
+            if (e.dataTransfer.items && e.dataTransfer.items[0].kind === "file") {
+                if (this.valid.includes(e.dataTransfer.items[0].type)) {
+                    this.dropRef.current.classList.add('CreatePost-mediaAllValid');
+                    this.dropRef.current.lastChild.classList.add('CreatePost-mediaContainerValid');
+                } else {
+                    this.dropRef.current.classList.add('CreatePost-mediaAllInvalid');
+                    this.dropRef.current.lastChild.classList.add('CreatePost-mediaContainerInvalid');
+                }
+            }
             this.dropRef.current.classList.add('CreatePost-mediaAllValid');
             this.dropRef.current.lastChild.classList.add('CreatePost-mediaContainerValid');
         }
         else if (e.type === "dragexit") {
             this.dropRef.current.classList.remove('CreatePost-mediaAllValid');
             this.dropRef.current.lastChild.classList.remove('CreatePost-mediaContainerValid');
+            this.dropRef.current.classList.remove('CreatePost-mediaAllInvalid');
+            this.dropRef.current.lastChild.classList.remove('CreatePost-mediaContainerInvalid');
         }
     }
 
@@ -171,10 +185,13 @@ export default class CreatePost extends React.Component {
         const title = document.getElementById('title').value;
         const subtitle = document.getElementById('subtitle').value;
         const body = document.getElementById('body').value;
+        const link = document.getElementById('link').value;
 
         formData.append('title', title);
         formData.append('subtitle', subtitle);
         formData.append('body', body);
+        formData.append('link', link);
+        formData.append('file', this.state.file);
 
         fetch('/create/post', {
             method: 'POST',
@@ -199,7 +216,7 @@ export default class CreatePost extends React.Component {
         }
 
         var file = <input type="hidden" name="file" id="file" value="null" />;
-        var link = <input type="hidden" name="link" id="link" value="null" />;
+        var link = <input type="hidden" name="link" id="link" />;
         var fileLink;
         if (this.state.mediaUpload) {
             file = (
@@ -244,9 +261,9 @@ export default class CreatePost extends React.Component {
             </div>
         );
 
-        var createText = "Create Text Post";
-        if (this.state.file && this.state.imgPreview) createText = "Create Picture Post";
-        else if (this.state.file || this.state.mediaLink) createText = "Create Video Post";
+        var createText = "Submit Text Post";
+        if (this.state.file && this.state.imgPreview) createText = "Submit Picture Post";
+        else if (this.state.file || this.state.mediaLink) createText = "Submit Video Post";
 
         // const enctype = (type === "IMG" || this.state.mediaUpload) ? "multipart/form-data" : null;
 

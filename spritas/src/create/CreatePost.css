@@ -77,6 +77,9 @@
 .CreatePost-mediaAllValid {
     box-shadow: 0 0 0 5px var(--spritan-gold);
 }
+.CreatePost-mediaAllInvalid {
+    box-shadow: 0 0 0 5px var(--spritan-red);
+}
 
 .CreatePost-mediaContainer {
     position: initial;
@@ -86,6 +89,9 @@
 }
 .CreatePost-mediaContainerValid {
     background-color: var(--spritan-gold);
+}
+.CreatePost-mediaContainerInvalid {
+    background-color: var(--spritan-red);
 }
 
 .CreatePost-previewContainer {

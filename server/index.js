@@ -26,6 +26,11 @@ const multer = require('multer');
 const memStorage = multer.memoryStorage();
 const memUpload = multer({
     storage: memStorage,
+    fileFilter: (req, file, cb) => {
+        var valid = ["video/mp4", "video/webm", "image/png", "image/jpeg", "image/gif"];
+        if (valid.includes(file.mimetype)) cb(null, true);
+        else cb(null, false);
+    },
     limits: {
         fileSize: 20971520
     }
@@ -398,14 +403,16 @@ app.post('/create/topic',
 app.post('/create/post',
     memUpload.single('file'),
     body('title').trim().isLength({ min: 1, max: 64 }).escape(),
-    body('subtitle').trim().isLength({ max: 32 }).escape(),
-    body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().escape(),
+    body('subtitle').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
+    body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().escape(),
     body('body').trim().isLength({ min: 2, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
         else if (!req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        console.log(req.file);
 
         return res.sendStatus(200);
 
