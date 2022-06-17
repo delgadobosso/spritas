@@ -67,6 +67,7 @@
 }
 
 .CreatePost-mediaAll {
+    position: relative;
     width: 1200px;
     border-radius: 10px;
     overflow: clip;
@@ -108,6 +109,10 @@
     height: 100%;
 }
 
+.CreatePost-post {
+    position: relative;
+}
+
 .CreatePost-title {
     font-size: 24px;
     font-weight: 700;
@@ -146,6 +151,39 @@
 }
 .CreatePost-body:focus:required:invalid {
     border-color: var(--spritan-red);
+}
+
+.CreatePost-optionContainer {
+    position: relative;
+}
+
+.CreatePost-submitCover {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+
+    transition: opacity 5s;
+}
+.CreatePost-submitting {
+    pointer-events: auto;
+    cursor: wait !important;
+    opacity: 0.25;
+    z-index: 2;
+
+    animation-name: submitting;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+}
+@keyframes submitting {
+    0% { background-color: var(--info-grey); }
+    25% { background-color: var(--spritan-gold); }
+    50% { background-color: var(--info-grey); }
+    75% { background-color: var(--spritan-red); }
+    100% { background-color: var(--info-grey); }
 }
 
 @media screen and (max-width: 1860px) {

@@ -22,7 +22,8 @@ export default class CreatePost extends React.Component {
             mediaUpload: true,
             mediaLink: null,
             fileName: 'Select File',
-            file: null
+            file: null,
+            submitting: false
         };
     }
 
@@ -180,30 +181,39 @@ export default class CreatePost extends React.Component {
         else if (trueCount > 9999) e.target.value = body.slice(0, 9999);
     }
 
-    submit() {
-        var formData = new FormData();
-        const title = document.getElementById('title').value;
-        const subtitle = document.getElementById('subtitle').value;
-        const body = document.getElementById('body').value;
-        const link = document.getElementById('link').value;
-
-        formData.append('title', title);
-        formData.append('subtitle', subtitle);
-        formData.append('body', body);
-        formData.append('link', link);
-        formData.append('file', this.state.file);
-
-        fetch('/create/post', {
-            method: 'POST',
-            body: formData
-        })
-        .then(resp => {
-            if (resp.ok) return resp.text();
-        })
-        .then(data => {
-            var id = parseInt(data);
-            if (id) window.location.href = "/post/" + id;
-        })
+    submit(e) {
+        if (!this.state.submitting) {
+            this.setState({
+                submitting: true
+            }, () => {
+                var formData = new FormData();
+                const title = document.getElementById('title').value;
+                const subtitle = document.getElementById('subtitle').value;
+                const body = document.getElementById('body').value;
+                const link = document.getElementById('link').value;
+        
+                formData.append('title', title);
+                formData.append('subtitle', subtitle);
+                formData.append('body', body);
+                formData.append('link', link);
+                formData.append('file', this.state.file);
+        
+                fetch('/create/post', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(resp => {
+                    if (resp.ok) return resp.text();
+                    else this.setState({ submitting: false });
+                })
+                .then(data => {
+                    this.setState({ submitting: false });
+                    var id = parseInt(data);
+                    if (id) window.location.href = "/post/" + id;
+                })
+                .catch(error => this.setState({ submitting: false }));
+            });
+        }
     }
 
     render() {
@@ -264,17 +274,19 @@ export default class CreatePost extends React.Component {
             </div>
         );
 
-        var createText = "Submit Text Post";
-        if (this.state.file && this.state.imgPreview) createText = "Submit Picture Post";
-        else if (this.state.file || this.state.mediaLink) createText = "Submit Video Post";
+        var typeText = "Text Post";
+        if (this.state.file && this.state.imgPreview) typeText = "Picture Post";
+        else if (this.state.file || this.state.mediaLink) typeText = "Video Post";
+        var submitText = (this.state.submitting) ? `Submitting ${typeText}...` : `Submit ${typeText}`;
 
-        // const enctype = (type === "IMG" || this.state.mediaUpload) ? "multipart/form-data" : null;
+        const cover = (this.state.submitting) ? " CreatePost-submitting" : "";
 
         return (
             <div className="CreatePost">
                 <h1 className='CreatePost-createTitle'>Create a Post</h1>
                 <div className='PostMain-container CreatePost-container'>
                     <div className='CreatePost-mediaAll' onDrop={this.handleDrop} onDragOver={this.handleDrag} onDragExit={this.handleDrag} ref={this.dropRef}>
+                        <div className={'CreatePost-submitCover' + cover}></div>
                         {fileLink}
                         {file}
                         {link}
@@ -284,7 +296,8 @@ export default class CreatePost extends React.Component {
                     </div>
                     <div className='PostMain-cards'>
                         <div className='PostMain-postOption'>
-                            <div className='PostMain-post'>
+                            <div className='PostMain-post CreatePost-post'>
+                                <div className={'CreatePost-submitCover' + cover}></div>
                                 <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Post Title*' required minLength="1" maxLength="64" />
                                 <div className='PostMain-info'>
                                     <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
@@ -299,8 +312,9 @@ export default class CreatePost extends React.Component {
                                 <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body*' required minLength="2" onChange={this.bodyCheck} />
                             </div>
                         </div>
-                        <div className='PostMain-option'>
-                            <div className='PostMain-optionItem' onClick={this.submit}>{createText}</div>
+                        <div className='PostMain-option CreatePost-optionContainer'>
+                            <div className={'CreatePost-submitCover' + cover}></div>
+                            <div className='PostMain-optionItem' onClick={this.submit}>{submitText}</div>
                         </div>
                     </div>
                 </div>
