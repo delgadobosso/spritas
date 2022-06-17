@@ -207,9 +207,13 @@ export default class CreatePost extends React.Component {
                     else this.setState({ submitting: false });
                 })
                 .then(data => {
-                    this.setState({ submitting: false });
                     var id = parseInt(data);
-                    if (id) window.location.href = "/post/" + id;
+                    if (id) {
+                        setTimeout(() => {
+                            this.setState({ submitting: false });
+                            window.location.href = "/post/" + id;
+                        }, 3000);
+                    }
                 })
                 .catch(error => this.setState({ submitting: false }));
             });
