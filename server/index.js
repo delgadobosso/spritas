@@ -409,6 +409,8 @@ app.post('/create/post',
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
+        return res.sendStatus(200);
+
         pool.query(`SELECT type, perm FROM topics WHERE id = ?`,
         req.body.id, (error, result, fields) => {
             if (error) return res.sendStatus(500);

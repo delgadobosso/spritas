@@ -18,7 +18,8 @@ export default class CreatePost extends React.Component {
             imgPreview: null,
             mediaUpload: true,
             mediaLink: null,
-            fileName: 'Select File'
+            fileName: 'Select File',
+            file: null
         };
     }
 
@@ -37,7 +38,8 @@ export default class CreatePost extends React.Component {
                         mediaUpload: true,
                         fileName: file.name,
                         imgPreview: e.target.result,
-                        mediaLink: null
+                        mediaLink: null,
+                        file: file
                     }, () => {
                         this.videoRef.current.classList.add('CreatePost-hide');
                         this.videoRef.current.pause();
@@ -56,7 +58,8 @@ export default class CreatePost extends React.Component {
                         mediaUpload: true,
                         fileName: file.name,
                         imgPreview: null,
-                        mediaLink: null
+                        mediaLink: null,
+                        file: file
                     });
                 }
                 reader.readAsDataURL(file);
@@ -93,7 +96,8 @@ export default class CreatePost extends React.Component {
 
             this.setState({
                 mediaLink: video,
-                imgPreview: e.target.result
+                imgPreview: e.target.result,
+                file: null
             });
         } else {
             this.setState({ mediaLink: null });
@@ -141,7 +145,8 @@ export default class CreatePost extends React.Component {
         this.setState({
             mediaUpload: false,
             imgPreview: null,
-            fileName: 'Select File'
+            fileName: 'Select File',
+            file: null
         }, () => {
             this.videoRef.current.classList.add('CreatePost-hide');
             this.videoRef.current.pause();
@@ -150,10 +155,13 @@ export default class CreatePost extends React.Component {
         });
     }
 
+    submit() {
+        var formData = new FormData();
+        
+    }
+
     render() {
         document.title = "Create a Post";
-        const id = this.props.match.params.id;
-        const type = new URLSearchParams(new URL(window.location.href).search).get('type');
 
         var username;
         var nickname;
@@ -210,36 +218,16 @@ export default class CreatePost extends React.Component {
             </div>
         );
 
-        const enctype = (type === "IMG" || this.state.mediaUpload) ? "multipart/form-data" : null;
+        var createText = "Create Text Post";
+        if (this.state.file && this.state.imgPreview) createText = "Create Picture Post";
+        else if (this.state.file || this.state.mediaLink) createText = "Create Video Post";
+
+        // const enctype = (type === "IMG" || this.state.mediaUpload) ? "multipart/form-data" : null;
+
+        console.log(this.state.file);
 
         return (
             <div className="CreatePost">
-                {/* <form action="/create/post/" className="CreatePost-form" method="POST"
-                    encType={enctype}>
-                    <h1>Create a Post</h1>
-                    <input type="hidden" name="id" id="id" value={id} />
-                    <input type="hidden" name="type" id="type" value={type} />
-                    <div className="CreatePost-item">
-                        <label htmlFor="name">Post Title: </label>
-                        <input type="text" name="name" id="name" required />
-                    </div>
-                    <div className="CreatePost-item">
-                        <label htmlFor="subtitle">Subtitle: </label>
-                        <input type="text" name="subtitle" id="subtitle" maxLength="30" />
-                    </div>
-                    {fileLink}
-                    {file}
-                    {link}
-                    {vidContainer}
-                    {imgPreview}
-                    <div className="CreatePost-item">
-                        <label htmlFor="body">Body: </label>
-                        <textarea name="body" id="body" rows="6" cols="100" required />
-                    </div>
-                    <div className="CreatePost-item">
-                        <input type="submit" value="Post" />
-                    </div>
-                </form> */}
                 <h1 className='CreatePost-createTitle'>Create a Post</h1>
                 <div className='PostMain-container CreatePost-container'>
                     <div className='CreatePost-mediaAll' onDrop={this.handleDrop} onDragOver={this.handleDrag} onDragExit={this.handleDrag} ref={this.dropRef}>
@@ -259,13 +247,16 @@ export default class CreatePost extends React.Component {
                                         <div className="PostMain-user">
                                             <img className="PostMain-img" src={avatar}
                                             alt="User icon" />
-                                            <p className="PostMain-nickname">{nickname}</p>
+                                            <span className="PostMain-nickname">{nickname}</span>
                                         </div>
                                     </a>
                                 </div>
                                 <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="30" placeholder='Subtitle' />
                                 <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body*' required />
                             </div>
+                        </div>
+                        <div className='PostMain-option'>
+                            <div className='PostMain-optionItem'>{createText}</div>
                         </div>
                     </div>
                 </div>
