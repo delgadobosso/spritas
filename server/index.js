@@ -397,12 +397,10 @@ app.post('/create/topic',
 
 app.post('/create/post',
     memUpload.single('file'),
-    body('id').isInt(),
-    body('type').notEmpty().isIn(["TEXT", "BLOG", "VIDO", "IMG"]),
-    body('title').trim().isLength({ min: 2 }).escape(),
-    body('subtitle').trim().isLength({ max: 30 }).escape(),
-    body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
-    body('body').trim().isLength({ min: 2 }).escape(),
+    body('title').trim().isLength({ min: 1, max: 64 }).escape(),
+    body('subtitle').trim().isLength({ max: 32 }).escape(),
+    body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().escape(),
+    body('body').trim().isLength({ min: 2, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
         else if (!req.session.user.type === "BAN") return res.sendStatus(403);

@@ -12,6 +12,8 @@ export default class CreatePost extends React.Component {
         this.handleDrag = this.handleDrag.bind(this);
         this.clickMediaLink = this.clickMediaLink.bind(this);
         this.clickMediaUpload = this.clickMediaUpload.bind(this);
+        this.bodyCheck = this.bodyCheck.bind(this);
+        this.submit = this.submit.bind(this);
         this.videoRef = React.createRef();
         this.dropRef = React.createRef();
         this.state = {
@@ -155,9 +157,33 @@ export default class CreatePost extends React.Component {
         });
     }
 
+    bodyCheck(e) {
+        var body = e.target.value;
+        var newLines = body.match(/(\r\n|\n|\r)/g);
+        var trueCount = body.length;
+        if (newLines) trueCount += newLines.length;
+        if (trueCount > 9999 && newLines) e.target.value = body.slice(0, 9999 - newLines.length);
+        else if (trueCount > 9999) e.target.value = body.slice(0, 9999);
+    }
+
     submit() {
         var formData = new FormData();
-        
+        const title = document.getElementById('title').value;
+        const subtitle = document.getElementById('subtitle').value;
+        const body = document.getElementById('body').value;
+
+        formData.append('title', title);
+        formData.append('subtitle', subtitle);
+        formData.append('body', body);
+
+        fetch('/create/post', {
+            method: 'POST',
+            body: formData
+        })
+        .then(resp => resp.text())
+        .then(data => {
+            console.log(data);
+        })
     }
 
     render() {
@@ -224,8 +250,6 @@ export default class CreatePost extends React.Component {
 
         // const enctype = (type === "IMG" || this.state.mediaUpload) ? "multipart/form-data" : null;
 
-        console.log(this.state.file);
-
         return (
             <div className="CreatePost">
                 <h1 className='CreatePost-createTitle'>Create a Post</h1>
@@ -241,7 +265,7 @@ export default class CreatePost extends React.Component {
                     <div className='PostMain-cards'>
                         <div className='PostMain-postOption'>
                             <div className='PostMain-post'>
-                                <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Post Title*' required />
+                                <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Post Title*' required minLength="1" maxLength="64" />
                                 <div className='PostMain-info'>
                                     <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
                                         <div className="PostMain-user">
@@ -251,12 +275,12 @@ export default class CreatePost extends React.Component {
                                         </div>
                                     </a>
                                 </div>
-                                <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="30" placeholder='Subtitle' />
-                                <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body*' required />
+                                <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="32" placeholder='Subtitle' />
+                                <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body*' required minLength="2" onChange={this.bodyCheck} />
                             </div>
                         </div>
                         <div className='PostMain-option'>
-                            <div className='PostMain-optionItem'>{createText}</div>
+                            <div className='PostMain-optionItem' onClick={this.submit}>{createText}</div>
                         </div>
                     </div>
                 </div>
