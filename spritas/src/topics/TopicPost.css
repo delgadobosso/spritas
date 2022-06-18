@@ -127,14 +127,15 @@
     background-size: 300px;
 }
 .TopicPost-thumbAni {
-    animation-name: breathe;
-    animation-duration: 0.5s;
+    animation-name: submitting;
+    animation-duration: 2.5s;
     animation-iteration-count: infinite;
     animation-direction: alternate;
+    animation-timing-function: linear;
 }
-@keyframes breathe {
-    from { background-color: var(--mid-grey); }
-    to { background-color: var(--light-grey); }
+@keyframes loading {
+    0% { background-color: var(--spritan-gold); }
+    100% { background-color: var(--spritan-red); }
 }
 
 @media (hover: hover) {
