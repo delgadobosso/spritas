@@ -111,7 +111,7 @@ export default class App extends React.Component {
             <Route path='/post/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/'>
-              <Featured user={this.state.user} />
+              {/* <Featured user={this.state.user} /> */}
               <TopicContainer postClick={this.postClick} user={this.state.user} />
             </Route>
           </Switch>
