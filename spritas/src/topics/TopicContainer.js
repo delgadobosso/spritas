@@ -9,18 +9,18 @@ export default class TopicContainer extends React.Component {
     }
 
     scrollTo() {
-        var con = document.getElementById(`TopicContainer-${this.props.topic.id}`);
+        var con = document.getElementById('TopicContainer');
         con.scrollIntoView({ behavior: "smooth" });
         // if (window.location.hash !== "#topics") window.history.pushState({}, "", "#topics");
     }
 
     render() {
         return (
-            <div id={`TopicContainer-${this.props.topic.id}`} className="Container">
-                <div className="Container-header" onClick={this.scrollTo}>
-                    <h1 className="Container-title">{this.props.topic.name}</h1>
+            <div id='TopicContainer' className="TopicContainer">
+                <div className="TopicContainer-header" onClick={this.scrollTo}>
+                    <h1 className="TopicContainer-title">Posts</h1>
                 </div>
-                <Topic topic={this.props.topic} user={this.props.user} postClick={this.props.postClick} naviHide={this.props.naviHide} />
+                <Topic user={this.props.user} postClick={this.props.postClick} feed={"new"} />
             </div>
         );
     }
