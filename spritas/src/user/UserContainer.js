@@ -51,7 +51,7 @@ export default class UserContainer extends React.Component {
                     if (data.length > 0) {
                         const posts = data.slice(0, this.state.amount).map((post, index) =>
                         <TopicPost key={index + this.state.offset} post={post}
-                            postClick={this.props.postClick} />);
+                            postClick={this.props.postClick} delay={index} />);
                         if (data.length < (this.state.amount + 1)) {
                             this.setState(state => ({
                                 more: !state.more

@@ -4,8 +4,11 @@
     background-color: var(--darkest-grey);
     border-radius: 10px;
     overflow: hidden;
+    opacity: 0;
 
-    animation: fadeIn 0.5s;
+    animation-name: fadeIn;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 }
 @keyframes fadeIn {
     from { opacity: 0; }

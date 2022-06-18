@@ -1,6 +1,6 @@
 .PostModal {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     opacity: 0;
 
     transition: opacity 0.25s;
