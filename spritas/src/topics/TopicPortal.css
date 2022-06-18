@@ -45,6 +45,7 @@
 }
 
 .TopicPortal-load, .TopicPortal-loaded {
+    position: relative;
     margin: 0 20px 20px 20px;
     padding: 10px 0;
     border-radius: 10px;

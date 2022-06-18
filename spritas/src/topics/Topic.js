@@ -13,7 +13,8 @@ export default class Topic extends React.Component {
             posts: [],
             offset: 0,
             amount: 24,
-            more: true
+            more: true,
+            loadingMore: false
         };
     }
 
@@ -22,33 +23,43 @@ export default class Topic extends React.Component {
     }
 
     loadPosts(first=false) {
-        fetch(`/home/${this.props.feed}/${this.state.offset}.${this.state.amount}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.length > 0) {
-                    var newPosts = data.slice(0, this.state.amount).map((post, index) =>
-                        <TopicPost key={index + this.state.offset} post={post}
-                            postClick={this.props.postClick} delay={index} />);
+        if (!this.state.loadingMore) {
+            this.setState({
+                loadingMore: true
+            }, () => {
+                fetch(`/home/${this.props.feed}/${this.state.offset}.${this.state.amount}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            var newPosts = data.slice(0, this.state.amount).map((post, index) =>
+                                <TopicPost key={index + this.state.offset} post={post}
+                                    postClick={this.props.postClick} delay={index} />);
 
-                    if (data.length < (this.state.amount + 1)) {
-                        this.setState(state => ({
-                            more: !state.more
-                        }));
-                    } else {
-                        this.setState(state => ({
-                            offset: state.offset + this.state.amount
-                        }))
-                    }
-                    if (!first) {
-                        var sub = document.getElementById(`Topic-${this.props.feed}`);
-                        let maxHeight = sub.scrollHeight;
-                        sub.style.height = maxHeight + "px";
-                    }
-                    this.setState(state => ({
-                        posts: [...state.posts, newPosts]
-                    }), () => { if (!first) this.extendPosts(sub)});
-                }
-            })
+                            if (data.length < (this.state.amount + 1)) {
+                                this.setState(state => ({
+                                    more: !state.more
+                                }));
+                            } else {
+                                this.setState(state => ({
+                                    offset: state.offset + this.state.amount
+                                }))
+                            }
+                            if (!first) {
+                                var sub = document.getElementById(`Topic-${this.props.feed}`);
+                                let maxHeight = sub.scrollHeight;
+                                sub.style.height = maxHeight + "px";
+                            }
+                            this.setState(state => ({
+                                posts: [...state.posts, newPosts],
+                                loadingMore: false
+                            }), () => { if (!first) this.extendPosts(sub)});
+                        }
+                    })
+                    .catch(error => this.setState({ loadingMore: false }));
+            });
+
+        }
+
     }
 
     extendPosts(sub) {
@@ -68,7 +79,7 @@ export default class Topic extends React.Component {
     render() {
         return (
             <div className="Topic" id={`Topic-${this.props.feed}`}>
-                <TopicPortal posts={this.state.posts} more={this.state.more} load={this.loadPosts} />
+                <TopicPortal posts={this.state.posts} more={this.state.more} load={this.loadPosts} loadingMore={this.state.loadingMore} />
             </div>
         );
     }

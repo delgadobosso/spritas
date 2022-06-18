@@ -283,14 +283,14 @@ export default class CreatePost extends React.Component {
         else if (this.state.file || this.state.mediaLink) typeText = "Video Post";
         var submitText = (this.state.submitting) ? `Submitting ${typeText}...` : `Submit ${typeText}`;
 
-        const cover = (this.state.submitting) ? " CreatePost-submitting" : "";
+        const cover = (this.state.submitting) ? " LoadingCover-anim" : "";
 
         return (
             <div className="CreatePost">
                 <h1 className='CreatePost-createTitle'>Create a Post</h1>
                 <div className='PostMain-container CreatePost-container'>
                     <div className='CreatePost-mediaAll' onDrop={this.handleDrop} onDragOver={this.handleDrag} onDragExit={this.handleDrag} ref={this.dropRef}>
-                        <div className={'CreatePost-submitCover' + cover}></div>
+                        <div className={'LoadingCover' + cover}></div>
                         {fileLink}
                         {file}
                         {link}
@@ -301,7 +301,7 @@ export default class CreatePost extends React.Component {
                     <div className='PostMain-cards'>
                         <div className='PostMain-postOption'>
                             <div className='PostMain-post CreatePost-post'>
-                                <div className={'CreatePost-submitCover' + cover}></div>
+                                <div className={'LoadingCover' + cover}></div>
                                 <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Post Title*' required minLength="1" maxLength="64" />
                                 <div className='PostMain-info'>
                                     <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
@@ -317,7 +317,7 @@ export default class CreatePost extends React.Component {
                             </div>
                         </div>
                         <div className='PostMain-option CreatePost-optionContainer'>
-                            <div className={'CreatePost-submitCover' + cover}></div>
+                            <div className={'LoadingCover' + cover}></div>
                             <div className='PostMain-optionItem' onClick={this.submit}>{submitText}</div>
                         </div>
                     </div>
