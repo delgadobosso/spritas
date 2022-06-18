@@ -21,12 +21,11 @@ export default class TopicPortal extends React.Component {
         var load = (this.props.more && this.props.posts.length > 0) ?
         <div className="TopicPortal-load" onClick={this.loadPosts} title="Show More Posts">Show More Posts</div> 
         : loaded;
-        if (this.props.loadingMore) load = (
-            <div className='TopicPortal-load' title="Loading More Posts">
-                <div className='LoadingCover LoadingCover-anim'></div>
-                Loading More Posts...
-            </div>
-        )
+        var cover = "";
+        if (this.props.loadingMore) {
+            load = <div className='TopicPortal-load' title="Loading More Posts">Loading More Posts...</div>;
+            cover = " LoadingCover-anim";
+        }
         if (this.props.posts.length <= 0) load = <div className="TopicPortal-loaded" title="No Posts">No Posts</div>;
 
         return (
@@ -34,7 +33,10 @@ export default class TopicPortal extends React.Component {
                 <div className='TopicPortal-posts'>
                     {this.props.posts}
                 </div>
-                {load}
+                <div className='TopicPortal-loadContainer'>
+                    <div className={'LoadingCover' + cover}></div>
+                    {load}
+                </div>
             </div>
         );
     }
