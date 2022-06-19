@@ -2,6 +2,7 @@ import './CreatePost.css';
 import { regex_video } from '../functions/constants';
 import React from 'react';
 import he from 'he';
+import CrossIcon from '../icons/cross';
 
 export default class CreatePost extends React.Component {
     constructor(props) {
@@ -13,6 +14,8 @@ export default class CreatePost extends React.Component {
         this.handleDrag = this.handleDrag.bind(this);
         this.clickMediaLink = this.clickMediaLink.bind(this);
         this.clickMediaUpload = this.clickMediaUpload.bind(this);
+        this.removeUpload = this.removeUpload.bind(this);
+        this.removeLink = this.removeLink.bind(this);
         this.bodyCheck = this.bodyCheck.bind(this);
         this.submit = this.submit.bind(this);
         this.videoRef = React.createRef();
@@ -21,9 +24,10 @@ export default class CreatePost extends React.Component {
             imgPreview: null,
             mediaUpload: true,
             mediaLink: null,
-            fileName: 'Select File',
+            fileName: 'Select A File',
             file: null,
-            submitting: false
+            submitting: false,
+            removeable: false
         };
     }
 
@@ -43,7 +47,8 @@ export default class CreatePost extends React.Component {
                         fileName: file.name,
                         imgPreview: e.target.result,
                         mediaLink: null,
-                        file: file
+                        file: file,
+                        removeable: true
                     }, () => {
                         this.videoRef.current.classList.add('CreatePost-hide');
                         this.videoRef.current.pause();
@@ -63,7 +68,8 @@ export default class CreatePost extends React.Component {
                         fileName: file.name,
                         imgPreview: null,
                         mediaLink: null,
-                        file: file
+                        file: file,
+                        removeable: true
                     });
                 }
                 reader.readAsDataURL(file);
@@ -101,10 +107,21 @@ export default class CreatePost extends React.Component {
             this.setState({
                 mediaLink: video,
                 imgPreview: e.target.result,
-                file: null
+                file: null,
+                removeable: true
             });
         } else {
-            this.setState({ mediaLink: null });
+            if (link === "") {
+                this.setState({
+                    mediaLink: null,
+                    removeable: false
+                });
+            } else {
+                this.setState({
+                    mediaLink: null,
+                    removeable: true
+                });
+            }
         }
     }
 
@@ -154,7 +171,8 @@ export default class CreatePost extends React.Component {
     clickMediaUpload() {
         this.setState({
             mediaUpload: true,
-            mediaLink: null
+            mediaLink: null,
+            removeable: false
         });
     }
 
@@ -162,14 +180,36 @@ export default class CreatePost extends React.Component {
         this.setState({
             mediaUpload: false,
             imgPreview: null,
-            fileName: 'Select File',
-            file: null
+            fileName: 'Select A File',
+            file: null,
+            removeable: false
         }, () => {
             this.videoRef.current.classList.add('CreatePost-hide');
             this.videoRef.current.pause();
             this.videoRef.current.removeAttribute('src');
             this.videoRef.current.load();
         });
+    }
+
+    removeUpload() {
+        this.setState({
+            imgPreview: null,
+            fileName: 'Select A File',
+            file: null,
+            removeable: false
+        }, () => {
+            this.videoRef.current.classList.add('CreatePost-hide');
+            this.videoRef.current.pause();
+            this.videoRef.current.removeAttribute('src');
+            this.videoRef.current.load();
+        });
+    }
+
+    removeLink() {
+        this.setState({
+            mediaLink: null,
+            removeable: false
+        }, () => document.getElementById('link').value = "");
     }
 
     bodyCheck(e) {
@@ -184,17 +224,17 @@ export default class CreatePost extends React.Component {
     submit(e) {
         const titleElem = document.getElementById('title');
         if (!titleElem.checkValidity()) {
-            titleElem.setCustomValidity('Please fill in the title of this post. Use a minimum of 1 character and a maximum of 64.');
+            titleElem.setCustomValidity('Your post requires a title.');
             return titleElem.reportValidity();
         }
         const bodyElem = document.getElementById('body');
         if (!bodyElem.checkValidity()) {
-            bodyElem.setCustomValidity('Please fill in the body of this post. Use a minimum of 2 characters and a maximum of 10000.');
+            bodyElem.setCustomValidity('Your post requires a body.');
             return bodyElem.reportValidity();
         }
         const linkElem = document.getElementById('link');
         if (!linkElem.checkValidity()) {
-            linkElem.setCustomValidity('Invalid link supplied. Please remove it or use a valid link.');
+            linkElem.setCustomValidity('Invalid link supplied.');
             return linkElem.reportValidity();
         }
 
@@ -251,6 +291,14 @@ export default class CreatePost extends React.Component {
         var file = <input type="hidden" name="file" id="file" value="null" />;
         var link = <input type="hidden" name="link" id="link" />;
         var fileLink;
+
+        var crossClass = '';
+        var pathClass = 'CreatePost-pathClass';
+        var crossColor = 'var(--info-grey)';
+        if (this.state.removeable) {
+            crossClass = 'CreatePost-remove';
+            crossColor = 'var(--spritan-red)';
+        }
         if (this.state.mediaUpload) {
             file = (
                 <div className="CreatePost-item">
@@ -258,6 +306,9 @@ export default class CreatePost extends React.Component {
                     <input className='CreatePost-fileIn' type="file" name="file" id="file"
                         onChange={this.handleFile}
                         accept="video/mp4, video/webm, image/png, image/jpeg, image/gif" />
+                    <div className='CreatePost-iconWrapper' onClick={this.removeUpload}>
+                        <CrossIcon className={crossClass} title='Remove File' stroke={crossColor} pathClass={pathClass} />
+                    </div>
                 </div>);
 
             fileLink = (
@@ -270,6 +321,9 @@ export default class CreatePost extends React.Component {
             link = (
                 <div className="CreatePost-item">
                     <input className='CreatePost-link' type="text" name="link" id="link" pattern={regex_video} onChange={this.handleLink} placeholder="Enter Link Here" onFocus={e => e.target.setCustomValidity('')} />
+                    <div className='CreatePost-iconWrapper' onClick={this.removeLink}>
+                        <CrossIcon className={crossClass} title='Remove Link' stroke={crossColor} pathClass={pathClass} />
+                    </div>
                 </div>);
 
             fileLink = (

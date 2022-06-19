@@ -12,6 +12,7 @@
 
 .CreatePost-options {
     display: flex;
+    height: 40px;
 }
 
 .CreatePost-option {
@@ -34,12 +35,34 @@
     font-weight: bold;
 }
 
+.CreatePost-item {
+    display: flex;
+    align-items: center;
+    background-color: var(--light-grey);
+}
+
+.CreatePost-remove {
+    transition: background-color 0.1s;
+}
+.CreatePost-pathClass {
+    transform-origin: center;
+
+    transition: stroke 0.1s, transform 0.1s;
+}
+
+.CreatePost-iconWrapper {
+    width: 40px;
+    height: 40px;
+}
+
 .CreatePost-file {
     display: block;
-    padding: 10px 0;
+    padding: 10px 0 10px 40px;
     text-align: center;
     background-color: var(--light-grey);
     line-height: 20px;
+    flex: 1;
+    word-break: break-word;
 
     transition: background-color 0.1s;
 }
@@ -51,12 +74,12 @@
 }
 
 .CreatePost-link {
-    padding: 10px 0;
-    width: 100%;
+    padding: 10px 0 10px 40px;
     text-align: center;
     border: 0;
     font-size: 16px;
     line-height: 20px;
+    flex: 1;
 }
 .CreatePost-link:invalid {
     color: var(--spritan-red);
@@ -205,5 +228,16 @@
     .CreatePost-file:hover {
         cursor: pointer;
         background-color: var(--lightest-grey);
+    }
+
+    .CreatePost-remove:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
+    }
+    .CreatePost-remove:hover .CreatePost-pathClass {
+        transform: scale(1.15);
+    }
+    .CreatePost-remove:active .CreatePost-pathClass {
+        transform: scale(0.85);
     }
 }
