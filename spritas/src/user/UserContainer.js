@@ -75,6 +75,8 @@ export default class UserContainer extends React.Component {
                                     posts: [...state.posts, ...posts],
                                     loadingMore: false
                                 }), () => { if (!first) this.extendPosts(sub) });
+                            } else {
+                                this.setState({ loadingMore: false });
                             }
                         })
                 }
@@ -135,7 +137,7 @@ export default class UserContainer extends React.Component {
                     </div>
                     <div className='UserContainer-container' id='UserContainer-scroll'>
                         <div className='UserContainer-topics' id='UserContainer-topics'>
-                            <TopicPortal posts={posts} more={this.state.more} load={this.loadPosts} loadingMore={this.state.loadingMore} />
+                            <TopicPortal posts={posts} more={this.state.more} load={this.loadPosts} loadingMore={this.state.loadingMore} loadHide={!this.state.thisUser} />
                         </div>
                     </div>
                 </div>

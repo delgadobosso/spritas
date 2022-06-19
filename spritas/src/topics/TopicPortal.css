@@ -44,17 +44,14 @@
     }
 }
 
-.TopicPortal-loadContainer {
+.TopicPortal-load, .TopicPortal-loaded {
     position: relative;
     margin: 0 20px 20px 20px;
-    border-radius: 10px;
-    overflow: clip;
-}
-
-.TopicPortal-load, .TopicPortal-loaded {
     padding: 10px 0;
+    border-radius: 10px;
     color: white;
     background-color: var(--mid-grey);
+    overflow: hidden;
     text-align: center;
 
     transition: background-color 0.1s;
