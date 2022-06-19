@@ -121,123 +121,14 @@ app.get('/create/post/:id', (req, res) => {
     }
 })
 
-app.get('/home', (req, res) => {
-    if (req.headers.referer) {
-        pool.query(`SELECT * FROM topics
-        WHERE idParent IS NULL AND status IS NULL
-        ORDER BY id`, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            else res.send(result);
-        })
-    } else res.redirect('/');
-});
-
-app.get('/home/:id.:offset.:limit', (req, res) => {
-    if (req.headers.referer) {
-        var final;
-        const id = req.params.id;
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
-        if (offset === 0) {
-            pool.query(`SELECT * FROM topics WHERE idParent = ? AND status IS NULL`, id, (error, result, fields) => {
-                if (error) return res.status(500).send(error);
-
-                else {
-                    final = result;
-
-                    pool.query(`
-                        SELECT 
-                            p1.id,
-                            p1.idParent,
-                            p1.idUser,
-                            p1.title,
-                            IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
-                            IFNULL(t1.body, p1.body) AS body,
-                            IFNULL(t1.update, p1.update) AS 'update',
-                            IFNULL(t1.link, p1.link) AS link,
-                            IFNULL(t1.type, p1.type) AS type,
-                            p1.perm,
-                            p1.ts,
-                            IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                            users.username AS username,
-                            users.nickname AS nickname,
-                            users.avatar AS avatar
-                        FROM posts AS p1
-                        LEFT JOIN users
-                        ON p1.idUser = users.id
-                        LEFT JOIN (
-                            SELECT *
-                            FROM posts AS p
-                            INNER JOIN (
-                                SELECT MAX(id) AS id
-                                FROM posts
-                                WHERE posts.update = 'UPDT'
-                                GROUP BY idParent) AS t
-                            USING (id)) AS t1
-                        ON p1.id = t1.idParent
-                        WHERE p1.idParent IS NULL
-                        AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
-                        ORDER BY p1.lastTs DESC
-                        LIMIT ?,?`,
-                    [offset, limit], (error, result, fields) => {
-                        if (error) res.status(500).send(error);
-
-                        else {
-                            final = final.concat(result);
-                            res.send(final);
-                        }
-                    })
-                }
-            })
-        } else {
-            pool.query(`
-                SELECT 
-                    p1.id,
-                    p1.idParent,
-                    p1.idUser,
-                    p1.title,
-                    IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
-                    IFNULL(t1.body, p1.body) AS body,
-                    IFNULL(t1.update, p1.update) AS 'update',
-                    IFNULL(t1.link, p1.link) AS link,
-                    IFNULL(t1.type, p1.type) AS type,
-                    p1.perm,
-                    p1.ts,
-                    IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                    users.username AS username,
-                    users.nickname AS nickname,
-                    users.avatar AS avatar
-                FROM posts AS p1
-                LEFT JOIN users
-                ON p1.idUser = users.id
-                LEFT JOIN (
-                    SELECT *
-                    FROM posts AS p
-                    INNER JOIN (
-                        SELECT MAX(id) AS id
-                        FROM posts
-                        WHERE posts.update = 'UPDT'
-                        GROUP BY idParent) AS t
-                    USING (id)) AS t1
-                ON p1.id = t1.idParent
-                WHERE p1.idParent IS NULL
-                AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
-                ORDER BY p1.lastTs DESC
-                LIMIT ?,?`,
-            [offset, limit], (error, result, fields) => {
-                if (error) res.status(500).send(error);
-
-                else res.send(result);
-            })
-        }
-    } else res.redirect('/');
-});
-
 app.get('/home/new/:offset.:limit', (req, res) => {
     if (req.headers.referer) {
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
         pool.query(`
             SELECT 
                 p1.id,
@@ -381,8 +272,12 @@ app.get('/p/:id', (req, res) => {
 app.get('/rr/:id.:offset.:limit', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
         pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
@@ -401,8 +296,12 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
 app.get('/r/:id.:offset.:limit', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
         pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
@@ -819,8 +718,12 @@ app.get('/user/info/:name', (req, res) => {
 app.get('/user/posts/:id.:offset.:limit', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
         pool.query(`
         SELECT 
             p1.id,
