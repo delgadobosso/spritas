@@ -329,7 +329,7 @@ export default class CreatePost extends React.Component {
                                     </a>
                                 </div>
                                 <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="32" placeholder='Subtitle (Optional, length 1-32)' />
-                                <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body (Required, length 2-10000)' required minLength="2" onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
+                                <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body (Required, length 1-10000)' required minLength="1" onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
                             </div>
                         </div>
                         <div className='PostMain-option CreatePost-optionContainer'>

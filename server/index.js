@@ -348,7 +348,7 @@ app.post('/create/post',
     body('title').trim().isLength({ min: 1, max: 64 }).escape(),
     body('subtitle').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
     body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().escape(),
-    body('body').trim().isLength({ min: 2, max: 10000 }).escape(),
+    body('body').trim().isLength({ min: 1, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
         else if (!req.session.user.type === "BAN") return res.sendStatus(403);
@@ -421,7 +421,7 @@ app.post('/create/post',
 
 app.post('/create/reply',
     body('id').notEmpty().isInt(),
-    body('reply').trim().isLength({ min: 2 }).escape(),
+    body('reply').trim().isLength({ min: 1 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
         if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
@@ -488,9 +488,9 @@ app.post('/create/reply',
 app.post('/update/post',
     memUpload.single('file'),
     body('id').notEmpty().isInt(),
-    body('subtitle').trim().isLength({ max: 30 }).escape(),
-    body('link').matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().isLength({ min: 2 }).escape(),
-    body('body').trim().isLength({ min: 2 }).escape(),
+    body('subtitle').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
+    body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().escape(),
+    body('body').trim().isLength({ min: 1, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
         if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
