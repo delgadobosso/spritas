@@ -182,15 +182,31 @@ export default class CreatePost extends React.Component {
     }
 
     submit(e) {
+        const titleElem = document.getElementById('title');
+        if (!titleElem.checkValidity()) {
+            titleElem.setCustomValidity('Please fill in the title of this post. Use a minimum of 1 character and a maximum of 64.');
+            return titleElem.reportValidity();
+        }
+        const bodyElem = document.getElementById('body');
+        if (!bodyElem.checkValidity()) {
+            bodyElem.setCustomValidity('Please fill in the body of this post. Use a minimum of 2 characters and a maximum of 10000.');
+            return bodyElem.reportValidity();
+        }
+        const linkElem = document.getElementById('link');
+        if (!linkElem.checkValidity()) {
+            linkElem.setCustomValidity('Invalid link supplied. Please remove it or use a valid link.');
+            return linkElem.reportValidity();
+        }
+
         if (!this.state.submitting) {
             this.setState({
                 submitting: true
             }, () => {
                 var formData = new FormData();
-                const title = document.getElementById('title').value;
+                const title = titleElem.value;
                 const subtitle = document.getElementById('subtitle').value;
-                const body = document.getElementById('body').value;
-                const link = document.getElementById('link').value;
+                const body = bodyElem.value;
+                const link = linkElem.value;
         
                 formData.append('title', title);
                 formData.append('subtitle', subtitle);
@@ -253,7 +269,7 @@ export default class CreatePost extends React.Component {
         } else if (!this.state.mediaUpload) {
             link = (
                 <div className="CreatePost-item">
-                    <input className='CreatePost-link' type="text" name="link" id="link" pattern={regex_video} onChange={this.handleLink} placeholder="Enter Link Here" />
+                    <input className='CreatePost-link' type="text" name="link" id="link" pattern={regex_video} onChange={this.handleLink} placeholder="Enter Link Here" onFocus={e => e.target.setCustomValidity('')} />
                 </div>);
 
             fileLink = (
@@ -302,7 +318,7 @@ export default class CreatePost extends React.Component {
                         <div className='PostMain-postOption'>
                             <div className='PostMain-post CreatePost-post'>
                                 <div className={'LoadingCover' + cover}></div>
-                                <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Post Title*' required minLength="1" maxLength="64" />
+                                <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Post Title (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />
                                 <div className='PostMain-info'>
                                     <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
                                         <div className="PostMain-user">
@@ -312,8 +328,8 @@ export default class CreatePost extends React.Component {
                                         </div>
                                     </a>
                                 </div>
-                                <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="32" placeholder='Subtitle' />
-                                <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body*' required minLength="2" onChange={this.bodyCheck} />
+                                <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="32" placeholder='Subtitle (Optional, length 1-32)' />
+                                <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body (Required, length 2-10000)' required minLength="2" onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
                             </div>
                         </div>
                         <div className='PostMain-option CreatePost-optionContainer'>

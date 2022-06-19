@@ -136,6 +136,7 @@
     font-weight: bold;
     border: none;
     border-radius: 5px;
+    width: initial;
 }
 
 .CreatePost-body {
