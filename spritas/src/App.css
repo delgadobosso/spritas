@@ -57,6 +57,11 @@ input, textarea {
     100% { background-color: var(--spritan-red); }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 
 .App {
     overflow-x: clip;

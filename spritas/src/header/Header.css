@@ -22,11 +22,7 @@
     top: 50%;
     transform: translate(-50%, -50%);
 
-    animation: fadein 1s;
-}
-@keyframes fadein {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    animation: fadeIn 1s;
 }
 
 .Header-videoSides {
@@ -46,6 +42,7 @@
     transform: translate(-50%, -50%);
     image-rendering: pixelated;
     
+    animation: fadeIn 1s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -58,11 +55,14 @@
     left: 10px;
     opacity: 1;
 
+    animation: fadeIn 1s;
     transition: opacity 0.5s;
 }
 
 @media screen and (max-width: 900px) {
     .Header-title {
         opacity: 0;
+
+        animation: none;
     }
 }
