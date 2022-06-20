@@ -321,7 +321,6 @@
 
     .PostMain-notEnd:hover {
         cursor: pointer;
-        transform: scale(1.15);
     }
 
     .PostMain-notEnd:hover .PostMain-arrowL, .PostMain-notEnd:hover .PostMain-arrowR {
