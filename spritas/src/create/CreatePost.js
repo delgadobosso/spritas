@@ -370,8 +370,8 @@ export default class CreatePost extends React.Component {
                 <div className='CreatePost-top'>
                     <h1 className='CreatePost-createTitle'>Create a Post</h1>
                     <ul className='CreatePost-list'>
-                        <li className='CreatePost-listItem'>one</li>
-                        <li className='CreatePost-listItem'>two</li>
+                        <li className='CreatePost-listItem'>To create a Text Post, simply omit any video or image in the Media Upload/Media Link box.</li>
+                        <li className='CreatePost-listItem'>The Subtitle is optional, but is encouraged for posts you intend to update in the future. It is a good way of quickly describing what changes you have made.</li>
                         <li className='CreatePost-listItem'>three</li>
                     </ul>
                 </div>
