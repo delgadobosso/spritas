@@ -340,11 +340,21 @@ export default class CreatePost extends React.Component {
             </div>)
         : null;
 
+        var topInfo = (this.state.mediaUpload) ? "Drag Or Select A File" : "Enter A Valid Link Above";
+        var bottomInfo = (this.state.mediaUpload) ? 'You Can Upload Up To 20MB: ".mp4", ".webm", ".png", ".jpeg", or ".gif"' : 'You Can Link YouTube Videos';
+        const previewInfo = (!this.state.file && !this.state.mediaLink) ? (
+                <div className='CreatePost-previewInfo'>
+                    <span className='CreatePost-info'>{topInfo}</span>
+                    <span className='CreatePost-info'>{bottomInfo}</span>
+                </div>
+        ) : null;
+
         const previewContainer = (
             <div className='CreatePost-previewContainer'>
                 <video className='CreatePost-videoElem CreatePost-hide' controls ref={this.videoRef} />
                 {this.state.mediaLink}
                 {imgPreview}
+                {previewInfo}
             </div>
         );
 
@@ -357,7 +367,14 @@ export default class CreatePost extends React.Component {
 
         return (
             <div className="CreatePost">
-                <h1 className='CreatePost-createTitle'>Create a Post</h1>
+                <div className='CreatePost-top'>
+                    <h1 className='CreatePost-createTitle'>Create a Post</h1>
+                    <ul className='CreatePost-list'>
+                        <li className='CreatePost-listItem'>one</li>
+                        <li className='CreatePost-listItem'>two</li>
+                        <li className='CreatePost-listItem'>three</li>
+                    </ul>
+                </div>
                 <div className='PostMain-container CreatePost-container'>
                     <div className='CreatePost-mediaAll' onDrop={this.handleDrop} onDragOver={this.handleDrag} onDragExit={this.handleDrag} ref={this.dropRef}>
                         <div className={'LoadingCover' + cover}></div>
@@ -372,7 +389,7 @@ export default class CreatePost extends React.Component {
                         <div className='PostMain-postOption'>
                             <div className='PostMain-post CreatePost-post'>
                                 <div className={'LoadingCover' + cover}></div>
-                                <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Post Title (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />
+                                <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Title (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />
                                 <div className='PostMain-info'>
                                     <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
                                         <div className="PostMain-user">
@@ -383,7 +400,7 @@ export default class CreatePost extends React.Component {
                                     </a>
                                 </div>
                                 <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="32" placeholder='Subtitle (Optional, length 1-32)' />
-                                <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Post Body (Required, length 1-10000)' required minLength="1" onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
+                                <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Body (Required, length 1-10000)' required minLength="1" onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
                             </div>
                         </div>
                         <div className='PostMain-option CreatePost-optionContainer'>

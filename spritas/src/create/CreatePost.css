@@ -1,3 +1,26 @@
+.CreatePost-top {
+    width: 600px;
+    background-color: var(--darkest-grey);
+    margin: 20px auto;
+    border-radius: 10px;
+}
+
+.CreatePost-createTitle {
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+}
+
+.CreatePost-list {
+    margin: 0;
+    padding: 20px;
+    list-style-position: inside;
+}
+
+.CreatePost-listItem {
+    color: white;
+}
+
 .CreatePost-container {
     margin-bottom: 20px;
 }
@@ -26,11 +49,11 @@
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    transition: background-color 0.1s;
+    transition: background-color 0.1s, color 0.25s;
 }
 
 .CreatePost-selected {
-    color: white;
+    color: var(--spritan-gold);
     background-color: var(--light-grey);
     font-weight: bold;
 }
@@ -85,10 +108,6 @@
     color: var(--spritan-red);
 }
 
-.CreatePost-createTitle {
-    text-align: center;
-}
-
 .CreatePost-mediaAll {
     position: relative;
     width: 1200px;
@@ -130,6 +149,28 @@
 .CreatePost-videoElem {
     width: 100%;
     height: 100%;
+}
+
+.CreatePost-previewInfo {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.CreatePost-info {
+    display: inline;
+    color: white;
+    font-size: 1.1em;
+    margin: 20px;
+    text-align: center;
+    font-weight: bold;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .CreatePost-post {
@@ -201,6 +242,12 @@
 }
 
 @media screen and (max-width: 700px) {
+    .CreatePost-top {
+        width: 100%;
+        margin: 0 0 20px 0;
+        border-radius: 0;
+    }
+
     .CreatePost-mediaAll {
         width: 100%;
         border-radius: 0;
