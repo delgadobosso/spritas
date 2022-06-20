@@ -296,7 +296,7 @@ export default class CreatePost extends React.Component {
         var pathClass = 'CreatePost-pathClass';
         var crossColor = 'var(--info-grey)';
         if (this.state.removeable) {
-            crossClass = 'CreatePost-remove';
+            crossClass = ' CreatePost-remove';
             crossColor = 'var(--spritan-red)';
         }
         if (this.state.mediaUpload) {
@@ -306,8 +306,8 @@ export default class CreatePost extends React.Component {
                     <input className='CreatePost-fileIn' type="file" name="file" id="file"
                         onChange={this.handleFile}
                         accept="video/mp4, video/webm, image/png, image/jpeg, image/gif" />
-                    <div className='CreatePost-iconWrapper' onClick={this.removeUpload}>
-                        <CrossIcon className={crossClass} title='Remove File' stroke={crossColor} pathClass={pathClass} />
+                    <div className={'CreatePost-iconWrapper' + crossClass} onClick={this.removeUpload}>
+                        <CrossIcon title='Remove File' stroke={crossColor} pathClass={pathClass} />
                     </div>
                 </div>);
 
@@ -321,8 +321,8 @@ export default class CreatePost extends React.Component {
             link = (
                 <div className="CreatePost-item">
                     <input className='CreatePost-link' type="text" name="link" id="link" pattern={regex_video} onChange={this.handleLink} placeholder="Enter Link Here" onFocus={e => e.target.setCustomValidity('')} />
-                    <div className='CreatePost-iconWrapper' onClick={this.removeLink}>
-                        <CrossIcon className={crossClass} title='Remove Link' stroke={crossColor} pathClass={pathClass} />
+                    <div className={'CreatePost-iconWrapper' + crossClass} onClick={this.removeLink}>
+                        <CrossIcon title='Remove Link' stroke={crossColor} pathClass={pathClass} />
                     </div>
                 </div>);
 

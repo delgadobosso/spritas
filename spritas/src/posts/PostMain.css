@@ -117,14 +117,13 @@
 }
 
 .PostMain-subtitle {
-    width: max-content;
+    width: fit-content;
     color: black;
     background-color: var(--info-grey);
     border-radius: 5px;
     margin: 10px 10px 0 10px;
     padding: 5px 10px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    word-break: break-all;
 }
 
 .PostMain-body {

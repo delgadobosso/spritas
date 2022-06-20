@@ -1,5 +1,6 @@
 import './PostModal.css';
 import React from 'react';
+import CrossIcon from '../icons/cross';
 
 export default class PostModal extends React.Component {
     constructor(props) {
@@ -183,8 +184,9 @@ export default class PostModal extends React.Component {
                 <div className='PostModal-backing'></div>
                 <div className={'PostModal-container'}>
                     <div className='PostModal-imageControls'>
-                        <div className='PostModal-imageButton'
-                            onClick={() => window.history.go(-1)}>Close Image</div>
+                        <div className='PostModal-iconWrapper' onClick={() => window.history.go(-1)}>
+                            <CrossIcon stroke='white' pathClass='PostModal-close' title='Close Image' />
+                        </div>
                     </div>
                     <div id={`PostModal-imageContainer-${this.props.id}`}
                         className={`PostModal-imageContainer`}
