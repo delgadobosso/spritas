@@ -143,18 +143,23 @@
 }
 
 .PostMain-arrowContainer {
-    cursor: pointer;
     width: 80px;
     height: 40px;
+}
+
+.PostMain-notEnd {
+    transform-origin: center;
+
+    transition: transform 0.1s;
 }
 
 .PostMain-arrowL, .PostMain-arrowR {
     transition: transform 0.1s, stroke 0.1s;
 }
-.PostMain-arrowContainer:active .PostMain-arrowL {
+.PostMain-notEnd:active .PostMain-arrowL {
     transform: translate(-10px);
 }
-.PostMain-arrowContainer:active .PostMain-arrowR {
+.PostMain-notEnd:active .PostMain-arrowR {
     transform: translate(10px);
 }
 
@@ -312,6 +317,15 @@
     .PostMain-user:hover .PostMain-img {
         border-radius: 10px;
         filter: brightness(1.1);
+    }
+
+    .PostMain-notEnd:hover {
+        cursor: pointer;
+        transform: scale(1.15);
+    }
+
+    .PostMain-notEnd:hover .PostMain-arrowL, .PostMain-notEnd:hover .PostMain-arrowR {
+        stroke: var(--spritan-gold);
     }
 
     .PostMain-nodeHit:hover .PostMain-node {

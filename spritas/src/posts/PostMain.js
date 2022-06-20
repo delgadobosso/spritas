@@ -144,14 +144,22 @@ export default class PostMain extends React.Component {
             });
 
             const nodeStyle = { transform: `translate(-${60 * (this.props.current - 1)}px)` };
-            const leftArrow = (this.props.current === 1)
-            ? 'var(--darkest-grey)' : 'white';
-            const rightArrow = (this.props.current === length)
-            ? 'var(--darkest-grey)' : 'white' ;
+            var classNotEndL = ' PostMain-notEnd';
+            var classNotEndR = ' PostMain-notEnd';
+            var leftArrow = 'white'
+            var rightArrow = 'white'
+            if (this.props.current === 1) {
+                leftArrow = 'var(--darkest-grey)';
+                classNotEndL = '';
+            }
+            if (this.props.current === length) {
+                rightArrow = 'var(--darkest-grey)';
+                classNotEndR = '';
+            }
 
             var controls = (
                 <div className="PostMain-controls">
-                    <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
+                    <svg className={"PostMain-arrowContainer" + classNotEndL} xmlns="http://www.w3.org/2000/svg" 
                         viewBox='0 0 80 40' onClick={this.left}>
                         <title>Previous Update</title>
                         <path className='PostMain-arrowL' d='M 40 10 L 30 20 L 40 30'
@@ -169,7 +177,7 @@ export default class PostMain extends React.Component {
                         </svg>
                     </svg>
 
-                    <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
+                    <svg className={"PostMain-arrowContainer" + classNotEndR} xmlns="http://www.w3.org/2000/svg" 
                         viewBox='0 0 80 40' onClick={this.right}>
                         <title>Next Update</title>
                         <path className='PostMain-arrowR' d='M 35 10 L 45 20 L 35 30'
