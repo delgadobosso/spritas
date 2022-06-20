@@ -104,7 +104,7 @@ app.get('/create/topic/:id?', (req, res) => {
     else res.sendFile(reactApp);
 })
 
-app.get('/create/post/:id', (req, res) => {
+app.get('/create/post', (req, res) => {
     if (!req.session.user) res.sendStatus(401);
     else if (req.session.user.type === "BAN") res.sendStatus(403);
     else {
@@ -351,7 +351,7 @@ app.post('/create/post',
     body('body').trim().isLength({ min: 1, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
-        else if (!req.session.user.type === "BAN") return res.sendStatus(403);
+        else if (req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
@@ -376,7 +376,7 @@ app.post('/create/post',
                 const resId = result.insertId.toString();
                 return res.status(200).send(resId);
             });
-        } else if ((type === "IMG" && req.file && req.file.buffer) || (type === "VIDO" && req.file && req.file.buffer)) {
+        } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
             if (imgurCurrent <= imgurLimit) {
                 const file64 = req.file.buffer.toString('base64');
                 imgur.uploadBase64(file64,
@@ -493,24 +493,32 @@ app.post('/update/post',
     body('body').trim().isLength({ min: 1, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
-        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
+        else if (req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        var type = "TEXT";
+        if (req.file) {
+            if (validVid.includes(req.file.mimetype)) type = "VIDO";
+            else if (validPic.includes(req.file.mimetype)) type = "IMG";
+        } else if (req.body.link) {
+            type = "VIDO";
+        }
 
         pool.query(`SELECT * FROM posts WHERE id = ?`,
         req.body.id, (error, result, fields) => {
                 if (error) return res.status(500).send(error);
 
-                // Valid first post of topic found
+                // Valid first post found
                 if (result.length > 0) {
                     const parent = result[0];
 
                     // Check if this user is OP
                     if (req.session.user.id === parent.idUser) {
                         // Add link if it's a VIDO
-                        if (result[0].type === "VIDO" && req.body.link !== "null") {
+                        if (type === "VIDO" && req.body.link !== "") {
                             pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
-                            [parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, req.body.link, result[0].type],
+                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body, req.body.link, type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
@@ -518,10 +526,11 @@ app.post('/update/post',
                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
     
-                                    return res.redirect('/');
+                                    const resId = result.insertId.toString();
+                                    return res.status(200).send(resId);
                                 })
                             })
-                        } else if ((result[0].type === "IMG" && req.file && req.file.buffer) || result[0].type === "VIDO" && req.file && req.file.buffer) {
+                        } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
                             // Upload file to imgur and update
                             if (imgurCurrent <= imgurLimit) {
                                 imgurCurrent++;
@@ -529,12 +538,12 @@ app.post('/update/post',
                                 const file64 = req.file.buffer.toString('base64');
                                 imgur.uploadBase64(file64,
                                         undefined,
-                                        result[0].title,
+                                        parent.title,
                                         req.body.subtitle)
                                     .then((json) => {
                                         if (json.link) {
                                             pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,'UPDT',?,?,?)",
-                                            [parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type],
+                                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body, json.link, json.deletehash, type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
@@ -542,7 +551,8 @@ app.post('/update/post',
                                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                                     if (error) return res.status(500).send(error);
                     
-                                                    return res.redirect('/');
+                                                    const resId = result.insertId.toString();
+                                                    return res.status(200).send(resId);
                                                 })
                                             })
                                         } else return res.status(500).json({error: "Issue uploading to imgur."});
@@ -557,7 +567,7 @@ app.post('/update/post',
                         } else {
                         // No link insert
                             pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`) VALUES(?,?,?,?,?,'UPDT')",
-                            [parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body],
+                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
@@ -565,7 +575,8 @@ app.post('/update/post',
                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
 
-                                    return res.redirect('/');
+                                    const resId = result.insertId.toString();
+                                    return res.status(200).send(resId);
                                 })
                             })
                         }
