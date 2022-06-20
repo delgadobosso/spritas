@@ -182,6 +182,8 @@
 }
 
 .PostMain-mediaContainer {
+    display: flex;
+    justify-content: center;
     position: sticky;
     top: 20px;
     width: 1200px;
