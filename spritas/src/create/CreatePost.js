@@ -12,6 +12,7 @@ export default class CreatePost extends React.Component {
         this.handleLink = this.handleLink.bind(this);
         this.handleDrop = this.handleDrop.bind(this);
         this.handleDrag = this.handleDrag.bind(this);
+        this.handleBeforeUnload = this.handleBeforeUnload.bind(this);
         this.clickMediaLink = this.clickMediaLink.bind(this);
         this.clickMediaUpload = this.clickMediaUpload.bind(this);
         this.removeUpload = this.removeUpload.bind(this);
@@ -168,6 +169,11 @@ export default class CreatePost extends React.Component {
         }
     }
 
+    handleBeforeUnload(e) {
+        e.preventDefault();
+        return e.returnValue = "Your post is still submitting. Are you sure you want to exit?";
+    }
+
     clickMediaUpload() {
         this.setState({
             mediaUpload: true,
@@ -242,6 +248,8 @@ export default class CreatePost extends React.Component {
             this.setState({
                 submitting: true
             }, () => {
+                window.addEventListener('beforeunload', this.handleBeforeUnload);
+
                 var formData = new FormData();
                 const title = titleElem.value;
                 const subtitle = document.getElementById('subtitle').value;
@@ -266,12 +274,18 @@ export default class CreatePost extends React.Component {
                     var id = parseInt(data);
                     if (id) {
                         setTimeout(() => {
-                            this.setState({ submitting: false });
-                            window.location.href = "/post/" + id;
+                            this.setState({
+                                submitting: false
+                            }, () => {
+                                window.removeEventListener('beforeunload', this.handleBeforeUnload);
+                                window.location.href = "/post/" + id;
+                            });
                         }, 3000);
                     }
                 })
-                .catch(error => this.setState({ submitting: false }));
+                .catch(error => this.setState({
+                    submitting: false
+                }, () => window.removeEventListener('beforeunload', this.handleBeforeUnload)));
             });
         }
     }
