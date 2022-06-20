@@ -291,8 +291,6 @@ export default class CreatePost extends React.Component {
     }
 
     render() {
-        document.title = "Create a Post";
-
         var username;
         var nickname;
         var avatar;
@@ -379,6 +377,17 @@ export default class CreatePost extends React.Component {
 
         const cover = (this.state.submitting) ? " LoadingCover-anim" : "";
 
+        // Update Specific Stuff
+        var title = <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Title* (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />;
+        var cancel;
+
+        if (this.props.ogPost) {
+            title = <h2 className='PostMain-title'>{he.decode(this.props.ogPost.title)}</h2>;
+            cancel = <div className='PostMain-optionItem' onClick={() => this.props.updateMode(false)}>Cancel Update</div>;
+        } else {
+            document.title = "Create a Post";
+        }
+
         return (
             <div className="CreatePost">
                 <div className='PostMain-container CreatePost-container'>
@@ -395,7 +404,7 @@ export default class CreatePost extends React.Component {
                         <div className='PostMain-postOption'>
                             <div className='PostMain-post CreatePost-post'>
                                 <div className={'LoadingCover' + cover}></div>
-                                <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Title* (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />
+                                {title}
                                 <div className='PostMain-info'>
                                     <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
                                         <div className="PostMain-user">
@@ -405,6 +414,7 @@ export default class CreatePost extends React.Component {
                                         </div>
                                     </a>
                                 </div>
+                                {this.props.controls}
                                 <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="32" placeholder='Subtitle (Optional, length 1-32)' />
                                 <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Body* (Required, length 1-10000)' required minLength="1" onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
                             </div>
@@ -412,7 +422,9 @@ export default class CreatePost extends React.Component {
                         <div className='PostMain-option CreatePost-optionContainer'>
                             <div className={'LoadingCover' + cover}></div>
                             <div className='PostMain-optionItem' onClick={this.submit}>{submitText}</div>
+                            {cancel}
                         </div>
+                        {this.props.rest};
                     </div>
                 </div>
             </div>

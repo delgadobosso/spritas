@@ -88,6 +88,7 @@
 .CreatePost-mediaAll {
     position: relative;
     width: 1200px;
+    height: max-content;
     border-radius: 10px;
     overflow: clip;
     margin-right: 20px;

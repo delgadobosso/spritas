@@ -7,6 +7,7 @@ import PostModal from './PostModal';
 import pfp from '../images/pfp.png';
 import relativeTime from '../functions/relativeTime';
 import PureIframe from '../other/PureIframe';
+import CreatePost from '../create/CreatePost';
 
 export default class PostMain extends React.Component {
     constructor(props) {
@@ -17,9 +18,11 @@ export default class PostMain extends React.Component {
         this.goToPost = this.goToPost.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.delete = this.delete.bind(this);
+        this.updateMode = this.updateMode.bind(this);
         this.state = ({
             modal: false,
-            toggleTime: false
+            toggleTime: false,
+            updateMode: false
         });
     }
 
@@ -101,11 +104,14 @@ export default class PostMain extends React.Component {
         } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
 
+    updateMode(yes) {
+        this.setState({ updateMode: yes });
+    }
+
     render() {
         const posts = this.props.posts;
         const length = posts.length;
         const currentPost = posts[this.props.current - 1];
-        const currentElem = <Post post={currentPost} op={true} />;
 
         var ts = new Date(currentPost.ts);
         var relTime = relativeTime(currentPost.ts);
@@ -264,7 +270,7 @@ export default class PostMain extends React.Component {
         var deletePost;
         var report;
         if (this.props.user && this.props.user.id === currentPost.idUser && currentPost.update !== 'DELE' && this.props.user.type !== 'BAN') {
-            update = <div className='PostMain-optionItem'>Update Post</div>;
+            update = <div className='PostMain-optionItem' onClick={() => this.updateMode(true)}>Update Post</div>;
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post</div>;
         } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.update !== 'DELE') {
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post As Admin</div>;
@@ -280,8 +286,8 @@ export default class PostMain extends React.Component {
             </div>
         ) : null;
 
-        return (
-            <div className={"PostMain"}>
+        var currentMode = (!this.state.updateMode) ? (
+            <div>
                 {modal}
                 <div className='PostMain-container'>
                     {media}
@@ -309,6 +315,16 @@ export default class PostMain extends React.Component {
                         {this.props.rest}
                     </div>
                 </div>
+            </div>
+        ) : (
+            <div>
+                <CreatePost user={this.props.user} ogPost={posts[0]} rest={this.props.rest} controls={controls} updateMode={this.updateMode} />
+            </div>
+        );
+
+        return (
+            <div className="PostMain">
+                {currentMode}
             </div>
         )
     }
