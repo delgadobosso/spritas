@@ -318,7 +318,7 @@ export default class PostMain extends React.Component {
             </div>
         ) : (
             <div>
-                <CreatePost user={this.props.user} ogPost={posts[0]} rest={this.props.rest} controls={controls} updateMode={this.updateMode} />
+                <CreatePost user={this.props.user} ogPost={posts[0]} controls={controls} updateMode={this.updateMode} />
             </div>
         );
 

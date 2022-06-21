@@ -437,7 +437,6 @@ export default class CreatePost extends React.Component {
                             <div className='PostMain-optionItem' onClick={this.submit}>{submitText}</div>
                             {cancel}
                         </div>
-                        {this.props.rest};
                     </div>
                 </div>
             </div>
