@@ -177,6 +177,18 @@
     cursor: pointer;
 }
 
+.PostMain-updateNode {
+    animation-name: updateBreathe;
+    animation-duration: 2s;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+@keyframes updateBreathe {
+    from { fill: var(--spritan-red); }
+    to { fill: var(--spritan-gold); }
+}
+
 .PostMain-mediaContainer {
     display: flex;
     justify-content: center;

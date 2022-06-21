@@ -105,7 +105,9 @@ export default class PostMain extends React.Component {
     }
 
     updateMode(yes) {
-        this.setState({ updateMode: yes });
+        this.setState({
+            updateMode: yes
+        }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
     }
 
     render() {
@@ -163,6 +165,25 @@ export default class PostMain extends React.Component {
                 classNotEndR = '';
             }
 
+            var newestIndex = posts.length;
+            var updateBegin = (this.state.updateMode) ? <animate id='grow' attributeName='r' values='0;13' dur='1s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' /> : null;
+            var updateNode =  (
+                <g key={newestIndex}>
+                    <circle className='PostMain-updateNode'
+                    cx={60 * newestIndex} cy='50%' r='0'>
+                        {updateBegin}
+                        <animate attributeName='r' values='13;8;13' begin='grow.end' dur='2s' repeatCount='indefinite'
+                        calcMode='spline' keyTimes='0; 0.5; 1' keySplines='0.65, 0, 0.35, 1; 0.65, 0, 0.35, 1' />
+                    </circle>
+                    <title>Update</title>
+                </g>
+            );
+            var updateLine = (this.state.updateMode) ? (
+                <line x1={60 * (length - 1)} y1='50%' x2={60 * length} y2='50%' stroke='var(--darkest-grey)' strokeWidth='3px'>
+                    <animate attributeName='x2' values={`${60 * (length - 1)};${60 * length}`} dur='1s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' />
+                </line>
+            ) : null;
+
             var controls = (
                 <div className="PostMain-controls">
                     <svg className={"PostMain-arrowContainer" + classNotEndL} xmlns="http://www.w3.org/2000/svg" 
@@ -178,7 +199,9 @@ export default class PostMain extends React.Component {
                             <g className='PostMain-nodeContainer' style={nodeStyle}>
                                 <line x1='0' y1='50%' x2={60 * (length - 1)} y2='50%'
                                     stroke='var(--darkest-grey)' strokeWidth='3px' />
+                                {updateLine}
                                 {nodes}
+                                {updateNode}
                             </g>
                         </svg>
                     </svg>
