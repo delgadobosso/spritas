@@ -174,11 +174,13 @@
 }
 
 .CreatePost-subtitle {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     border: none;
     border-radius: 5px;
     width: initial;
+    margin: 10px 10px 0 10px;
+    padding: 5px 10px;
 }
 
 .CreatePost-body {

@@ -118,18 +118,14 @@
 
 .PostMain-subtitle {
     width: fit-content;
-    color: black;
-    background-color: var(--info-grey);
-    border-radius: 5px;
+    color: var(--spritan-gold);
     margin: 10px 10px 0 10px;
-    padding: 5px 10px;
     word-break: break-all;
 }
 
 .PostMain-body {
     color: white;
-    margin-top: 10px;
-    padding: 0 15px 15px 15px;
+    margin: 10px 10px 15px 10px;
 }
 
 .PostMain-controls {

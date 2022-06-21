@@ -26,10 +26,7 @@ export default class TopicPost extends React.Component {
     render() {
         const post = this.props.post;
         const title = he.decode(post.title);
-        const subtitle = (post.subtitle) ? (
-            <div className='TopicPost-titles'>
-                <h4 className="TopicPost-subName">{he.decode(post.subtitle)}</h4>
-            </div>) : null;
+        const subtitle = (post.subtitle) ? (<h4 className="TopicPost-subtitle">{he.decode(post.subtitle)}</h4>) : null;
         const avatar = (post.avatar) ? `/media/avatars/${post.avatar}` : pfp;
 
         var ts = new Date(post.ts);
@@ -127,9 +124,7 @@ export default class TopicPost extends React.Component {
             <div className="TopicPost" title={title} style={{animationDelay: `${this.props.delay * 25}ms`}}>
                 <a className="TopicPost-link" href={'/post/' + post.id} onClick={this.handleClick}>
                     {thumb}
-                    <div className='TopicPost-titles'>
-                        <h3 className="TopicPost-name" id={"TopicPostName-" + post.id}>{title}</h3>
-                    </div>
+                    <h3 className="TopicPost-title" id={"TopicPostName-" + post.id}>{title}</h3>
                     {subtitle}
                     <a href={`/u/${post.username}`} title={post.username}
                     className="TopicPost-a">

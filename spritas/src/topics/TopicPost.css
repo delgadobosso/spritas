@@ -29,27 +29,17 @@
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1) inset;
 }
 
-.TopicPost-titles {
-    display: flex;
-    align-items: center;
-    margin: 10px 0 0 0;
-    flex-wrap: wrap;
-}
-
-.TopicPost-name {
+.TopicPost-title {
     color: white;
-    margin: 0 10px;
+    margin: 10px 6px 0 6px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.TopicPost-subName {
-    color: black;
-    background-color: var(--info-grey);
-    border-radius: 5px;
-    margin: 0 5px;
-    padding: 0 10px;
+.TopicPost-subtitle {
+    color: var(--spritan-gold);
+    margin: 3px 6px 0 6px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -58,7 +48,7 @@
 .TopicPost-a {
     display: block;
     max-width: 100%;
-    margin: 10px 5px 0 4px;
+    margin: 6px 3px 0 3px;
 }
 
 .TopicPost-user {
@@ -141,12 +131,11 @@
 }
 
 @media screen and (max-width: 716px) {
-    .TopicPost, .TopicPost-link {
-        width: 100%;
-        border-radius: 0;
-    }
-
     .TopicPost {
         margin: 0 0 20px 0;
+    }
+
+    .TopicPost-thumb {
+        height: 100px;
     }
 }

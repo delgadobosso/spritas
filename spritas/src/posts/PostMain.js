@@ -264,7 +264,7 @@ export default class PostMain extends React.Component {
 
         const avatar = (currentPost.avatar) ? `/media/avatars/${currentPost.avatar}` : pfp;
         const subtitle = (currentPost.subtitle) ?
-            <h4 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h4> : null;
+            <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3> : null;
 
         var update;
         var deletePost;
