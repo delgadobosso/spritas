@@ -228,10 +228,13 @@ export default class CreatePost extends React.Component {
     }
 
     submit(e) {
-        const titleElem = document.getElementById('title');
-        if (!titleElem.checkValidity()) {
-            titleElem.setCustomValidity('Your post requires a title.');
-            return titleElem.reportValidity();
+        var titleElem;
+        if (!this.props.ogPost) {
+            titleElem = document.getElementById('title');
+            if (!titleElem.checkValidity()) {
+                titleElem.setCustomValidity('Your post requires a title.');
+                return titleElem.reportValidity();
+            }
         }
         const bodyElem = document.getElementById('body');
         if (!bodyElem.checkValidity()) {
@@ -251,18 +254,25 @@ export default class CreatePost extends React.Component {
                 window.addEventListener('beforeunload', this.handleBeforeUnload);
 
                 var formData = new FormData();
-                const title = titleElem.value;
+                const title = (titleElem) ? titleElem.value : null;
                 const subtitle = document.getElementById('subtitle').value;
                 const body = bodyElem.value;
                 const link = linkElem.value;
         
-                formData.append('title', title);
+                if (title) formData.append('title', title);
                 formData.append('subtitle', subtitle);
                 formData.append('body', body);
                 formData.append('link', link);
                 formData.append('file', this.state.file);
+                
+                var fetchURL = '/create/post';
+
+                if (this.props.ogPost) {
+                    formData.append('id', this.props.ogPost.id);
+                    fetchURL = '/update/post';
+                }
         
-                fetch('/create/post', {
+                fetch(fetchURL, {
                     method: 'POST',
                     body: formData
                 })
@@ -280,7 +290,7 @@ export default class CreatePost extends React.Component {
                                 window.removeEventListener('beforeunload', this.handleBeforeUnload);
                                 window.location.href = "/post/" + id;
                             });
-                        }, 3000);
+                        }, 5000);
                     }
                 })
                 .catch(error => this.setState({
@@ -370,23 +380,26 @@ export default class CreatePost extends React.Component {
             </div>
         );
 
-        var typeText = "Text Post";
-        if (this.state.file && this.state.imgPreview) typeText = "Picture Post";
-        else if (this.state.file || this.state.mediaLink) typeText = "Video Post";
-        var submitText = (this.state.submitting) ? `Submitting ${typeText}...` : `Submit ${typeText}`;
-
-        const cover = (this.state.submitting) ? " LoadingCover-anim" : "";
-
         // Update Specific Stuff
         var title = <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Title* (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />;
         var cancel;
+        var updateText = "";
 
+        // For Update, if a post is  given
         if (this.props.ogPost) {
             title = <h2 className='PostMain-title'>{he.decode(this.props.ogPost.title)}</h2>;
             cancel = <div className='PostMain-optionItem' onClick={() => this.props.updateMode(false)}>Cancel Update</div>;
+            updateText = " Update";
         } else {
             document.title = "Create a Post";
         }
+
+        var typeText = "Text Post" + updateText;
+        if (this.state.file && this.state.imgPreview) typeText = "Picture Post" + updateText;
+        else if (this.state.file || this.state.mediaLink) typeText = "Video Post" + updateText;
+        var submitText = (this.state.submitting) ? `Submitting ${typeText}...` : `Submit ${typeText}`;
+
+        const cover = (this.state.submitting) ? " LoadingCover-anim" : "";
 
         return (
             <div className="CreatePost">
