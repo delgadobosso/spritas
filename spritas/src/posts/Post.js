@@ -175,7 +175,8 @@ export default class Post extends React.Component {
         }
 
         const youreply = (this.props.user && this.props.user.id === post.idUser) ? " Post-replyyou" : "";
-        const youtag = (youreply) ? <span className="Post-youtag" title="You"> YOU</span> : null;
+        const opOrYou = (this.props.user && this.props.user.id === this.props.opid) ? "Post-optag" : "Post-youtag";
+        const youtag = (youreply) ? <span className={opOrYou} title="You"> YOU</span> : null;
 
         const op = (this.props.op) ? " Post-op" : "";
         const opreply = (this.props.opid === post.idUser) ? " Post-replyop" : "";
