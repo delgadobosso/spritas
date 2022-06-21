@@ -55,7 +55,8 @@ export default class PostMain extends React.Component {
     }
 
     left() {
-        if (this.props.current > 1) {
+        if (this.state.updateMode) this.setState({ updateMode: false });
+        else if (this.props.current > 1) {
             this.props.setCurrent(this.props.current - 1);
         }
     }
@@ -67,7 +68,12 @@ export default class PostMain extends React.Component {
     }
 
     goToPost(index) {
-        if (this.props.current !== index) this.props.setCurrent(index);
+        if (this.state.updateMode) {
+            this.setState({
+                updateMode: false
+            }, () => setTimeout(() => this.props.setCurrent(index), 10));
+        }
+        else if (this.props.current !== index) this.props.setCurrent(index);
     }
 
     toggleModal() {
@@ -180,7 +186,7 @@ export default class PostMain extends React.Component {
             );
             var updateLine = (this.state.updateMode) ? (
                 <line x1={60 * (length - 1)} y1='50%' x2={60 * length} y2='50%' stroke='var(--darkest-grey)' strokeWidth='3px'>
-                    <animate attributeName='x2' values={`${60 * (length - 1)};${60 * length}`} dur='1s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' />
+                    <animate attributeName='x2' values={`${60 * (length - 1)};${60 * length}`} dur='0.5s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' />
                 </line>
             ) : null;
 
