@@ -497,6 +497,9 @@ app.post('/update/post',
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
+        const validVid = ["video/mp4", "video/webm"];
+        const validPic = ["image/png", "image/jpeg", "image/gif"];
+
         var type = "TEXT";
         if (req.file) {
             if (validVid.includes(req.file.mimetype)) type = "VIDO";
@@ -526,7 +529,7 @@ app.post('/update/post',
                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
     
-                                    const resId = result.insertId.toString();
+                                    const resId = parent.id.toString();
                                     return res.status(200).send(resId);
                                 })
                             })
@@ -551,7 +554,7 @@ app.post('/update/post',
                                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                                     if (error) return res.status(500).send(error);
                     
-                                                    const resId = result.insertId.toString();
+                                                    const resId = parent.id.toString();
                                                     return res.status(200).send(resId);
                                                 })
                                             })
@@ -575,7 +578,7 @@ app.post('/update/post',
                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
 
-                                    const resId = result.insertId.toString();
+                                    const resId = parent.id.toString();
                                     return res.status(200).send(resId);
                                 })
                             })
