@@ -93,7 +93,7 @@
     overflow: clip;
     margin-right: 20px;
 
-    transition: box-shadow 0.25s;
+    transition: box-shadow 0.25s, width 0.5s, height 0.5s, margin 0.5s;
 }
 .CreatePost-mediaAllValid {
     box-shadow: 0 0 0 5px var(--spritan-gold);
