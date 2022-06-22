@@ -192,7 +192,7 @@ export default class PostMain extends React.Component {
             );
             var updateLine = (this.state.updateMode) ? (
                 <line x1={60 * (length - 1)} y1='50%' x2={60 * length} y2='50%' stroke='var(--darkest-grey)' strokeWidth='3px'>
-                    <animate attributeName='x2' values={`${60 * (length - 1)};${60 * length}`} dur='0.5s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' />
+                    <animate attributeName='x2' values={`${60 * (length - 1)};${60 * length}`} dur='1s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' />
                 </line>
             ) : null;
 
