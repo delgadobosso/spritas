@@ -226,11 +226,12 @@ export default class PostMain extends React.Component {
         var modal;
         var video;
         var image;
-        var media;
         var cardsClass = "";
+        var mediaClass = "";
         switch(currentPost.type) {
             case "TEXT":
                 cardsClass = " PostMain-cardsText";
+                mediaClass = " PostMain-mediaText";
                 break;
 
             case "VIDO":
@@ -251,18 +252,14 @@ export default class PostMain extends React.Component {
                         if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
                         video = (
-                        <div className="PostMain-mediaContainer">
                             <PureIframe src={embedSrc} width="100%" height="675" id={currentPost.id} />
-                        </div>);
+                        );
                     }
                 } else if (currentPost.link) {
                     video = (
-                        <div className='PostMain-mediaContainer'>
-                            <video className='PostMain-videoElem' src={link} controls width="100%"></video>
-                        </div>
+                        <video className='PostMain-videoElem' src={link} controls width="100%"></video>
                     )
                 }
-                media = video;
                 break;
 
             case "IMG":
@@ -271,23 +268,27 @@ export default class PostMain extends React.Component {
                         <PostModal link={currentPost.link} id={currentPost.id}/>
                         : null;
 
-                    image =
-                    <div className='PostMain-mediaContainer'>
+                    image = (
                         <div className='PostMain-imageContainer'
                             onClick={this.toggleModal}>
                             <img className='PostMain-image'
                                 src={currentPost.link}
                                 alt="Main Post" />
                             <p className='PostMain-view'>Click To View Full Image</p>
-                        </div>
-                    </div>
+                        </div>);
                 }
-                media = image;
                 break;
 
             default:
                 break;
         }
+
+        var media = (
+            <div className={'PostMain-mediaContainer' + mediaClass}>
+                {video}
+                {image}
+            </div>
+        )
 
         const avatar = (currentPost.avatar) ? `/media/avatars/${currentPost.avatar}` : pfp;
         const subtitle = (currentPost.subtitle) ?
