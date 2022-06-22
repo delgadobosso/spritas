@@ -29,6 +29,20 @@
     transition: background-color 0.1s, color 0.25s;
 }
 
+.CreatePost-mediaTop {
+    height: 80px;
+    overflow: hidden;
+
+    transition: height 0.5s;
+}
+.CreatePost-mediaTopUpdate {
+    animation: topOpen 0.5s;
+}
+@keyframes topOpen {
+    from { height: 0; }
+    to { height: 80px; }
+}
+
 .CreatePost-selected {
     color: var(--spritan-gold);
     background-color: var(--light-grey);
@@ -37,6 +51,7 @@
 
 .CreatePost-item {
     display: flex;
+    height: 40px;
     align-items: center;
     background-color: var(--light-grey);
 }

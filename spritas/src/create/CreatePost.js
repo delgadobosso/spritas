@@ -301,6 +301,27 @@ export default class CreatePost extends React.Component {
     }
 
     render() {
+        // Update Specific Stuff
+        var title = <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Title* (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />;
+        var cancel;
+        var updateText = "";
+        var mediaAllText = "";
+        var mediaContainText = "";
+        var mediaTopUpdate = "";
+        // For Update, if a post is  given
+        if (this.props.ogPost) {
+            title = <h2 className='PostMain-title'>{he.decode(this.props.ogPost.title)}</h2>;
+            cancel = <div className='PostMain-optionItem' onClick={() => this.props.updateMode(false)}>Cancel Update</div>;
+            updateText = " Update";
+            mediaTopUpdate = " CreatePost-mediaTopUpdate";
+            if (this.props.fromPost.type === "TEXT") {
+                mediaAllText = " CreatePost-mediaAllText";
+                mediaContainText = " CreatePost-containerText";
+            }
+        } else {
+            document.title = "Create a Post";
+        }
+
         var username;
         var nickname;
         var avatar;
@@ -380,25 +401,6 @@ export default class CreatePost extends React.Component {
             </div>
         );
 
-        // Update Specific Stuff
-        var title = <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Title* (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />;
-        var cancel;
-        var updateText = "";
-        var mediaAllText = "";
-        var mediaContainText = "";
-        // For Update, if a post is  given
-        if (this.props.ogPost) {
-            title = <h2 className='PostMain-title'>{he.decode(this.props.ogPost.title)}</h2>;
-            cancel = <div className='PostMain-optionItem' onClick={() => this.props.updateMode(false)}>Cancel Update</div>;
-            updateText = " Update";
-            if (this.props.fromPost.type === "TEXT") {
-                mediaAllText = " CreatePost-mediaAllText";
-                mediaContainText = " CreatePost-containerText";
-            }
-        } else {
-            document.title = "Create a Post";
-        }
-
         var typeText = "Text Post" + updateText;
         if (this.state.file && this.state.imgPreview) typeText = "Picture Post" + updateText;
         else if (this.state.file || this.state.mediaLink) typeText = "Video Post" + updateText;
@@ -411,9 +413,11 @@ export default class CreatePost extends React.Component {
                 <div className='PostMain-container CreatePost-container'>
                     <div className={'CreatePost-mediaAll' + mediaAllText} onDrop={this.handleDrop} onDragOver={this.handleDrag} onDragExit={this.handleDrag} ref={this.dropRef}>
                         <div className={'LoadingCover' + cover}></div>
-                        {fileLink}
-                        {file}
-                        {link}
+                        <div className={'CreatePost-mediaTop' + mediaTopUpdate}>
+                            {fileLink}
+                            {file}
+                            {link}
+                        </div>
                         <div className={'PostMain-mediaContainer CreatePost-mediaContainer' + mediaContainText} >
                             {previewContainer}
                         </div>
