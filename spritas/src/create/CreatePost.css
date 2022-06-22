@@ -285,7 +285,7 @@
 @media screen and (max-width: 1350px) {
     .CreatePost-mediaAll {
         width: 640px;
-        height: 440px;
+        height: 100%;
         margin: 0;
     }
     .CreatePost-mediaAllText {
