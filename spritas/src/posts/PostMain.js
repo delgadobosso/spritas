@@ -56,7 +56,11 @@ export default class PostMain extends React.Component {
     }
 
     left() {
-        if (this.state.updateMode) this.setState({ updateMode: false });
+        if (this.state.updateMode) {
+            this.setState({
+                updateMode: false
+            }, () => setTimeout(() => this.props.setCurrent(this.props.current - 1), 10));
+        }
         else if (this.props.current > 1) {
             this.props.setCurrent(this.props.current - 1);
         }
