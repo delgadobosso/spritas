@@ -37,6 +37,10 @@
     background-color: var(--dark-grey);
 }
 
+.UserContainer .TopicPortal-posts::after {
+    background-color: var(--dark-grey);
+}
+
 .UserContainer-header {
     background-color: var(--darkest-grey);
     padding: 10px 20px;
