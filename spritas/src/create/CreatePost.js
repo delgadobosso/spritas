@@ -308,6 +308,7 @@ export default class CreatePost extends React.Component {
         var mediaAllText = "";
         var mediaContainText = "";
         var mediaTopUpdate = "";
+        var cardsText = "";
         // For Update, if a post is  given
         if (this.props.ogPost) {
             title = <h2 className='PostMain-title'>{he.decode(this.props.ogPost.title)}</h2>;
@@ -317,6 +318,7 @@ export default class CreatePost extends React.Component {
             if (this.props.fromPost.type === "TEXT") {
                 mediaAllText = " CreatePost-mediaAllText";
                 mediaContainText = " CreatePost-containerText";
+                cardsText = " CreatePost-cardsText";
             }
         } else {
             document.title = "Create a Post";
@@ -422,7 +424,7 @@ export default class CreatePost extends React.Component {
                             {previewContainer}
                         </div>
                     </div>
-                    <div className='PostMain-cards'>
+                    <div className={'PostMain-cards' + cardsText}>
                         <div className='PostMain-postOption'>
                             <div className='PostMain-post CreatePost-post'>
                                 <div className={'LoadingCover' + cover}></div>

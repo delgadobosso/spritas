@@ -280,6 +280,14 @@
     .CreatePost-previewInfo {
         width: 800px;
     }
+
+    .CreatePost-cardsText {
+        animation: cardShrink 0.5s;
+    }
+    @keyframes cardShrink {
+        from { width: 600px; }
+        to { width: 500px; }
+    }
 }
 
 @media screen and (max-width: 1350px) {
