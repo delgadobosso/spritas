@@ -384,14 +384,17 @@ export default class CreatePost extends React.Component {
         var title = <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Title* (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />;
         var cancel;
         var updateText = "";
-        var textClass = "";
-
+        var mediaAllText = "";
+        var mediaContainText = "";
         // For Update, if a post is  given
         if (this.props.ogPost) {
             title = <h2 className='PostMain-title'>{he.decode(this.props.ogPost.title)}</h2>;
             cancel = <div className='PostMain-optionItem' onClick={() => this.props.updateMode(false)}>Cancel Update</div>;
             updateText = " Update";
-            if (this.props.fromPost.type === "TEXT") textClass = " CreatePost-mediaAllText";
+            if (this.props.fromPost.type === "TEXT") {
+                mediaAllText = " CreatePost-mediaAllText";
+                mediaContainText = " CreatePost-containerText";
+            }
         } else {
             document.title = "Create a Post";
         }
@@ -406,12 +409,12 @@ export default class CreatePost extends React.Component {
         return (
             <div className="CreatePost">
                 <div className='PostMain-container CreatePost-container'>
-                    <div className={'CreatePost-mediaAll' + textClass} onDrop={this.handleDrop} onDragOver={this.handleDrag} onDragExit={this.handleDrag} ref={this.dropRef}>
+                    <div className={'CreatePost-mediaAll' + mediaAllText} onDrop={this.handleDrop} onDragOver={this.handleDrag} onDragExit={this.handleDrag} ref={this.dropRef}>
                         <div className={'LoadingCover' + cover}></div>
                         {fileLink}
                         {file}
                         {link}
-                        <div className='PostMain-mediaContainer CreatePost-mediaContainer' >
+                        <div className={'PostMain-mediaContainer CreatePost-mediaContainer' + mediaContainText} >
                             {previewContainer}
                         </div>
                     </div>
