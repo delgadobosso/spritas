@@ -145,6 +145,7 @@ export default class PostMain extends React.Component {
 
         // Update controls
         if (length > 1) {
+            var hitClass = (!this.state.updateMode) ? "PostMain-nodeHit" : "";
             const nodes = posts.map((post, index) => {
                 var fill, r, nClass;
                 if (this.props.current - 1 === index) {
@@ -160,7 +161,7 @@ export default class PostMain extends React.Component {
                 const nodeTime = (!this.state.toggleTime) ? relTime : ts;
 
                 return (
-                    <g key={index} className='PostMain-nodeHit'
+                    <g key={index} className={hitClass}
                         onClick={() => this.goToPost(index + 1)}>
                         <circle cx={60 * index} cy='50%' r='25' fillOpacity='0' />
                         <circle className={nClass}
@@ -175,11 +176,11 @@ export default class PostMain extends React.Component {
             var classNotEndR = ' PostMain-notEnd';
             var leftArrow = 'white'
             var rightArrow = 'white'
-            if (this.props.current === 1) {
+            if (this.props.current === 1 || this.state.updateMode) {
                 leftArrow = 'var(--darkest-grey)';
                 classNotEndL = '';
             }
-            if (this.props.current === length) {
+            if (this.props.current === length || this.state.updateMode) {
                 rightArrow = 'var(--darkest-grey)';
                 classNotEndR = '';
             }
@@ -194,7 +195,7 @@ export default class PostMain extends React.Component {
                         <animate attributeName='r' values='13;8;13' begin='grow.end' dur='2s' repeatCount='indefinite'
                         calcMode='spline' keyTimes='0; 0.5; 1' keySplines='0.65, 0, 0.35, 1; 0.65, 0, 0.35, 1' />
                     </circle>
-                    <title>Update</title>
+                    <title>Update Post</title>
                 </g>
             );
             var updateLine = (this.state.updateMode) ? (
