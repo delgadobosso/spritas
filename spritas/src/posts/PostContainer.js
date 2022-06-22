@@ -136,11 +136,8 @@ export default class PostContainer extends React.Component {
         const load = (this.state.more) ?
         <div className="PostContainer-load" onClick={this.loadReplies}>Show More Comments</div> : loaded;
 
-        var restClass = "";
-        if (this.state.main && this.state.main[this.state.current - 1].type === "TEXT") restClass = " PostContainer-restText";
-
         const rest = (this.state.replies.length > 0 || reply) ? (
-            <div className={'PostContainer-rest' + restClass}>
+            <div className='PostContainer-rest'>
                 {reply}
                 <div className="PostContainer-replies" id="Replies">
                     {this.state.replies}

@@ -1,11 +1,6 @@
 .PostContainer-rest {
     margin-top: 20px;
 }
-.PostContainer-restText {
-    width: 600px;
-    margin-top: 0;
-    margin-left: 20px;
-}
 
 .PostContainer .Reply, .PostContainer .UpdatePost, .PostContainer-controls {
     width: 100%;
@@ -56,17 +51,7 @@
     background-color: transparent;
 }
 
-@media screen and (max-width: 1350px) {
-    .PostContainer-restText {
-        margin-left: 0;
-    }
-}
-
 @media screen and (max-width: 700px) {
-    .PostContainer-restText {
-        width: initial;
-    }
-
     .PostContainer-replies {
         width: initial;
         padding: 0 10px;

@@ -2,6 +2,8 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
+
+    transition: margin 0.5s;
 }
 
 .PostMain-cards {
@@ -9,19 +11,10 @@
 
     transition: width 0.5s, height 0.5s, margin 0.5s;
 }
-.PostMain-cardsText {
-    display: flex;
-    justify-content: center;
-    width: initial;
-}
 
-.PostMain-postOption, .PostMain-postOptionText {
+.PostMain-postOption {
     display: flex;
     flex-direction: column;
-}
-.PostMain-postOptionText {
-    width: 600px;
-    margin-bottom: 20px;
 }
 
 .PostMain-post {
@@ -255,7 +248,7 @@
         width: 500px;
     }
     .PostMain-cardsText {
-        width: initial;
+        width: 600px;
     }
 
     .PostMain-mediaContainer {
@@ -275,8 +268,7 @@
         margin-top: 20px;
     }
     .PostMain-cardsText {
-        display: initial;
-        margin-top: 0;
+        margin: 0;
     }
 
     .PostMain-mediaContainer {
@@ -295,13 +287,6 @@
     .PostMain-cards {
         width: 100%;
         margin: 0;
-    }
-    .PostMain-cardsText {
-        display: initial;
-    }
-
-    .PostMain-postOptionText {
-        width: initial;
     }
 
     .PostMain-post, .PostMain-option {

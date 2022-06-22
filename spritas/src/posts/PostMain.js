@@ -228,11 +228,9 @@ export default class PostMain extends React.Component {
         var image;
         var media;
         var cardsClass = "";
-        var postOpClass = ""
         switch(currentPost.type) {
             case "TEXT":
                 cardsClass = " PostMain-cardsText";
-                postOpClass = " PostMain-postOptionText";
                 break;
 
             case "VIDO":
@@ -321,7 +319,7 @@ export default class PostMain extends React.Component {
                 <div className='PostMain-container'>
                     {media}
                     <div className={"PostMain-cards" + cardsClass}>
-                        <div className={"PostMain-postOption" + postOpClass}>
+                        <div className="PostMain-postOption">
                             <div className='PostMain-post'>
                                 <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
                                 <div className='PostMain-info'>
