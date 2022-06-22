@@ -7,7 +7,7 @@
 .PostMain-cards {
     width: 600px;
 
-    transition: width 0.5s, height 0.5s;
+    transition: width 0.5s, height 0.5s, margin 0.5s;
 }
 .PostMain-cardsText {
     display: flex;

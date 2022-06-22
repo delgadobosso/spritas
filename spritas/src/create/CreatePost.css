@@ -106,7 +106,7 @@
     position: initial;
     border-radius: 0;
 
-    transition: background-color 0.25s;
+    transition: background-color 0.25s, width 0.5s, height 0.5s, margin 0.5s;
 }
 .CreatePost-mediaContainerValid {
     background-color: var(--spritan-gold);
