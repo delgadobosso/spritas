@@ -119,11 +119,14 @@ export default class PostMain extends React.Component {
                 const currentPost = posts[this.props.current - 1];
                 const con = document.getElementById(`PostMain-mediaContainer${currentPost.id}`);
                 const cards = document.getElementById(`PostMain-cards${currentPost.id}`);
+                const vid = document.getElementById(`PostMain-videoElem${currentPost.id}`);
                 con.classList.add('PostMain-return');
                 cards.classList.add('PostMain-returnCards');
+                if (vid) vid.classList.add('PostMain-return');
                 setTimeout(() => {
                     con.classList.remove('PostMain-return');
                     cards.classList.remove('PostMain-returnCards');
+                    if (vid) vid.classList.remove('PostMain-return');
                 }, 10);
             });
         }
@@ -270,7 +273,7 @@ export default class PostMain extends React.Component {
                     }
                 } else if (currentPost.link) {
                     video = (
-                        <video className='PostMain-videoElem' src={link} controls></video>
+                        <video id={`PostMain-videoElem${currentPost.id}`} className='PostMain-videoElem' src={link} controls></video>
                     )
                 }
                 break;

@@ -208,18 +208,19 @@
     margin: 0;
     opacity: 0;
 }
-.PostMain-return {
-    width: 1200px;
-    height: 755px;
-    opacity: 1;
-}
-
 .PostMain-videoElem {
     border: 0;
     width: 1200px;
     height: 675px;
 
     transition: width 0.5s, height 0.5s;
+    animation: fadeIn 0.5s;
+}
+.PostMain-return {
+    width: 1200px;
+    height: 755px;
+    opacity: 1;
+    transition: none;
 }
 
 .PostMain-imageContainer {
@@ -231,6 +232,7 @@
     height: 100%;
 
     transition: background-color 0.5s;
+    animation: fadeIn 0.5s;
 }
 
 .PostMain-image {
@@ -265,12 +267,6 @@
         margin: 0;
         opacity: 0;
     }
-    .PostMain-return {
-        width: 960px;
-        height: 620px;
-        opacity: 1;
-    }
-
     .PostMain-videoElem {
         width: 960px;
         height: 540px;
@@ -278,6 +274,11 @@
     .PostMain-image {
         max-width: 960px;
         max-height: 540px;
+    }
+    .PostMain-return {
+        width: 960px;
+        height: 620px;
+        opacity: 1;
     }
 }
 
@@ -302,12 +303,6 @@
         margin: 0;
         opacity: 0;
     }
-    .PostMain-return {
-        width: 800px;
-        height: 530px;
-        opacity: 1;
-    }
-
     .PostMain-videoElem {
         width: 800px;
         height: 450px;
@@ -315,6 +310,11 @@
     .PostMain-image {
         max-width: 800px;
         max-height: 450px;
+    }
+    .PostMain-return {
+        width: 800px;
+        height: 530px;
+        opacity: 1;
     }
 }
 
@@ -344,12 +344,6 @@
         margin: 0;
         opacity: 0;
     }
-    .PostMain-return {
-        width: 640px;
-        height: 440px;
-        opacity: 1;
-    }
-
     .PostMain-videoElem {
         width: 640px;
         height: 360px;
@@ -357,6 +351,11 @@
     .PostMain-image {
         max-width: 640px;
         max-height: 360px;
+    }
+    .PostMain-return {
+        width: 640px;
+        height: 440px;
+        opacity: 1;
     }
 }
 
