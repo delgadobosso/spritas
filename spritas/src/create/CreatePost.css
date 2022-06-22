@@ -335,6 +335,7 @@
 
     .CreatePost-mediaContainer {
         position: relative;
+        border-radius: 0;
     }
     .CreatePost-containerText {
         animation: containerOpen 0.5s;
