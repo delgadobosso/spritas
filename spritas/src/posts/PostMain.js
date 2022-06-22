@@ -116,10 +116,27 @@ export default class PostMain extends React.Component {
     }
 
     updateMode(yes) {
-        this.setState({
-            updateMode: yes,
-            fromIndex: this.props.current - 1
-        }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
+        if (yes) {
+            this.setState({
+                updateMode: true,
+                fromIndex: this.props.current - 1
+            }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
+        } else {
+            this.setState({
+                updateMode: false
+            }, () => {
+                const posts = this.props.posts;
+                const currentPost = posts[this.props.current - 1];
+                const con = document.getElementById(`PostMain-mediaContainer${currentPost.id}`);
+                const cards = document.getElementById(`PostMain-cards${currentPost.id}`);
+                con.classList.add('PostMain-return');
+                cards.classList.add('PostMain-returnCards');
+                setTimeout(() => {
+                    con.classList.remove('PostMain-return');
+                    cards.classList.remove('PostMain-returnCards');
+                }, 10);
+            });
+        }
     }
 
     render() {
@@ -290,7 +307,7 @@ export default class PostMain extends React.Component {
         }
 
         var media = (
-            <div className={'PostMain-mediaContainer' + mediaClass}>
+            <div id={`PostMain-mediaContainer${currentPost.id}`} className={'PostMain-mediaContainer' + mediaClass}>
                 {video}
                 {image}
             </div>
@@ -325,7 +342,7 @@ export default class PostMain extends React.Component {
                 {modal}
                 <div className='PostMain-container'>
                     {media}
-                    <div className={"PostMain-cards" + cardsClass}>
+                    <div id={`PostMain-cards${currentPost.id}`} className={"PostMain-cards" + cardsClass}>
                         <div className="PostMain-postOption">
                             <div className='PostMain-post'>
                                 <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>

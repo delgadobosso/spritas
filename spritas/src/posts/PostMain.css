@@ -208,6 +208,11 @@
     margin: 0;
     opacity: 0;
 }
+.PostMain-return {
+    width: 1200px;
+    height: 755px;
+    opacity: 1;
+}
 
 .PostMain-videoElem {
     border: 0;
@@ -260,6 +265,12 @@
         margin: 0;
         opacity: 0;
     }
+    .PostMain-return {
+        width: 960px;
+        height: 620px;
+        opacity: 1;
+    }
+
     .PostMain-videoElem {
         width: 960px;
         height: 540px;
@@ -277,6 +288,9 @@
     .PostMain-cardsText {
         width: 600px;
     }
+    .PostMain-returnCards {
+        width: 500px;
+    }
 
     .PostMain-mediaContainer {
         width: 800px;
@@ -288,6 +302,12 @@
         margin: 0;
         opacity: 0;
     }
+    .PostMain-return {
+        width: 800px;
+        height: 530px;
+        opacity: 1;
+    }
+
     .PostMain-videoElem {
         width: 800px;
         height: 450px;
@@ -324,6 +344,12 @@
         margin: 0;
         opacity: 0;
     }
+    .PostMain-return {
+        width: 640px;
+        height: 440px;
+        opacity: 1;
+    }
+
     .PostMain-videoElem {
         width: 640px;
         height: 360px;
@@ -359,6 +385,11 @@
         margin: 0;
         opacity: 0;
     }
+    .PostMain-return {
+        padding-bottom: calc(56.25% + 80px);
+        opacity: 1;
+    }
+
     .PostMain-videoElem, .PostMain-imageContainer {
         position: absolute;
         width: 100%;
