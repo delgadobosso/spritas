@@ -145,7 +145,6 @@ export default class PostMain extends React.Component {
 
         // Update controls
         if (length > 1) {
-            var hitClass = (!this.state.updateMode) ? "PostMain-nodeHit" : "";
             const nodes = posts.map((post, index) => {
                 var fill, r, nClass;
                 if (this.props.current - 1 === index) {
@@ -161,7 +160,7 @@ export default class PostMain extends React.Component {
                 const nodeTime = (!this.state.toggleTime) ? relTime : ts;
 
                 return (
-                    <g key={index} className={hitClass}
+                    <g key={index} className="PostMain-nodeHit"
                         onClick={() => this.goToPost(index + 1)}>
                         <circle cx={60 * index} cy='50%' r='25' fillOpacity='0' />
                         <circle className={nClass}
@@ -271,7 +270,7 @@ export default class PostMain extends React.Component {
                     }
                 } else if (currentPost.link) {
                     video = (
-                        <video className='PostMain-videoElem' src={link} controls width="100%"></video>
+                        <video className='PostMain-videoElem' src={link} controls></video>
                     )
                 }
                 break;
