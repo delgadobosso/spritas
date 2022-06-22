@@ -56,29 +56,19 @@ export default class PostMain extends React.Component {
     }
 
     left() {
-        if (this.state.updateMode) {
-            this.setState({
-                updateMode: false
-            }, () => setTimeout(() => this.props.setCurrent(this.props.current - 1), 10));
-        }
-        else if (this.props.current > 1) {
+        if (this.props.current > 1 && !this.state.updateMode) {
             this.props.setCurrent(this.props.current - 1);
         }
     }
 
     right() {
-        if (this.props.current < this.props.posts.length) {
+        if (this.props.current < this.props.posts.length && !this.state.updateMode) {
             this.props.setCurrent(this.props.current + 1);
         }
     }
 
     goToPost(index) {
-        if (this.state.updateMode) {
-            this.setState({
-                updateMode: false
-            }, () => setTimeout(() => this.props.setCurrent(index), 10));
-        }
-        else if (this.props.current !== index) this.props.setCurrent(index);
+        if (this.props.current !== index && !this.state.updateMode) this.props.setCurrent(index);
     }
 
     toggleModal() {
