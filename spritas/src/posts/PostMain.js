@@ -22,7 +22,8 @@ export default class PostMain extends React.Component {
         this.state = ({
             modal: false,
             toggleTime: false,
-            updateMode: false
+            updateMode: false,
+            fromIndex: this.props.current - 1
         });
     }
 
@@ -112,7 +113,8 @@ export default class PostMain extends React.Component {
 
     updateMode(yes) {
         this.setState({
-            updateMode: yes
+            updateMode: yes,
+            fromIndex: this.props.current - 1
         }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
     }
 
@@ -346,7 +348,7 @@ export default class PostMain extends React.Component {
             </div>
         ) : (
             <div>
-                <CreatePost user={this.props.user} ogPost={posts[0]} controls={controls} updateMode={this.updateMode} />
+                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} />
             </div>
         );
 
