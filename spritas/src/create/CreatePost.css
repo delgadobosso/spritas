@@ -133,7 +133,7 @@
 
 .CreatePost-mediaContainer {
     position: initial;
-    border-radius: 0;
+    border-radius: 0 0 10px 10px;
 
     transition: background-color 0.25s, width 0.5s, height 0.5s, margin 0.5s;
 }
@@ -306,6 +306,10 @@
 
     .CreatePost-previewInfo {
         width: 100%;
+    }
+
+    .CreatePost-cardsText {
+        animation: none;
     }
 }
 
