@@ -18,7 +18,8 @@ export default class Post extends React.Component {
             amount: 4,
             more: true,
             collapsed: false,
-            toggleTime: false
+            toggleTime: false,
+            loadingMore: false
          });
     }
 
@@ -62,7 +63,8 @@ export default class Post extends React.Component {
                 let maxHeight = rep.scrollHeight;
                 rep.style.height = maxHeight + "px";
                 this.setState(state => ({
-                    replies: [...moreReplies, ...state.replies]
+                    replies: [...moreReplies, ...state.replies],
+                    loadingMore: false
                 }), () => this.extendReplies())
                 if (data.length < (this.state.amount + 1)) {
                     this.setState(state => ({
@@ -74,6 +76,7 @@ export default class Post extends React.Component {
                     }));
                 }
             })
+            .catch(error => this.setState({ loadingMore: false }));
     }
 
     extendReplies() {
@@ -162,9 +165,20 @@ export default class Post extends React.Component {
         </div>
         : null;
 
+        var loadMsg = "Show Older Replies";
+        var cover = ""
+        if (this.state.loadingMore) {
+            loadMsg = "Loading More Replies...";
+            cover = " LoadingCover-anim";
+        }
         var load = null;
         if (this.props.reply && this.state.more) {
-            load = <div className="Post-load" onClick={this.loadReplies}>Older Replies</div>;
+            load = <div className="Post-load" onClick={() => this.setState({
+                loadingMore: true
+            }, () => this.loadReplies())}>
+                <div className={'LoadingCover' + cover}></div>
+                {loadMsg}
+            </div>;
         }
 
         var collapse = null;

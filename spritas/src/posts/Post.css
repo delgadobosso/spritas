@@ -119,6 +119,7 @@
 }
 
 .Post-load, .Post-collapse, .Post-gap {
+    position: relative;
     flex-grow: 1;
     flex-basis: 0;
     padding: 5px 0;
