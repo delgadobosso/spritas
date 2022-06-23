@@ -198,6 +198,7 @@
     background-color: var(--darkest-grey);
     flex-shrink: 0;
     opacity: 1;
+    z-index: 1;
 
     transition: width, height, margin, opacity, padding;
     transition-duration: 0.5s;

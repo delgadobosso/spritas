@@ -128,7 +128,7 @@ export default class PostMain extends React.Component {
                     cards.classList.remove('PostMain-returnCards');
                     if (vid) vid.classList.remove('PostMain-return');
                 }, 10);
-                this.props.extendReplies();
+                this.props.extendReplies(true);
             });
         }
     }

@@ -201,7 +201,7 @@ export default class Post extends React.Component {
         )
 
         return (
-            <div className={"Post" + op + opreply + youreply} id={"p" + post.id}>
+            <div className={"Post" + op + opreply + youreply} id={"p" + post.id} style={{animationDelay: `${this.props.delay * 100}ms`}}>
                 <div className="Post-main">
                     <div className='Post-info'>
                         <a className='Post-a' href={`/u/${post.username}`} title={"@" + post.username}>

@@ -3,8 +3,12 @@
     border-radius: 10px;
     background-color: var(--mid-grey);
     overflow: hidden;
+    opacity: 0;
 
     transition: border-radius 0.5s;
+    animation-name: fadeIn;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 }
 
 .Post-optag {

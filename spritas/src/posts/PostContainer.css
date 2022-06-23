@@ -18,7 +18,7 @@
 }
 
 .PostContainer-replies {
-    height: 0px;
+    height: auto;
     margin: auto;
     overflow: hidden;
 
