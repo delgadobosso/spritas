@@ -24,7 +24,8 @@ export default class PostContainer extends React.Component {
             more: true,
             ever: false,
             opid: null,
-            blockers: []
+            blockers: [],
+            loadingMore: false
         }
     }
 
@@ -90,7 +91,8 @@ export default class PostContainer extends React.Component {
                     rep.style.height = maxHeight + "px";
                 }
                 this.setState(state => ({
-                    replies: [...state.replies, ...moreReplies]
+                    replies: [...state.replies, ...moreReplies],
+                    loadingMore: false
                 }), () => { if (!first) this.extendReplies(); })
                 if (data.length < (this.state.amount + 1)) {
                     this.setState(state => ({
@@ -102,6 +104,7 @@ export default class PostContainer extends React.Component {
                     }));
                 }
             })
+            .catch(error => this.setState({ loadingMore: false }));
     }
 
     extendReplies(first=false) {
@@ -133,8 +136,23 @@ export default class PostContainer extends React.Component {
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Comments Shown</div> : null;
-        const load = (this.state.more) ?
-        <div className="PostContainer-load" onClick={() => this.loadReplies()}>Show More Comments</div> : loaded;
+
+        var loadMsg = "Show More Comments";
+        var cover = ""
+        if (this.state.loadingMore) {
+            loadMsg = "Loading More Comments...";
+            cover = " LoadingCover-anim";
+        }
+        const load = (this.state.more) ? (
+        <div className="PostContainer-load" onClick={() => {
+            this.setState({
+                loadingMore: true
+            }, () => this.loadReplies())
+        }}>
+            <div className={'LoadingCover' + cover}></div>
+            {loadMsg}
+        </div>
+        ) : loaded;
 
         const rest = (this.state.replies.length > 0 || reply) ? (
             <div className='PostContainer-rest'>

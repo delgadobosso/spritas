@@ -25,12 +25,14 @@
 }
 
 .PostContainer-load, .PostContainer-loaded {
+    position: relative;
     text-align: center;
     margin: 0 auto 20px auto;
     padding: 15px 0;
     background-color: var(--mid-grey);
     color: white;
     border-radius: 10px;
+    overflow: hidden;
 
     transition: background-color 0.1s;
     -moz-user-select: none;
