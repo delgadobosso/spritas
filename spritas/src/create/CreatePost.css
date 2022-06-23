@@ -215,6 +215,8 @@
     width: initial;
     margin: 10px 10px 0 10px;
     padding: 5px 10px;
+
+    animation: fadeIn 0.5s;
 }
 
 .CreatePost-body {
@@ -225,6 +227,8 @@
     border: solid 5px var(--lightest-grey);
     border-radius: 10px;
     flex-grow: 1;
+
+    animation: fadeIn 0.5s;
 }
 .CreatePost-body:focus:required:valid {
     border-color: var(--spritan-gold);

@@ -117,11 +117,15 @@
     color: var(--spritan-gold);
     margin: 10px 10px 0 10px;
     word-break: break-all;
+
+    animation: fadeIn 0.5s;
 }
 
 .PostMain-body {
     color: white;
     margin: 10px 10px 15px 10px;
+
+    animation: fadeIn 0.5s;
 }
 
 .PostMain-controls {
