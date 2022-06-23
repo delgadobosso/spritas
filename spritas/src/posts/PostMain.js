@@ -29,11 +29,6 @@ export default class PostMain extends React.Component {
 
     componentDidMount() {
         window.addEventListener('hashchange', this.hashHandle);
-
-        const posts = this.props.posts;
-        const currentPost = posts[this.props.current - 1];
-        var currentHeight = document.getElementById(`PostMain-post${currentPost.id}`).scrollHeight;
-        if (currentHeight) this.setState({ height: currentHeight });
     }
 
     componentWillUnmount() {
@@ -111,7 +106,12 @@ export default class PostMain extends React.Component {
     }
 
     updateMode(yes) {
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+
         if (yes) {
+            var currentHeight = document.getElementById(`PostMain-post${currentPost.id}`).scrollHeight;
+            if (currentHeight) this.setState({ height: currentHeight });
             this.setState({
                 updateMode: true,
                 fromIndex: this.props.current - 1
@@ -120,8 +120,6 @@ export default class PostMain extends React.Component {
             this.setState({
                 updateMode: false
             }, () => {
-                const posts = this.props.posts;
-                const currentPost = posts[this.props.current - 1];
                 const con = document.getElementById(`PostMain-mediaContainer${currentPost.id}`);
                 const cards = document.getElementById(`PostMain-cards${currentPost.id}`);
                 const vid = document.getElementById(`PostMain-videoElem${currentPost.id}`);
