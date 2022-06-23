@@ -126,6 +126,7 @@
     background-color: var(--light-grey);
     color: white;
     font-size: 0.9em;
+    line-height: 20px;
 
     transition: background-color 0.1s;
     -moz-user-select: none;

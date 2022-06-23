@@ -53,6 +53,7 @@
     background-color: var(--mid-grey);
     overflow: hidden;
     text-align: center;
+    line-height: 20px;
 
     transition: background-color 0.1s;
     -moz-user-select: none;

@@ -33,6 +33,7 @@
     color: white;
     border-radius: 10px;
     overflow: hidden;
+    line-height: 20px;
 
     transition: background-color 0.1s;
     -moz-user-select: none;
