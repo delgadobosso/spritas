@@ -56,19 +56,57 @@ export default class PostMain extends React.Component {
     }
 
     left() {
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+
         if (this.props.current > 1 && !this.state.updateMode) {
-            this.props.setCurrent(this.props.current - 1);
+            const postFrom = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(this.props.current - 1, (newCurrent) => {
+                const newPost = posts[newCurrent - 1];
+                const postTo = document.getElementById(`PostMain-post${newPost.id}`);
+                postTo.getAnimations().map(animation => animation.cancel());
+                postTo.animate([
+                    { height: `${postFrom}px` },
+                    { height: `${postTo.clientHeight}px` }
+                ], { duration: 500, easing: 'ease' });
+            });
         }
     }
 
     right() {
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+
         if (this.props.current < this.props.posts.length && !this.state.updateMode) {
-            this.props.setCurrent(this.props.current + 1);
+            const postFrom = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(this.props.current + 1, (newCurrent) => {
+                const newPost = posts[newCurrent - 1];
+                const postTo = document.getElementById(`PostMain-post${newPost.id}`);
+                postTo.getAnimations().map(animation => animation.cancel());
+                postTo.animate([
+                    { height: `${postFrom}px` },
+                    { height: `${postTo.clientHeight}px` }
+                ], { duration: 500, easing: 'ease' });
+            });
         }
     }
 
     goToPost(index) {
-        if (this.props.current !== index && !this.state.updateMode) this.props.setCurrent(index);
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+
+        if (this.props.current !== index && !this.state.updateMode) {
+            const postFrom = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(index, (newCurrent) => {
+                const newPost = posts[newCurrent - 1];
+                const postTo = document.getElementById(`PostMain-post${newPost.id}`);
+                postTo.getAnimations().map(animation => animation.cancel());
+                postTo.animate([
+                    { height: `${postFrom}px` },
+                    { height: `${postTo.clientHeight}px` }
+                ], { duration: 500, easing: 'ease' });
+            });
+        }
     }
 
     toggleModal() {

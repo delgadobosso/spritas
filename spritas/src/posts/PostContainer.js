@@ -122,8 +122,10 @@ export default class PostContainer extends React.Component {
         }
     }
 
-    setCurrent(value) {
-        this.setState({ current: value });
+    setCurrent(value, cb) {
+        this.setState({
+            current: value
+        }, () => { if (cb) cb(value); });
     }
 
     render() {
