@@ -32,6 +32,16 @@ export default class CreatePost extends React.Component {
         };
     }
 
+    componentDidMount() {
+        if (this.props.ogPost && this.props.height) {
+            const card = document.getElementById('CreatePost-post');
+            card.animate([
+                { height: `${this.props.height}px` },
+                { height: '380px' }
+            ], { duration: 500, easing: 'ease' });
+        }
+    }
+
     handleFile(e, fileDrop=null) {
         const file = (fileDrop) ? fileDrop : e.target.files[0];
 
@@ -426,7 +436,7 @@ export default class CreatePost extends React.Component {
                     </div>
                     <div className={'PostMain-cards' + cardsText}>
                         <div className='PostMain-postOption'>
-                            <div className='PostMain-post CreatePost-post'>
+                            <div id='CreatePost-post' className='PostMain-post CreatePost-post'>
                                 <div className={'LoadingCover' + cover}></div>
                                 {title}
                                 <div className='PostMain-info'>

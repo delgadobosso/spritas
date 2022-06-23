@@ -186,6 +186,7 @@
 
 .CreatePost-post {
     position: relative;
+    height: 380px;
 }
 
 .CreatePost-title {
@@ -223,6 +224,7 @@
     padding: 5px;
     border: solid 5px var(--lightest-grey);
     border-radius: 10px;
+    flex-grow: 1;
 }
 .CreatePost-body:focus:required:valid {
     border-color: var(--spritan-gold);

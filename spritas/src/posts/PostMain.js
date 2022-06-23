@@ -29,6 +29,11 @@ export default class PostMain extends React.Component {
 
     componentDidMount() {
         window.addEventListener('hashchange', this.hashHandle);
+
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+        var currentHeight = document.getElementById(`PostMain-post${currentPost.id}`).scrollHeight;
+        if (currentHeight) this.setState({ height: currentHeight });
     }
 
     componentWillUnmount() {
@@ -128,6 +133,11 @@ export default class PostMain extends React.Component {
                     cards.classList.remove('PostMain-returnCards');
                     if (vid) vid.classList.remove('PostMain-return');
                 }, 10);
+                const postCard = document.getElementById(`PostMain-post${currentPost.id}`);
+                postCard.animate([
+                    { height: '380px' },
+                    { height: `${postCard.clientHeight}px` }
+                ], { duration: 500, easing: 'ease' });
                 this.props.extendReplies(true);
             });
         }
@@ -338,7 +348,7 @@ export default class PostMain extends React.Component {
                     {media}
                     <div id={`PostMain-cards${currentPost.id}`} className={"PostMain-cards" + cardsClass}>
                         <div className="PostMain-postOption">
-                            <div className='PostMain-post'>
+                            <div id={`PostMain-post${currentPost.id}`} className='PostMain-post'>
                                 <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
                                 <div className='PostMain-info'>
                                     <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}
@@ -363,7 +373,7 @@ export default class PostMain extends React.Component {
             </div>
         ) : (
             <div>
-                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} />
+                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} height={this.state.height} />
             </div>
         );
 
