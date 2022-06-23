@@ -94,7 +94,7 @@
 }
 
 .Post-replies {
-    height: 0px;
+    height: auto;
     overflow: hidden;
 
     transition: height 0.5s;

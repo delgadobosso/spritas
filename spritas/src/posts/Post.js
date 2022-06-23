@@ -34,7 +34,7 @@ export default class Post extends React.Component {
                             <Post key={index} post={reply} opid={this.props.opid} user={this.props.user} /> );
                         this.setState({
                             replies: replies
-                        }, () => this.extendReplies());
+                        });
                     }
                     if (data.length < (this.state.amount + 1)) {
                         this.setState(state => ({
