@@ -146,7 +146,7 @@ export default class PostContainer extends React.Component {
             </div>
         ) : null;
 
-        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} /> : null;
+        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} /> : null;
 
         return (
             <div className={"PostContainer"}>
