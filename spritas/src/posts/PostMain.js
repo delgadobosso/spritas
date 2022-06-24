@@ -260,6 +260,7 @@ export default class PostMain extends React.Component {
                     nClass = 'PostMain-node'
                 }
 
+                const subtitle = (post.subtitle) ? `"${he.decode(post.subtitle)}" ` : "";
                 const nodeTime = (!this.state.toggleTime) ? relTime : ts;
 
                 return (
@@ -268,7 +269,7 @@ export default class PostMain extends React.Component {
                         <circle cx={60 * index} cy='50%' r='25' fillOpacity='0' />
                         <circle className={nClass}
                             cx={60 * index} cy='50%' r={r} fill={fill} />
-                        <title>{`"${post.subtitle}" ${nodeTime}`}</title>
+                        <title>{`${subtitle}${nodeTime}`}</title>
                     </g>
                 )
             });
