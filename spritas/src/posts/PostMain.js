@@ -115,11 +115,19 @@ export default class PostMain extends React.Component {
         const posts = this.props.posts;
         const newPost = posts[newIndex - 1];
         const postTo = document.getElementById(`PostMain-post${newPost.id}`);
+        const subtitle = document.getElementById(`PostMain-subtitle${newPost.id}`);
+        const body = document.getElementById(`PostMain-body${newPost.id}`);
+        const media = document.getElementById(`PostMain-media${newPost.id}`);
+        const options = { duration: 500, easing: 'ease' };
         postTo.getAnimations().map(animation => animation.cancel());
         postTo.animate([
             { height: `${fromHeight}px` },
             { height: `${postTo.clientHeight}px` }
-        ], { duration: 500, easing: 'ease' });
+        ], options);
+        const fadeIn = [{ opacity: 0 }, { opacity: 1 }];
+        if (subtitle) subtitle.animate(fadeIn, options);
+        if (body) body.animate(fadeIn, options);
+        if (media) media.animate(fadeIn, options);
     }
 
     toggleModal() {
@@ -225,7 +233,7 @@ export default class PostMain extends React.Component {
                 this.collapsable();
                 const con = document.getElementById(`PostMain-mediaContainer${currentPost.id}`);
                 const cards = document.getElementById(`PostMain-cards${currentPost.id}`);
-                const vid = document.getElementById(`PostMain-videoElem${currentPost.id}`);
+                const vid = document.getElementById(`PostMain-media${currentPost.id}`);
                 con.classList.add('PostMain-return');
                 cards.classList.add('PostMain-returnCards');
                 if (vid) vid.classList.add('PostMain-return');
@@ -382,12 +390,12 @@ export default class PostMain extends React.Component {
                         if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
                         video = (
-                            <PureIframe src={embedSrc} width="100%" height="675" id={currentPost.id} />
+                            <PureIframe src={embedSrc} width="100%" height="675" id={currentPost.id} elementId={`PostMain-media${currentPost.id}`} />
                         );
                     }
                 } else if (currentPost.link) {
                     video = (
-                        <video id={`PostMain-videoElem${currentPost.id}`} className='PostMain-videoElem' src={link} controls></video>
+                        <video id={`PostMain-media${currentPost.id}`} className='PostMain-videoElem' src={link} controls></video>
                     )
                 }
                 break;
@@ -401,8 +409,8 @@ export default class PostMain extends React.Component {
                     image = (
                         <div className='PostMain-imageContainer'
                             onClick={this.toggleModal}>
-                            <img className='PostMain-image'
-                                src={currentPost.link}
+                            <img id={`PostMain-media${currentPost.id}`} className='PostMain-image'
+                                src={currentPost.link} key={currentPost.link}
                                 alt="Main Post" />
                             <p className='PostMain-view'>Click To View Full Image</p>
                         </div>);
@@ -422,7 +430,7 @@ export default class PostMain extends React.Component {
 
         const avatar = (currentPost.avatar) ? `/media/avatars/${currentPost.avatar}` : pfp;
         const subtitle = (currentPost.subtitle) ?
-            <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3> : null;
+            <h3 id={`PostMain-subtitle${currentPost.id}`} className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3> : null;
 
         var collapseNo = (!this.state.collapsable) ? " PostMain-collapseNo" : "";
         var expand = (this.state.expand) ? "Show Less" : "Show More";
@@ -474,7 +482,7 @@ export default class PostMain extends React.Component {
                                 </div>
                                 {controls}
                                 {subtitle}
-                                <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
+                                <div id={`PostMain-body${currentPost.id}`} className='PostMain-body'>{he.decode(currentPost.body)}</div>
                                 {collapsable}
                             </div>
                             {options}
