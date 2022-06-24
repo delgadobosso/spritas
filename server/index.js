@@ -107,18 +107,7 @@ app.get('/create/topic/:id?', (req, res) => {
 app.get('/create/post', (req, res) => {
     if (!req.session.user) res.sendStatus(401);
     else if (req.session.user.type === "BAN") res.sendStatus(403);
-    else {
-        pool.query(`SELECT perm FROM topics WHERE id = ?`,
-        req.params.id, (error, result, fields) => {
-            if (error) return res.sendStatus(500);
-
-            if (result.length > 0) {
-                if (result[0].perm === "ADMN" && req.session.user.type === "ADMN") return res.sendFile(reactApp);
-                else if (result[0].perm === "ALL") return res.sendFile(reactApp);
-                else return res.sendStatus(403);
-            } else return res.sendStatus(404);
-        })
-    }
+    else return res.sendFile(reactApp);
 })
 
 app.get('/home/new/:offset.:limit', (req, res) => {
