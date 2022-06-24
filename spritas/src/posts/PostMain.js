@@ -183,6 +183,7 @@ export default class PostMain extends React.Component {
         else this.setState({
             expand: false
         }, () => {
+            this.props.scrollTop();
             post.getAnimations().map(animation => animation.cancel());
             post.animate([
                 { height: `${post.scrollHeight}px` },
