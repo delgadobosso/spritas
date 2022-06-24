@@ -148,7 +148,7 @@ export default class PostMain extends React.Component {
         const currentPost = posts[this.props.current - 1];
 
         if (yes) {
-            var currentHeight = document.getElementById(`PostMain-post${currentPost.id}`).scrollHeight;
+            var currentHeight = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
             if (currentHeight) this.setState({ height: currentHeight });
             this.setState({
                 updateMode: true,
