@@ -13,6 +13,7 @@ export default class PostMain extends React.Component {
     constructor(props) {
         super(props);
         this.hashHandle = this.hashHandle.bind(this);
+        this.resizeHandle = this.resizeHandle.bind(this);
         this.left = this.left.bind(this);
         this.right = this.right.bind(this);
         this.goToPost = this.goToPost.bind(this);
@@ -28,18 +29,21 @@ export default class PostMain extends React.Component {
             updateMode: false,
             fromIndex: this.props.current - 1,
             collapsable: false,
-            expand: false
+            expand: false,
+            resize: true
         });
     }
 
     componentDidMount() {
         window.addEventListener('hashchange', this.hashHandle);
+        window.addEventListener('resize', this.resizeHandle);
 
         this.collapsable();
     }
 
     componentWillUnmount() {
         window.removeEventListener('hashchange', this.hashHandle);
+        window.removeEventListener('resize', this.resizeHandle);
     }
 
     hashHandle(e) {
@@ -59,6 +63,14 @@ export default class PostMain extends React.Component {
             this.setState({
                 modal: true
             }, () => this.props.naviHide(true));
+        }
+    }
+
+    resizeHandle() {
+        // Throttle resize handle
+        if (this.state.resize) {
+            this.setState({ resize: false });
+            setTimeout(() => this.setState({ resize: true }, () => this.collapsable()), 500);
         }
     }
 
