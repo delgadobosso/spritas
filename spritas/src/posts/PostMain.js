@@ -236,9 +236,10 @@ export default class PostMain extends React.Component {
 
             var newestIndex = posts.length;
             var updateBegin = (this.state.updateMode) ? <animate id='grow' attributeName='r' values='0;13' dur='1s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' /> : null;
+            var updateClass = (this.state.updateMode) ? 'PostMain-updateNode' : "";
             var updateNode =  (
                 <g key={newestIndex}>
-                    <circle className='PostMain-updateNode'
+                    <circle className={updateClass}
                     cx={60 * newestIndex} cy='50%' r='0'>
                         {updateBegin}
                         <animate attributeName='r' values='13;8;13' begin='grow.end' dur='2s' repeatCount='indefinite'
