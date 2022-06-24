@@ -19,17 +19,23 @@ export default class PostMain extends React.Component {
         this.postTransition = this.postTransition.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.delete = this.delete.bind(this);
+        this.collapsable = this.collapsable.bind(this);
+        this.expand = this.expand.bind(this);
         this.updateMode = this.updateMode.bind(this);
         this.state = ({
             modal: false,
             toggleTime: false,
             updateMode: false,
-            fromIndex: this.props.current - 1
+            fromIndex: this.props.current - 1,
+            collapsable: false,
+            expand: false
         });
     }
 
     componentDidMount() {
         window.addEventListener('hashchange', this.hashHandle);
+
+        this.collapsable();
     }
 
     componentWillUnmount() {
@@ -93,6 +99,7 @@ export default class PostMain extends React.Component {
     }
 
     postTransition(fromHeight, newIndex) {
+        this.collapsable();
         const posts = this.props.posts;
         const newPost = posts[newIndex - 1];
         const postTo = document.getElementById(`PostMain-post${newPost.id}`);
@@ -137,6 +144,54 @@ export default class PostMain extends React.Component {
         } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
 
+    collapsable(newIndex) {
+        const posts = this.props.posts;
+        const currentPost = (newIndex) ? posts[newIndex - 1] : posts[this.props.current - 1];
+        const post = document.getElementById(`PostMain-post${currentPost.id}`);
+        if (post && post.scrollHeight > 675) {
+            post.style.height = '675px';
+            this.setState({
+                collapsable: true,
+                expand: false
+            });
+        }
+        else {
+            post.style.height = 'initial';
+            this.setState({
+                collapsable: false,
+                expand: false
+            });
+        }
+    }
+
+    expand() {
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+        const post = document.getElementById(`PostMain-post${currentPost.id}`);
+        const durr = (post.scrollHeight > 1000) ? 1000 : 500;
+
+        if (!this.state.expand) this.setState({
+            expand: true
+        }, () => {
+            post.getAnimations().map(animation => animation.cancel());
+            post.animate([
+                { height: `675px` },
+                { height: `${post.scrollHeight + 35}px` }
+            ], { duration: durr, easing: 'ease' });
+            post.style.height = `${post.scrollHeight + 35}px`;
+        });
+        else this.setState({
+            expand: false
+        }, () => {
+            post.getAnimations().map(animation => animation.cancel());
+            post.animate([
+                { height: `${post.scrollHeight}px` },
+                { height: `675px` },
+            ], { duration: durr, easing: 'ease' });
+            post.style.height = `675px`;
+        });
+    }
+
     updateMode(yes) {
         const posts = this.props.posts;
         const currentPost = posts[this.props.current - 1];
@@ -150,8 +205,10 @@ export default class PostMain extends React.Component {
             }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
         } else {
             this.setState({
-                updateMode: false
+                updateMode: false,
+                expand: false
             }, () => {
+                this.collapsable();
                 const con = document.getElementById(`PostMain-mediaContainer${currentPost.id}`);
                 const cards = document.getElementById(`PostMain-cards${currentPost.id}`);
                 const vid = document.getElementById(`PostMain-videoElem${currentPost.id}`);
@@ -352,6 +409,17 @@ export default class PostMain extends React.Component {
         const subtitle = (currentPost.subtitle) ?
             <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3> : null;
 
+        var collapsable;
+        var expand = "";
+        if (this.state.collapsable) {
+            expand = (this.state.expand) ? "Show Less" : "Show More";
+            var backClass = (this.state.expand) ? " PostMain-expandBack" : "";
+            collapsable = <div className='PostMain-collapse' onClick={this.expand} title={expand}>
+                <div className={'PostMain-collapseBack' + backClass}></div>
+                <span className='PostMain-collapseText'>{expand}</span>
+            </div>;
+        }
+
         var update;
         var deletePost;
         var report;
@@ -395,6 +463,7 @@ export default class PostMain extends React.Component {
                                 {controls}
                                 {subtitle}
                                 <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
+                                {collapsable}
                             </div>
                             {options}
                         </div>
