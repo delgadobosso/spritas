@@ -414,7 +414,7 @@ export default class PostMain extends React.Component {
         var backClass = (this.state.expand) ? " PostMain-expandBack" : "";
         var collapsable = <div className={'PostMain-collapse' + collapseNo} onClick={this.state.collapsable ? this.expand : undefined} title={expand}>
             <div className={'PostMain-collapseBack' + backClass}></div>
-            <span className='PostMain-collapseText'>{expand}</span>
+            <span className={!this.state.expand ? 'PostMain-collapseText' : 'PostMain-expandText'}>{expand}</span>
         </div>;
 
         var update;

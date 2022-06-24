@@ -152,7 +152,7 @@
     position: absolute;
     width: 100%;
     height: 100px;
-    background: linear-gradient(0deg, var(--darkest-grey) 10%, rgba(0,0,0,0));
+    background: linear-gradient(0deg, var(--mid-grey) 10%, rgba(0,0,0,0));
     bottom: 0;
 
     transition: opacity 0.5s, height 0.5s;
@@ -161,14 +161,17 @@
     height: 50px;
     opacity: 0;
 }
-.PostMain-collapseText {
+.PostMain-collapseText, .PostMain-expandText {
     position: absolute;
     color: white;
+    text-shadow: 0 2px var(--darkest-grey);
     font-weight: bold;
     line-height: 20px;
     width: 100%;
     text-align: center;
     bottom: 15px;
+
+    transition: color 0.1s;
 }
 
 .PostMain-controls {
@@ -482,6 +485,12 @@
 
     .PostMain-collapse:hover .PostMain-collapseBack {
         opacity: 0.75;
+    }
+    .PostMain-collapse:hover .PostMain-collapseText {
+        color: var(--spritan-gold);
+    }
+    .PostMain-collapse:hover .PostMain-expandText {
+        color: var(--spritan-red);
     }
 
     .PostMain-optionItem:hover {
