@@ -18,7 +18,8 @@ export default class Post extends React.Component {
             amount: 4,
             more: true,
             collapsed: false,
-            toggleTime: false
+            toggleTime: false,
+            loadingMore: false
          });
     }
 
@@ -34,7 +35,7 @@ export default class Post extends React.Component {
                             <Post key={index} post={reply} opid={this.props.opid} user={this.props.user} /> );
                         this.setState({
                             replies: replies
-                        }, () => this.extendReplies());
+                        });
                     }
                     if (data.length < (this.state.amount + 1)) {
                         this.setState(state => ({
@@ -62,7 +63,8 @@ export default class Post extends React.Component {
                 let maxHeight = rep.scrollHeight;
                 rep.style.height = maxHeight + "px";
                 this.setState(state => ({
-                    replies: [...moreReplies, ...state.replies]
+                    replies: [...moreReplies, ...state.replies],
+                    loadingMore: false
                 }), () => this.extendReplies())
                 if (data.length < (this.state.amount + 1)) {
                     this.setState(state => ({
@@ -74,6 +76,7 @@ export default class Post extends React.Component {
                     }));
                 }
             })
+            .catch(error => this.setState({ loadingMore: false }));
     }
 
     extendReplies() {
@@ -162,9 +165,20 @@ export default class Post extends React.Component {
         </div>
         : null;
 
+        var loadMsg = "Show Older Replies";
+        var cover = ""
+        if (this.state.loadingMore) {
+            loadMsg = "Loading More Replies...";
+            cover = " LoadingCover-anim";
+        }
         var load = null;
         if (this.props.reply && this.state.more) {
-            load = <div className="Post-load" onClick={this.loadReplies}>Older Replies</div>;
+            load = <div className="Post-load" onClick={() => this.setState({
+                loadingMore: true
+            }, () => this.loadReplies())}>
+                <div className={'LoadingCover' + cover}></div>
+                {loadMsg}
+            </div>;
         }
 
         var collapse = null;
@@ -175,7 +189,8 @@ export default class Post extends React.Component {
         }
 
         const youreply = (this.props.user && this.props.user.id === post.idUser) ? " Post-replyyou" : "";
-        const youtag = (youreply) ? <span className="Post-youtag" title="You"> YOU</span> : null;
+        const opOrYou = (this.props.user && this.props.user.id === this.props.opid) ? "Post-optag" : "Post-youtag";
+        const youtag = (youreply) ? <span className={opOrYou} title="You"> YOU</span> : null;
 
         const op = (this.props.op) ? " Post-op" : "";
         const opreply = (this.props.opid === post.idUser) ? " Post-replyop" : "";
@@ -200,7 +215,7 @@ export default class Post extends React.Component {
         )
 
         return (
-            <div className={"Post" + op + opreply + youreply} id={"p" + post.id}>
+            <div className={"Post" + op + opreply + youreply} id={"p" + post.id} style={{animationDelay: `${this.props.delay * 100}ms`}}>
                 <div className="Post-main">
                     <div className='Post-info'>
                         <a className='Post-a' href={`/u/${post.username}`} title={"@" + post.username}>

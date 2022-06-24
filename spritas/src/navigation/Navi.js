@@ -51,11 +51,14 @@ export default class Navi extends React.Component {
         var itemOpen = (this.state.open) ? " Navi-itemOpen" : "";
 
         var avatar;
+        var home = <a className={"Navi-item" + itemOpen} href="/">Home</a>;
         var userItem;
+        var createPost;
         var logout;
         if (user) {
             avatar = (user.avatar) ? `/media/avatars/${user.avatar}` : pfp;
-            userItem = <a className={"Navi-item" + itemOpen} href={"/u/" + user.username}>{user.nickname}</a>;
+            userItem = <a className={"Navi-item" + itemOpen} href={"/u/" + user.username}>{user.nickname} (@{user.username})</a>;
+            createPost = <a className={"Navi-item" + itemOpen} href="/create/post">Create Post</a>;
             logout = <a className={"Navi-item" + itemOpen} href="/logout">Logout</a>;
         } else {
             avatar = pfp;
@@ -73,7 +76,9 @@ export default class Navi extends React.Component {
                     <div className={"Navi-toggle" + avatarOpen} onClick={this.toggleClick}>
                         <img className="Navi-img" src={avatar} alt="Navigation" />
                     </div>
+                    {home}
                     {userItem}
+                    {createPost}
                     {logout}
                 </div>
             </div>

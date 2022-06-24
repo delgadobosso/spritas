@@ -16,9 +16,10 @@
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    margin: 0 20px;
+    margin: 0 0 0 20px;
     overflow: clip;
     background-color: var(--darkest-grey);
+    flex-grow: 1;
 }
 
 .UserContainer-container {
@@ -32,6 +33,14 @@
     transition: height 0.5s;
 }
 
+.UserContainer .TopicPost {
+    background-color: var(--dark-grey);
+}
+
+.UserContainer .TopicPortal-posts::after {
+    background-color: var(--dark-grey);
+}
+
 .UserContainer-header {
     background-color: var(--darkest-grey);
     padding: 10px 20px;
@@ -39,6 +48,7 @@
     cursor: pointer;
     position: sticky;
     top: 0;
+    z-index: 1;
 
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -84,6 +94,7 @@
     .UserContainer-postContainer {
         width: 100%;
         border-radius: 0;
+        margin: 0;
     }
 }
 

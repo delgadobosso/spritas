@@ -1,9 +1,14 @@
 .TopicPost {
     width: 300px;
     margin: 0 0 20px 20px;
-    background-color: var(--dark-grey);
+    background-color: var(--darkest-grey);
     border-radius: 10px;
     overflow: hidden;
+    opacity: 0;
+
+    animation-name: fadeIn;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 }
 
 .TopicPost-link {
@@ -24,27 +29,17 @@
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1) inset;
 }
 
-.TopicPost-titles {
-    display: flex;
-    align-items: center;
-    margin: 10px 0 0 0;
-    flex-wrap: wrap;
-}
-
-.TopicPost-name {
+.TopicPost-title {
     color: white;
-    margin: 0 10px;
+    margin: 10px 6px 0 6px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.TopicPost-subName {
-    color: black;
-    background-color: var(--info-grey);
-    border-radius: 5px;
-    margin: 0 5px;
-    padding: 0 10px;
+.TopicPost-subtitle {
+    color: var(--spritan-gold);
+    margin: 3px 6px 0 6px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -53,7 +48,7 @@
 .TopicPost-a {
     display: block;
     max-width: 100%;
-    margin: 10px 5px 0 4px;
+    margin: 6px 3px 0 3px;
 }
 
 .TopicPost-user {
@@ -73,9 +68,9 @@
 }
 
 .TopicPost-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
 
     transition: border-radius 0.25s;
 }
@@ -116,17 +111,17 @@
     background-color: var(--mid-grey);
     background-repeat: no-repeat;
     background-size: 300px;
-    margin-top: 10px;
 }
 .TopicPost-thumbAni {
-    animation-name: breathe;
-    animation-duration: 0.5s;
+    animation-name: submitting;
+    animation-duration: 2.5s;
     animation-iteration-count: infinite;
     animation-direction: alternate;
+    animation-timing-function: linear;
 }
-@keyframes breathe {
-    from { background-color: var(--mid-grey); }
-    to { background-color: var(--light-grey); }
+@keyframes loading {
+    0% { background-color: var(--spritan-gold); }
+    100% { background-color: var(--spritan-red); }
 }
 
 @media (hover: hover) {
@@ -136,12 +131,11 @@
 }
 
 @media screen and (max-width: 716px) {
-    .TopicPost, .TopicPost-link {
-        width: 100%;
-        border-radius: 0;
-    }
-
     .TopicPost {
         margin: 0 0 20px 0;
+    }
+
+    .TopicPost-thumb {
+        height: 100px;
     }
 }

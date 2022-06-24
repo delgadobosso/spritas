@@ -7,28 +7,43 @@ import PostModal from './PostModal';
 import pfp from '../images/pfp.png';
 import relativeTime from '../functions/relativeTime';
 import PureIframe from '../other/PureIframe';
+import CreatePost from '../create/CreatePost';
 
 export default class PostMain extends React.Component {
     constructor(props) {
         super(props);
         this.hashHandle = this.hashHandle.bind(this);
+        this.resizeHandle = this.resizeHandle.bind(this);
         this.left = this.left.bind(this);
         this.right = this.right.bind(this);
         this.goToPost = this.goToPost.bind(this);
+        this.postTransition = this.postTransition.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.delete = this.delete.bind(this);
+        this.collapsable = this.collapsable.bind(this);
+        this.expand = this.expand.bind(this);
+        this.updateMode = this.updateMode.bind(this);
         this.state = ({
             modal: false,
-            toggleTime: false
+            toggleTime: false,
+            updateMode: false,
+            fromIndex: this.props.current - 1,
+            collapsable: false,
+            expand: false,
+            resize: true
         });
     }
 
     componentDidMount() {
         window.addEventListener('hashchange', this.hashHandle);
+        window.addEventListener('resize', this.resizeHandle);
+
+        this.collapsable();
     }
 
     componentWillUnmount() {
         window.removeEventListener('hashchange', this.hashHandle);
+        window.removeEventListener('resize', this.resizeHandle);
     }
 
     hashHandle(e) {
@@ -51,20 +66,68 @@ export default class PostMain extends React.Component {
         }
     }
 
+    resizeHandle() {
+        // Throttle resize handle
+        if (this.state.resize) {
+            this.setState({ resize: false });
+            setTimeout(() => this.setState({ resize: true }, () => this.collapsable()), 500);
+        }
+    }
+
     left() {
-        if (this.props.current > 1) {
-            this.props.setCurrent(this.props.current - 1);
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+
+        if (this.props.current > 1 && !this.state.updateMode) {
+            const fromHeight = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(this.props.current - 1, (newIndex) => {
+                this.postTransition(fromHeight, newIndex);
+            });
         }
     }
 
     right() {
-        if (this.props.current < this.props.posts.length) {
-            this.props.setCurrent(this.props.current + 1);
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+
+        if (this.props.current < this.props.posts.length && !this.state.updateMode) {
+            const fromHeight = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(this.props.current + 1, (newIndex) => {
+                this.postTransition(fromHeight, newIndex);
+            });
         }
     }
 
     goToPost(index) {
-        if (this.props.current !== index) this.props.setCurrent(index);
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+
+        if (this.props.current !== index && !this.state.updateMode) {
+            const fromHeight = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(index, (newIndex) => {
+                this.postTransition(fromHeight, newIndex);
+            });
+        }
+    }
+
+    postTransition(fromHeight, newIndex) {
+        this.collapsable();
+        const posts = this.props.posts;
+        const newPost = posts[newIndex - 1];
+        const postTo = document.getElementById(`PostMain-post${newPost.id}`);
+        const subtitle = document.getElementById(`PostMain-subtitle${newPost.id}`);
+        const body = document.getElementById(`PostMain-body${newPost.id}`);
+        const media = document.getElementById(`PostMain-media${newPost.id}`);
+        const options = { duration: 500, easing: 'ease' };
+        postTo.getAnimations().map(animation => animation.cancel());
+        postTo.animate([
+            { height: `${fromHeight}px` },
+            { height: `${postTo.clientHeight}px` }
+        ], options);
+        const fadeIn = [{ opacity: 0 }, { opacity: 1 }];
+        if (subtitle) subtitle.animate(fadeIn, options);
+        if (body) body.animate(fadeIn, options);
+        if (media) media.animate(fadeIn, options);
     }
 
     toggleModal() {
@@ -101,11 +164,98 @@ export default class PostMain extends React.Component {
         } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
 
+    collapsable(newIndex) {
+        const posts = this.props.posts;
+        const currentPost = (newIndex) ? posts[newIndex - 1] : posts[this.props.current - 1];
+        const post = document.getElementById(`PostMain-post${currentPost.id}`);
+        post.getAnimations().map(animation => animation.cancel());
+        post.style.height = 'initial';
+        if (post && post.scrollHeight > 675) {
+            post.style.height = '675px';
+            this.setState({
+                collapsable: true,
+                expand: false
+            });
+        }
+        else {
+            this.setState({
+                collapsable: false,
+                expand: false
+            });
+        }
+    }
+
+    expand() {
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+        const post = document.getElementById(`PostMain-post${currentPost.id}`);
+        const durr = (post.scrollHeight > 1000) ? 1000 : 500;
+
+        if (!this.state.expand) this.setState({
+            expand: true
+        }, () => {
+            post.getAnimations().map(animation => animation.cancel());
+            post.animate([
+                { height: `675px` },
+                { height: `${post.scrollHeight + 35}px` }
+            ], { duration: durr, easing: 'ease' });
+            post.style.height = `${post.scrollHeight + 35}px`;
+        });
+        else this.setState({
+            expand: false
+        }, () => {
+            this.props.scrollTop();
+            post.getAnimations().map(animation => animation.cancel());
+            post.animate([
+                { height: `${post.scrollHeight}px` },
+                { height: `675px` },
+            ], { duration: durr, easing: 'ease' });
+            post.style.height = `675px`;
+        });
+    }
+
+    updateMode(yes) {
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+
+        if (yes) {
+            var currentHeight = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            if (currentHeight) this.setState({ height: currentHeight });
+            this.setState({
+                updateMode: true,
+                fromIndex: this.props.current - 1
+            }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
+        } else {
+            this.setState({
+                updateMode: false,
+                expand: false
+            }, () => {
+                this.collapsable();
+                const con = document.getElementById(`PostMain-mediaContainer${currentPost.id}`);
+                const cards = document.getElementById(`PostMain-cards${currentPost.id}`);
+                const vid = document.getElementById(`PostMain-media${currentPost.id}`);
+                con.classList.add('PostMain-return');
+                cards.classList.add('PostMain-returnCards');
+                if (vid) vid.classList.add('PostMain-return');
+                setTimeout(() => {
+                    con.classList.remove('PostMain-return');
+                    cards.classList.remove('PostMain-returnCards');
+                    if (vid) vid.classList.remove('PostMain-return');
+                }, 10);
+                const postCard = document.getElementById(`PostMain-post${currentPost.id}`);
+                postCard.animate([
+                    { height: '380px' },
+                    { height: `${postCard.clientHeight}px` }
+                ], { duration: 500, easing: 'ease' });
+                this.props.extendReplies(true);
+            });
+        }
+    }
+
     render() {
         const posts = this.props.posts;
         const length = posts.length;
         const currentPost = posts[this.props.current - 1];
-        const currentElem = <Post post={currentPost} op={true} />;
 
         var ts = new Date(currentPost.ts);
         var relTime = relativeTime(currentPost.ts);
@@ -130,28 +280,57 @@ export default class PostMain extends React.Component {
                     nClass = 'PostMain-node'
                 }
 
+                const subtitle = (post.subtitle) ? `"${he.decode(post.subtitle)}" ` : "";
                 const nodeTime = (!this.state.toggleTime) ? relTime : ts;
 
                 return (
-                    <g key={index} className='PostMain-nodeHit'
+                    <g key={index} className="PostMain-nodeHit"
                         onClick={() => this.goToPost(index + 1)}>
                         <circle cx={60 * index} cy='50%' r='25' fillOpacity='0' />
                         <circle className={nClass}
                             cx={60 * index} cy='50%' r={r} fill={fill} />
-                        <title>{`"${post.subtitle}" ${nodeTime}`}</title>
+                        <title>{`${subtitle}${nodeTime}`}</title>
                     </g>
                 )
             });
 
             const nodeStyle = { transform: `translate(-${60 * (this.props.current - 1)}px)` };
-            const leftArrow = (this.props.current === 1)
-            ? 'var(--darkest-grey)' : 'white';
-            const rightArrow = (this.props.current === length)
-            ? 'var(--darkest-grey)' : 'white' ;
+            var classNotEndL = ' PostMain-notEnd';
+            var classNotEndR = ' PostMain-notEnd';
+            var leftArrow = 'white'
+            var rightArrow = 'white'
+            if (this.props.current === 1 || this.state.updateMode) {
+                leftArrow = 'var(--darkest-grey)';
+                classNotEndL = '';
+            }
+            if (this.props.current === length || this.state.updateMode) {
+                rightArrow = 'var(--darkest-grey)';
+                classNotEndR = '';
+            }
+
+            var newestIndex = posts.length;
+            var updateBegin = (this.state.updateMode) ? <animate id='grow' attributeName='r' values='0;13' dur='1s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' /> : null;
+            var updateClass = (this.state.updateMode) ? 'PostMain-updateNode' : "";
+            var updateNode =  (
+                <g key={newestIndex}>
+                    <circle className={updateClass}
+                    cx={60 * newestIndex} cy='50%' r='0'>
+                        {updateBegin}
+                        <animate attributeName='r' values='13;8;13' begin='grow.end' dur='2s' repeatCount='indefinite'
+                        calcMode='spline' keyTimes='0; 0.5; 1' keySplines='0.65, 0, 0.35, 1; 0.65, 0, 0.35, 1' />
+                    </circle>
+                    <title>Update Post</title>
+                </g>
+            );
+            var updateLine = (this.state.updateMode) ? (
+                <line x1={60 * (length - 1)} y1='50%' x2={60 * length} y2='50%' stroke='var(--darkest-grey)' strokeWidth='3px'>
+                    <animate attributeName='x2' values={`${60 * (length - 1)};${60 * length}`} dur='1s' calcMode='spline' keyTimes='0; 1' keySplines='0.33, 1, 0.68, 1' />
+                </line>
+            ) : null;
 
             var controls = (
                 <div className="PostMain-controls">
-                    <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
+                    <svg className={"PostMain-arrowContainer" + classNotEndL} xmlns="http://www.w3.org/2000/svg" 
                         viewBox='0 0 80 40' onClick={this.left}>
                         <title>Previous Update</title>
                         <path className='PostMain-arrowL' d='M 40 10 L 30 20 L 40 30'
@@ -164,12 +343,14 @@ export default class PostMain extends React.Component {
                             <g className='PostMain-nodeContainer' style={nodeStyle}>
                                 <line x1='0' y1='50%' x2={60 * (length - 1)} y2='50%'
                                     stroke='var(--darkest-grey)' strokeWidth='3px' />
+                                {updateLine}
                                 {nodes}
+                                {updateNode}
                             </g>
                         </svg>
                     </svg>
 
-                    <svg className="PostMain-arrowContainer" xmlns="http://www.w3.org/2000/svg" 
+                    <svg className={"PostMain-arrowContainer" + classNotEndR} xmlns="http://www.w3.org/2000/svg" 
                         viewBox='0 0 80 40' onClick={this.right}>
                         <title>Next Update</title>
                         <path className='PostMain-arrowR' d='M 35 10 L 45 20 L 35 30'
@@ -183,13 +364,12 @@ export default class PostMain extends React.Component {
         var modal;
         var video;
         var image;
-        var media;
         var cardsClass = "";
-        var postOpClass = ""
+        var mediaClass = "";
         switch(currentPost.type) {
             case "TEXT":
                 cardsClass = " PostMain-cardsText";
-                postOpClass = " PostMain-postOptionText";
+                mediaClass = " PostMain-mediaText";
                 break;
 
             case "VIDO":
@@ -210,18 +390,14 @@ export default class PostMain extends React.Component {
                         if (source === "youtube" || source === "youtu.be") embedSrc = `https://www.youtube.com/embed/${id}?modestbranding=1`;
                         else if (source === "streamable") embedSrc = `https://streamable.com/e/${id}`;
                         video = (
-                        <div className="PostMain-video">
-                            <PureIframe src={embedSrc} width="100%" height="675" id={currentPost.id} />
-                        </div>);
+                            <PureIframe src={embedSrc} width="100%" height="675" id={currentPost.id} elementId={`PostMain-media${currentPost.id}`} />
+                        );
                     }
                 } else if (currentPost.link) {
                     video = (
-                        <div className='PostMain-video'>
-                            <video className='PostMain-videoElem' src={link} controls width="100%"></video>
-                        </div>
+                        <video id={`PostMain-media${currentPost.id}`} className='PostMain-videoElem' src={link} controls></video>
                     )
                 }
-                media = video;
                 break;
 
             case "IMG":
@@ -230,33 +406,45 @@ export default class PostMain extends React.Component {
                         <PostModal link={currentPost.link} id={currentPost.id}/>
                         : null;
 
-                    image =
-                    <div className='PostMain-imagePreview'>
+                    image = (
                         <div className='PostMain-imageContainer'
                             onClick={this.toggleModal}>
-                            <img className='PostMain-image'
-                                src={currentPost.link}
+                            <img id={`PostMain-media${currentPost.id}`} className='PostMain-image'
+                                src={currentPost.link} key={currentPost.link}
                                 alt="Main Post" />
                             <p className='PostMain-view'>Click To View Full Image</p>
-                        </div>
-                    </div>
+                        </div>);
                 }
-                media = image;
                 break;
 
             default:
                 break;
         }
 
+        var media = (
+            <div id={`PostMain-mediaContainer${currentPost.id}`} className={'PostMain-mediaContainer' + mediaClass}>
+                {video}
+                {image}
+            </div>
+        )
+
         const avatar = (currentPost.avatar) ? `/media/avatars/${currentPost.avatar}` : pfp;
         const subtitle = (currentPost.subtitle) ?
-            <h4 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h4> : null;
+            <h3 id={`PostMain-subtitle${currentPost.id}`} className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3> : null;
+
+        var collapseNo = (!this.state.collapsable) ? " PostMain-collapseNo" : "";
+        var expand = (this.state.expand) ? "Show Less" : "Show More";
+        var backClass = (this.state.expand) ? " PostMain-expandBack" : "";
+        var collapsable = <div className={'PostMain-collapse' + collapseNo} onClick={this.state.collapsable ? this.expand : undefined} title={expand}>
+            <div className={'PostMain-collapseBack' + backClass}></div>
+            <span className={!this.state.expand ? 'PostMain-collapseText' : 'PostMain-expandText'}>{expand}</span>
+        </div>;
 
         var update;
         var deletePost;
         var report;
         if (this.props.user && this.props.user.id === currentPost.idUser && currentPost.update !== 'DELE' && this.props.user.type !== 'BAN') {
-            update = <div className='PostMain-optionItem'>Update Post</div>;
+            update = <div className='PostMain-optionItem' onClick={() => this.updateMode(true)}>Update Post</div>;
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post</div>;
         } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.update !== 'DELE') {
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post As Admin</div>;
@@ -272,14 +460,14 @@ export default class PostMain extends React.Component {
             </div>
         ) : null;
 
-        return (
-            <div className={"PostMain"}>
+        var currentMode = (!this.state.updateMode) ? (
+            <div>
                 {modal}
                 <div className='PostMain-container'>
                     {media}
-                    <div className={"PostMain-cards" + cardsClass}>
-                        <div className={"PostMain-postOption" + postOpClass}>
-                            <div className='PostMain-post'>
+                    <div id={`PostMain-cards${currentPost.id}`} className={"PostMain-cards" + cardsClass}>
+                        <div className="PostMain-postOption">
+                            <div id={`PostMain-post${currentPost.id}`} className='PostMain-post'>
                                 <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
                                 <div className='PostMain-info'>
                                     <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}
@@ -294,13 +482,24 @@ export default class PostMain extends React.Component {
                                 </div>
                                 {controls}
                                 {subtitle}
-                                <div className='PostMain-body'>{he.decode(currentPost.body)}</div>
+                                <div id={`PostMain-body${currentPost.id}`} className='PostMain-body'>{he.decode(currentPost.body)}</div>
+                                {collapsable}
                             </div>
                             {options}
                         </div>
                         {this.props.rest}
                     </div>
                 </div>
+            </div>
+        ) : (
+            <div>
+                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} height={this.state.height} />
+            </div>
+        );
+
+        return (
+            <div className="PostMain">
+                {currentMode}
             </div>
         )
     }

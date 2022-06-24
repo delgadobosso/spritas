@@ -1,12 +1,5 @@
-.CreatePost-imgPreview {
-    max-width: 500px;
-    max-height: 500px;
-}
-
-.CreatePost-videoContainer {
-    width: 640px;
-    height: 360px;
-    background-color: var(--darkest-grey);
+.CreatePost-container {
+    margin-bottom: 20px;
 }
 
 .CreatePost-hide {
@@ -19,13 +12,12 @@
 
 .CreatePost-options {
     display: flex;
-    width: 640px;
+    height: 40px;
 }
 
 .CreatePost-option {
-    width: 150px;
     text-align: center;
-    color: white;
+    color: var(--info-grey);
     background-color: var(--darkest-grey);
     padding: 10px;
     flex-grow: 1;
@@ -34,20 +26,58 @@
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    transition: background-color 0.1s;
+    transition: background-color 0.1s, color 0.25s;
+}
+
+.CreatePost-mediaTop {
+    height: 80px;
+    overflow: hidden;
+
+    transition: height 0.5s;
+}
+.CreatePost-mediaTopUpdate {
+    animation: topOpen 0.5s;
+}
+@keyframes topOpen {
+    from { height: 0; }
+    to { height: 80px; }
 }
 
 .CreatePost-selected {
+    color: var(--spritan-gold);
     background-color: var(--light-grey);
     font-weight: bold;
 }
 
+.CreatePost-item {
+    display: flex;
+    height: 40px;
+    align-items: center;
+    background-color: var(--light-grey);
+}
+
+.CreatePost-remove {
+    transition: background-color 0.1s;
+}
+.CreatePost-pathClass {
+    transform-origin: center;
+
+    transition: stroke 0.1s, transform 0.1s;
+}
+
+.CreatePost-iconWrapper {
+    width: 40px;
+    height: 40px;
+}
+
 .CreatePost-file {
     display: block;
-    width: 640px;
-    padding: 10px 0;
+    padding: 10px 0 10px 40px;
     text-align: center;
     background-color: var(--light-grey);
+    line-height: 20px;
+    flex: 1;
+    word-break: break-word;
 
     transition: background-color 0.1s;
 }
@@ -59,14 +89,280 @@
 }
 
 .CreatePost-link {
-    width: 640px;
-    padding: 10px 0;
+    padding: 10px 0 10px 40px;
     text-align: center;
     border: 0;
     font-size: 16px;
+    line-height: 20px;
+    flex: 1;
 }
 .CreatePost-link:invalid {
     color: var(--spritan-red);
+}
+
+.CreatePost-mediaAll {
+    position: relative;
+    width: 1200px;
+    height: 755px;
+    border-radius: 10px;
+    overflow: clip;
+    margin-right: 20px;
+
+    transition: box-shadow 0.25s, width 0.5s, height 0.5s, margin 0.5s;
+}
+.CreatePost-mediaAllText {
+    animation: mediaOpen 0.5s;
+}
+@keyframes mediaOpen {
+    from {
+        width: 0;
+        margin: 0;
+    }
+    to {
+        width: 1200px;
+        margin-right: 20px;
+    }
+}
+
+.CreatePost-mediaAllValid {
+    box-shadow: 0 0 0 5px var(--spritan-gold);
+}
+.CreatePost-mediaAllInvalid {
+    box-shadow: 0 0 0 5px var(--spritan-red);
+}
+
+.CreatePost-mediaContainer {
+    position: initial;
+    border-radius: 0 0 10px 10px;
+
+    transition: background-color 0.25s, width 0.5s, height 0.5s, margin 0.5s;
+}
+.CreatePost-mediaContainerValid {
+    background-color: var(--spritan-gold);
+}
+.CreatePost-mediaContainerInvalid {
+    background-color: var(--spritan-red);
+}
+
+.CreatePost-previewContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.CreatePost-imageContainer:hover {
+    cursor: initial;
+}
+
+.CreatePost-videoElem {
+    width: 100%;
+    height: 100%;
+}
+
+.CreatePost-previewInfo {
+    display: flex;
+    flex-direction: column;
+    width: 1200px;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+
+    transition: width 0.5s;
+    animation: fadeIn 0.5s;
+}
+
+.CreatePost-info {
+    display: inline;
+    color: white;
+    font-size: 1.1em;
+    margin: 20px;
+    text-align: center;
+    font-weight: bold;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.CreatePost-post {
+    position: relative;
+    height: 380px;
+}
+
+.CreatePost-title {
+    font-size: 24px;
+    font-weight: 700;
+    background-color: var(--lightest-grey);
+    border: solid 5px var(--darkest-grey);
+    border-radius: 10px 10px 0 0;
+}
+.CreatePost-title:valid {
+    background-color: var(--darkest-grey);
+    border-color: var(--darkest-grey);
+}
+.CreatePost-title:focus:required:valid {
+    border-color: var(--spritan-gold);
+}
+.CreatePost-title:focus:required:invalid {
+    border-color: var(--spritan-red);
+}
+
+.CreatePost-subtitle {
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    width: initial;
+    margin: 10px 10px 0 10px;
+    padding: 5px 10px;
+
+    animation: fadeIn 0.5s;
+}
+
+.CreatePost-body {
+    resize: none;
+    font-size: 16px;
+    margin: 10px;
+    padding: 5px;
+    border: solid 5px var(--lightest-grey);
+    border-radius: 10px;
+    flex-grow: 1;
+
+    animation: fadeIn 0.5s;
+}
+.CreatePost-body:focus:required:valid {
+    border-color: var(--spritan-gold);
+}
+.CreatePost-body:focus:required:invalid {
+    border-color: var(--spritan-red);
+}
+
+.CreatePost-optionContainer {
+    position: relative;
+}
+
+@media screen and (max-width: 1860px) {
+    .CreatePost-mediaAll {
+        width: 960px;
+        height: 620px;
+    }
+    .CreatePost-mediaAllText {
+        animation: mediaOpen 0.5s;
+    }
+    @keyframes mediaOpen {
+        from {
+            width: 0;
+            margin: 0;
+        }
+        to {
+            width: 960px;
+            margin-right: 20px;
+        }
+    }
+
+    .CreatePost-previewInfo {
+        width: 960px;
+    }
+}
+
+@media screen and (max-width: 1620px) {
+    .CreatePost-mediaAll {
+        width: 800px;
+        height: 530px;
+    }
+    .CreatePost-mediaAllText {
+        animation: mediaOpen 0.5s;
+    }
+    @keyframes mediaOpen {
+        from {
+            width: 0;
+            margin: 0;
+        }
+        to {
+            width: 800px;
+            margin-right: 20px;
+        }
+    }
+
+    .CreatePost-previewInfo {
+        width: 800px;
+    }
+
+    .CreatePost-cardsText {
+        animation: cardShrink 0.5s;
+    }
+    @keyframes cardShrink {
+        from { width: 600px; }
+        to { width: 500px; }
+    }
+}
+
+@media screen and (max-width: 1350px) {
+    .CreatePost-mediaAll {
+        width: 640px;
+        height: 100%;
+        margin: 0;
+    }
+    .CreatePost-mediaAllText {
+        animation: mediaOpen 0.5s;
+    }
+    @keyframes mediaOpen {
+        from { height: 0; }
+        to { height: 440px; }
+    }
+
+    .CreatePost-previewInfo {
+        width: 100%;
+    }
+
+    .CreatePost-cardsText {
+        animation: none;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .CreatePost-top {
+        width: 100%;
+        margin: 0 0 20px 0;
+        border-radius: 0;
+    }
+
+    .CreatePost-mediaAll {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+    .CreatePost-mediaAllText {
+        animation: mediaOpen 0.5s;
+    }
+    @keyframes mediaOpen {
+        from { height: 0; }
+        to { height: 100%; }
+    }
+
+    .CreatePost-mediaContainer {
+        position: relative;
+        border-radius: 0;
+    }
+    .CreatePost-containerText {
+        animation: containerOpen 0.5s;
+    }
+    @keyframes containerOpen {
+        from {
+            padding-bottom: 0;
+        }
+        to {
+            padding-bottom: 56.25%;
+        }
+    }
+
+    .CreatePost-previewContainer {
+        position: absolute;
+    }
+
+    .CreatePost-title {
+        border-radius: 0;
+    }
 }
 
 @media (hover: hover) {
@@ -78,5 +374,16 @@
     .CreatePost-file:hover {
         cursor: pointer;
         background-color: var(--lightest-grey);
+    }
+
+    .CreatePost-remove:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
+    }
+    .CreatePost-remove:hover .CreatePost-pathClass {
+        transform: scale(1.15);
+    }
+    .CreatePost-remove:active .CreatePost-pathClass {
+        transform: scale(0.85);
     }
 }

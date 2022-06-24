@@ -8,20 +8,6 @@ export default class TopicPortal extends React.Component {
         this.state = {ever: false};
     }
 
-    componentDidMount() {
-        var con = document.getElementById(`TopicPortal-${this.props.id}`);
-        var naviTime = false;
-        var prevScroll = con.scrollTop;
-        con.onscroll = () => {
-          clearTimeout(naviTime);
-          naviTime = setTimeout(() => {
-            var down = prevScroll < con.scrollTop;
-            this.props.naviHide(down);
-            prevScroll = con.scrollTop;
-          }, 50);
-        }
-    }
-
     loadPosts() {
         this.props.load();
 
@@ -29,28 +15,41 @@ export default class TopicPortal extends React.Component {
     }
 
     render() {
-        var loaded = (this.state.ever) ?
-        <div className="TopicPortal-loaded" title="All Posts Shown">All Posts Shown</div>
-        : null;
-        var load = (this.props.more && this.props.posts.length > 0) ?
-        <div className="TopicPortal-load" onClick={this.loadPosts} title="Show More Posts">Show More Posts</div> 
-        : loaded;
-        if (this.props.posts.length <= 0) load = <div className="TopicPortal-loaded" title="No Posts">No Posts</div>;
-
-        const controls = (this.props.controls) ? (
-            <div className="TopicPortal-controls">
-                {this.props.controls}
-            </div>
-        ) : null;
+        var load = "";
+        var loadClass = "TopicPortal-loaded";
+        var loadClick = false;
+        var cover = "";
+        if (this.state.ever) {
+            load = "All Posts Shown";
+            loadClass = "TopicPortal-loaded";
+        }
+        if (this.props.more && this.props.posts.length > 0) {
+            load = "Show More Posts";
+            loadClick = true;
+            loadClass = "TopicPortal-load";
+        }
+        if ((this.props.loadingMore && this.props.posts.length <= 0) || this.props.loadHide) {
+            load = "";
+            loadClass = "TopicPortal-loaded";
+        }
+        else if (this.props.loadingMore) {
+            load = "Loading More Posts...";
+            cover = " LoadingCover-anim";
+        }
+        else if (this.props.posts.length <= 0) {
+            load = "No Posts";
+            loadClass = "TopicPortal-loaded";
+        }
 
         return (
-            <div className="TopicPortal" id={`TopicPortal-${this.props.id}`}>
-                {/* {controls} */}
-                {this.props.topics}
+            <div className="TopicPortal">
                 <div className='TopicPortal-posts'>
                     {this.props.posts}
                 </div>
-                {load}
+                <div className={loadClass} onClick={loadClick ? this.loadPosts : undefined}>
+                    <div className={'LoadingCover' + cover}></div>
+                    {load}
+                </div>
             </div>
         );
     }

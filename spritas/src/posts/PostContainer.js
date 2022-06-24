@@ -24,7 +24,8 @@ export default class PostContainer extends React.Component {
             more: true,
             ever: false,
             opid: null,
-            blockers: []
+            blockers: [],
+            loadingMore: false
         }
     }
 
@@ -43,7 +44,7 @@ export default class PostContainer extends React.Component {
                     }, () => {
                         const title = document.getElementById('PostName-' + id);
                         if (title) scrollBounce(title);
-                        this.loadReplies();
+                        this.loadReplies(true);
                     });
                     const title = (data[0].title) ? data[0].title : '';
                     document.title = he.decode(title);
@@ -72,7 +73,7 @@ export default class PostContainer extends React.Component {
         });
     }
 
-    loadReplies() {
+    loadReplies(first=false) {
         const id = (this.props.id) ? this.props.id : this.props.match.params.id;
         if (!this.state.ever && this.state.offset > 0) this.setState({ever: true});
 
@@ -82,16 +83,17 @@ export default class PostContainer extends React.Component {
                 const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
                     <Post key={index + this.state.offset} post={reply}
                         reply={true} opid={this.state.opid} user={this.props.user}
-                        blockers={this.state.blockers} />
+                        blockers={this.state.blockers} delay={index} />
                 );
                 var rep = document.getElementById('Replies');
-                if (rep) {
+                if (rep && !first) {
                     let maxHeight = rep.scrollHeight;
                     rep.style.height = maxHeight + "px";
                 }
                 this.setState(state => ({
-                    replies: [...state.replies, ...moreReplies]
-                }), () => this.extendReplies())
+                    replies: [...state.replies, ...moreReplies],
+                    loadingMore: false
+                }), () => { if (!first) this.extendReplies(); })
                 if (data.length < (this.state.amount + 1)) {
                     this.setState(state => ({
                         more: !state.more
@@ -102,11 +104,12 @@ export default class PostContainer extends React.Component {
                     }));
                 }
             })
+            .catch(error => this.setState({ loadingMore: false }));
     }
 
-    extendReplies() {
+    extendReplies(first=false) {
         var rep = document.getElementById('Replies');
-        if (rep) {
+        if (rep && !first) {
             let maxHeight = rep.scrollHeight;
             rep.style.height = maxHeight + "px";
             const controller = new AbortController();
@@ -119,8 +122,10 @@ export default class PostContainer extends React.Component {
         }
     }
 
-    setCurrent(value) {
-        this.setState({ current: value });
+    setCurrent(value, cb) {
+        this.setState({
+            current: value
+        }, () => { if (cb) cb(value); });
     }
 
     render() {
@@ -133,14 +138,26 @@ export default class PostContainer extends React.Component {
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Comments Shown</div> : null;
-        const load = (this.state.more) ?
-        <div className="PostContainer-load" onClick={this.loadReplies}>Show More Comments</div> : loaded;
 
-        var restClass = "";
-        if (this.state.post && this.state.post.type === "TEXT") restClass = " PostContainer-restText";
+        var loadMsg = "Show More Comments";
+        var cover = ""
+        if (this.state.loadingMore) {
+            loadMsg = "Loading More Comments...";
+            cover = " LoadingCover-anim";
+        }
+        const load = (this.state.more) ? (
+        <div className="PostContainer-load" onClick={() => {
+            this.setState({
+                loadingMore: true
+            }, () => this.loadReplies())
+        }}>
+            <div className={'LoadingCover' + cover}></div>
+            {loadMsg}
+        </div>
+        ) : loaded;
 
         const rest = (this.state.replies.length > 0 || reply) ? (
-            <div className={'PostContainer-rest' + restClass}>
+            <div className='PostContainer-rest'>
                 {reply}
                 <div className="PostContainer-replies" id="Replies">
                     {this.state.replies}
@@ -149,7 +166,7 @@ export default class PostContainer extends React.Component {
             </div>
         ) : null;
 
-        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} /> : null;
+        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} /> : null;
 
         return (
             <div className={"PostContainer"}>

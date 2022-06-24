@@ -1,6 +1,6 @@
 .Navi-full {
     position: relative;
-    z-index: 3;
+    z-index: 6;
 }
 
 .Navi {
@@ -67,6 +67,7 @@
     display: block;
     width: 100%;
     padding: 30px 0;
+    line-height: 20px;
     color: var(--darkest-grey);
     background-color: var(--darkest-grey);
     margin-bottom: 10px;
@@ -74,7 +75,7 @@
     white-space: nowrap;
     font-weight: bold;
 
-    transition: color 0.75s, background-color 0.75s;
+    transition: color 0.5s, background-color 0.5s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;

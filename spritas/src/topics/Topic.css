@@ -5,8 +5,10 @@ a {
 
 
 .Topic {
-    overflow-y: scroll;
-
+    width: 1940px;
+    margin: 0 auto;
+    
+    transition: height 0.5s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -48,9 +50,34 @@ a {
     color: white;
 }
 
-.Subtopic {
-    height: 0px;
-    overflow: hidden;
-    
-    transition: height 0.5s;
+@media screen and (max-width: 1976px) {
+    .Topic {
+        width: 1620px;
+    }
+}
+
+@media screen and (max-width: 1656px) {
+    .Topic {
+        width: 1300px;
+    }
+}
+
+@media screen and (max-width: 1336px) {
+    .Topic {
+        width: 980px;
+    }
+}
+
+@media screen and (max-width: 1016px) {
+    .Topic {
+        width: 660px;
+    }
+}
+
+@media screen and (max-width: 716px) {
+    .Topic {
+        width: 100%;
+        border-radius: 0;
+        margin: 0;
+    }
 }

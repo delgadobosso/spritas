@@ -1,30 +1,25 @@
 .PostMain-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px 0;
+
+    transition: margin 0.5s;
 }
 
 .PostMain-cards {
     width: 600px;
-}
-.PostMain-cardsText {
-    display: flex;
-    justify-content: center;
-    width: initial;
+
+    transition: width 0.5s, height 0.5s, margin 0.5s;
 }
 
-.PostMain-postOption, .PostMain-postOptionText {
+.PostMain-postOption {
     display: flex;
     flex-direction: column;
 }
-.PostMain-postOptionText {
-    width: 600px;
-    margin-bottom: 20px;
-}
 
 .PostMain-post {
+    position: relative;
     display: flex;
-    height: max-content;
     flex-direction: column;
     background-color: var(--mid-grey);
     border-radius: 10px;
@@ -36,6 +31,7 @@
     padding: 15px;
     border-radius: 10px;
     background-color: var(--mid-grey);
+    overflow: hidden;
 }
 
 .PostMain-optionItem {
@@ -44,6 +40,7 @@
     background-color: var(--mid-grey);
     border-radius: 10px;
     text-align: center;
+    line-height: 20px;
 
     transition: background-color 0.1s;
     -moz-user-select: none;
@@ -91,9 +88,9 @@
 }
 
 .PostMain-img {
-    width: 60px;
-    height: 60px;
-    border-radius: 30px;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
 
     transition: filter 0.5s, border-radius 0.25s;
 }
@@ -116,20 +113,65 @@
 }
 
 .PostMain-subtitle {
-    width: max-content;
-    color: black;
-    background-color: var(--info-grey);
-    border-radius: 5px;
+    width: fit-content;
+    color: var(--spritan-gold);
     margin: 10px 10px 0 10px;
-    padding: 5px 10px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    word-break: break-all;
+
+    animation: fadeIn 0.5s;
 }
 
 .PostMain-body {
     color: white;
-    margin-top: 10px;
-    padding: 0 15px 15px 15px;
+    margin: 10px 10px 15px 10px;
+
+    animation: fadeIn 0.5s;
+}
+
+.PostMain-collapse {
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+
+    animation: fadeIn 0.5s;
+    transition: opacity 0.5s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.PostMain-collapseNo {
+    pointer-events: none;
+    cursor: initial;
+    opacity: 0;
+
+    animation: none;
+}
+.PostMain-collapseBack {
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(0deg, var(--mid-grey) 10%, rgba(0,0,0,0));
+    bottom: 0;
+
+    transition: opacity 0.5s, height 0.5s;
+}
+.PostMain-expandBack {
+    height: 50px;
+    opacity: 0;
+}
+.PostMain-collapseText, .PostMain-expandText {
+    position: absolute;
+    color: white;
+    text-shadow: 0 2px var(--darkest-grey);
+    font-weight: bold;
+    line-height: 20px;
+    width: 100%;
+    text-align: center;
+    bottom: 15px;
+
+    transition: color 0.1s;
 }
 
 .PostMain-controls {
@@ -143,18 +185,23 @@
 }
 
 .PostMain-arrowContainer {
-    cursor: pointer;
     width: 80px;
     height: 40px;
+}
+
+.PostMain-notEnd {
+    transform-origin: center;
+
+    transition: transform 0.1s;
 }
 
 .PostMain-arrowL, .PostMain-arrowR {
     transition: transform 0.1s, stroke 0.1s;
 }
-.PostMain-arrowContainer:active .PostMain-arrowL {
+.PostMain-notEnd:active .PostMain-arrowL {
     transform: translate(-10px);
 }
-.PostMain-arrowContainer:active .PostMain-arrowR {
+.PostMain-notEnd:active .PostMain-arrowR {
     transform: translate(10px);
 }
 
@@ -176,7 +223,21 @@
     cursor: pointer;
 }
 
-.PostMain-video, .PostMain-imagePreview {
+.PostMain-updateNode {
+    animation-name: updateBreathe;
+    animation-duration: 2s;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+@keyframes updateBreathe {
+    from { fill: var(--spritan-red); }
+    to { fill: var(--spritan-gold); }
+}
+
+.PostMain-mediaContainer {
+    display: flex;
+    justify-content: center;
     position: sticky;
     top: 20px;
     width: 1200px;
@@ -187,11 +248,31 @@
     margin-right: 20px;
     background-color: var(--darkest-grey);
     flex-shrink: 0;
-}
+    opacity: 1;
+    z-index: 1;
 
+    transition: width, height, margin, opacity, padding;
+    transition-duration: 0.5s;
+}
+.PostMain-mediaText {
+    width: 0;
+    height: 0;
+    margin: 0;
+    opacity: 0;
+}
 .PostMain-videoElem {
-    max-height: 100%;
     border: 0;
+    width: 1200px;
+    height: 675px;
+
+    transition: width 0.5s, height 0.5s;
+    animation: fadeIn 0.5s;
+}
+.PostMain-return {
+    width: 1200px;
+    height: 755px;
+    opacity: 1;
+    transition: none;
 }
 
 .PostMain-imageContainer {
@@ -199,14 +280,18 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    width: 100%;
     height: 100%;
 
     transition: background-color 0.5s;
+    animation: fadeIn 0.5s;
 }
 
 .PostMain-image {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 1200px;
+    max-height: 675px;
+
+    transition: max-width 0.5s, max-height 0.5s;
 }
 
 .PostMain-view {
@@ -224,9 +309,28 @@
 }
 
 @media screen and (max-width: 1860px) {
-    .PostMain-video, .PostMain-imagePreview {
+    .PostMain-mediaContainer {
         width: 960px;
         height: 540px;
+    }
+    .PostMain-mediaText {
+        width: 0;
+        height: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    .PostMain-videoElem {
+        width: 960px;
+        height: 540px;
+    }
+    .PostMain-image {
+        max-width: 960px;
+        max-height: 540px;
+    }
+    .PostMain-return {
+        width: 960px;
+        height: 620px;
+        opacity: 1;
     }
 }
 
@@ -235,12 +339,34 @@
         width: 500px;
     }
     .PostMain-cardsText {
-        width: initial;
+        width: 600px;
+    }
+    .PostMain-returnCards {
+        width: 500px;
     }
 
-    .PostMain-video, .PostMain-imagePreview {
+    .PostMain-mediaContainer {
         width: 800px;
         height: 450px;
+    }
+    .PostMain-mediaText {
+        width: 0;
+        height: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    .PostMain-videoElem {
+        width: 800px;
+        height: 450px;
+    }
+    .PostMain-image {
+        max-width: 800px;
+        max-height: 450px;
+    }
+    .PostMain-return {
+        width: 800px;
+        height: 530px;
+        opacity: 1;
     }
 }
 
@@ -255,45 +381,66 @@
         margin-top: 20px;
     }
     .PostMain-cardsText {
-        display: initial;
-        margin-top: 0;
+        margin: 0;
     }
 
-    .PostMain-video, .PostMain-imagePreview {
+    .PostMain-mediaContainer {
         width: 640px;
         height: 360px;
         margin-right: 0;
         top: -1px;
     }
+    .PostMain-mediaText {
+        width: 0;
+        height: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    .PostMain-videoElem {
+        width: 640px;
+        height: 360px;
+    }
+    .PostMain-image {
+        max-width: 640px;
+        max-height: 360px;
+    }
+    .PostMain-return {
+        width: 640px;
+        height: 440px;
+        opacity: 1;
+    }
 }
 
 @media screen and (max-width: 700px) {
     .PostMain-container {
-        margin: 0;
+        margin: 0 0 20px 0;
     }
 
     .PostMain-cards {
         width: 100%;
         margin: 0;
     }
-    .PostMain-cardsText {
-        display: initial;
-    }
-
-    .PostMain-postOptionText {
-        width: initial;
-    }
 
     .PostMain-post, .PostMain-option {
         border-radius: 0;
     }
 
-    .PostMain-video, .PostMain-imagePreview {
+    .PostMain-mediaContainer {
         width: 100%;
-        height: 0;
+        height: 100%;
         padding-bottom: 56.25%;
         border-radius: 0;
     }
+    .PostMain-mediaText {
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    .PostMain-return {
+        padding-bottom: calc(56.25% + 80px);
+        opacity: 1;
+    }
+
     .PostMain-videoElem, .PostMain-imageContainer {
         position: absolute;
         width: 100%;
@@ -301,6 +448,10 @@
         left: 0;
         top: 0;
         border-radius: 0;
+    }
+    .PostMain-image {
+        max-width: 100%;
+        max-height: 100%;
     }
 }
 
@@ -314,6 +465,14 @@
         filter: brightness(1.1);
     }
 
+    .PostMain-notEnd:hover {
+        cursor: pointer;
+    }
+
+    .PostMain-notEnd:hover .PostMain-arrowL, .PostMain-notEnd:hover .PostMain-arrowR {
+        stroke: var(--spritan-gold);
+    }
+
     .PostMain-nodeHit:hover .PostMain-node {
         fill: var(--spritan-gold);
         r: 10px;
@@ -322,6 +481,16 @@
     .PostMain-ts:hover {
         cursor: pointer;
         color: white;
+    }
+
+    .PostMain-collapse:hover .PostMain-collapseBack {
+        opacity: 0.75;
+    }
+    .PostMain-collapse:hover .PostMain-collapseText {
+        color: var(--spritan-gold);
+    }
+    .PostMain-collapse:hover .PostMain-expandText {
+        color: var(--spritan-red);
     }
 
     .PostMain-optionItem:hover {

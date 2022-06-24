@@ -19,7 +19,8 @@ export default class UserContainer extends React.Component {
             offset: 0,
             amount: 20,
             more: true,
-            edit: false
+            edit: false,
+            loadingMore: false
         }
     }
 
@@ -43,34 +44,43 @@ export default class UserContainer extends React.Component {
     }
 
     loadPosts(first=false) {
-        if (this.state.thisUser) {
-            const id = this.state.thisUser.id;
-            fetch(`/user/posts/${id}.${this.state.offset}.${this.state.amount}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const posts = data.slice(0, this.state.amount).map((post, index) =>
-                        <TopicPost key={index + this.state.offset} post={post}
-                            postClick={this.props.postClick} />);
-                        if (data.length < (this.state.amount + 1)) {
-                            this.setState(state => ({
-                                more: !state.more
-                            }));
-                        } else {
-                            this.setState(state => ({
-                                offset: state.offset + this.state.amount
-                            }));
-                        }
-                        if (!first) {
-                            var sub = document.getElementById('UserContainer-topics');
-                            let maxHeight = sub.scrollHeight;
-                            sub.style.height = maxHeight + "px";
-                        }
-                        this.setState(state => ({
-                            posts: [...state.posts, ...posts]
-                        }), () => { if (!first) this.extendPosts(sub) });
-                    }
-                });
+        if (!this.state.loadingMore) {
+            this.setState({
+                loadingMore: true
+            }, () => {
+                if (this.state.thisUser) {
+                    const id = this.state.thisUser.id;
+                    fetch(`/user/posts/${id}.${this.state.offset}.${this.state.amount}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                const posts = data.slice(0, this.state.amount).map((post, index) =>
+                                <TopicPost key={index + this.state.offset} post={post}
+                                    postClick={this.props.postClick} delay={index} />);
+                                if (data.length < (this.state.amount + 1)) {
+                                    this.setState(state => ({
+                                        more: !state.more
+                                    }));
+                                } else {
+                                    this.setState(state => ({
+                                        offset: state.offset + this.state.amount
+                                    }));
+                                }
+                                if (!first) {
+                                    var sub = document.getElementById('UserContainer-topics');
+                                    let maxHeight = sub.scrollHeight;
+                                    sub.style.height = maxHeight + "px";
+                                }
+                                this.setState(state => ({
+                                    posts: [...state.posts, ...posts],
+                                    loadingMore: false
+                                }), () => { if (!first) this.extendPosts(sub) });
+                            } else {
+                                this.setState({ loadingMore: false });
+                            }
+                        })
+                }
+            });
         }
     }
 
@@ -127,7 +137,7 @@ export default class UserContainer extends React.Component {
                     </div>
                     <div className='UserContainer-container' id='UserContainer-scroll'>
                         <div className='UserContainer-topics' id='UserContainer-topics'>
-                            <TopicPortal posts={posts} more={this.state.more} load={this.loadPosts} />
+                            <TopicPortal posts={posts} more={this.state.more} load={this.loadPosts} loadingMore={this.state.loadingMore} loadHide={!this.state.thisUser} />
                         </div>
                     </div>
                 </div>

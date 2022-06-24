@@ -1,7 +1,6 @@
 .TopicPortal {
     flex-grow: 1;
     padding: 0;
-    overflow-y: scroll;
     margin: 0;
 }
 
@@ -14,7 +13,7 @@
 .TopicPortal-posts::after {
     content: "";
     display: block;
-    background-color: var(--dark-grey);
+    background-color: var(--darkest-grey);
     flex: 1;
     margin: 0 0 20px 20px;
     border-radius: 10px;
@@ -46,6 +45,7 @@
 }
 
 .TopicPortal-load, .TopicPortal-loaded {
+    position: relative;
     margin: 0 20px 20px 20px;
     padding: 10px 0;
     border-radius: 10px;
@@ -53,6 +53,7 @@
     background-color: var(--mid-grey);
     overflow: hidden;
     text-align: center;
+    line-height: 20px;
 
     transition: background-color 0.1s;
     -moz-user-select: none;

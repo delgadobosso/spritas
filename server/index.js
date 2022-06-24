@@ -26,6 +26,11 @@ const multer = require('multer');
 const memStorage = multer.memoryStorage();
 const memUpload = multer({
     storage: memStorage,
+    fileFilter: (req, file, cb) => {
+        var valid = ["video/mp4", "video/webm", "image/png", "image/jpeg", "image/gif"];
+        if (valid.includes(file.mimetype)) cb(null, true);
+        else cb(null, false);
+    },
     limits: {
         fileSize: 20971520
     }
@@ -99,7 +104,7 @@ app.get('/create/topic/:id?', (req, res) => {
     else res.sendFile(reactApp);
 })
 
-app.get('/create/post/:id', (req, res) => {
+app.get('/create/post', (req, res) => {
     if (!req.session.user) res.sendStatus(401);
     else if (req.session.user.type === "BAN") res.sendStatus(403);
     else {
@@ -116,120 +121,55 @@ app.get('/create/post/:id', (req, res) => {
     }
 })
 
-app.get('/home', (req, res) => {
+app.get('/home/new/:offset.:limit', (req, res) => {
     if (req.headers.referer) {
-        pool.query(`SELECT * FROM topics
-        WHERE idParent IS NULL AND status IS NULL
-        ORDER BY id`, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
+        pool.query(`
+            SELECT 
+                p1.id,
+                p1.idParent,
+                p1.idUser,
+                p1.title,
+                IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
+                IFNULL(t1.body, p1.body) AS body,
+                IFNULL(t1.update, p1.update) AS 'update',
+                IFNULL(t1.link, p1.link) AS link,
+                IFNULL(t1.type, p1.type) AS type,
+                p1.perm,
+                p1.ts,
+                IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
+                users.username AS username,
+                users.nickname AS nickname,
+                users.avatar AS avatar
+            FROM posts AS p1
+            LEFT JOIN users
+            ON p1.idUser = users.id
+            LEFT JOIN (
+                SELECT *
+                FROM posts AS p
+                INNER JOIN (
+                    SELECT MAX(id) AS id
+                    FROM posts
+                    WHERE posts.update = 'UPDT'
+                    GROUP BY idParent) AS t
+                USING (id)) AS t1
+            ON p1.id = t1.idParent
+            WHERE p1.idParent IS NULL
+            AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
+            ORDER BY p1.lastTs DESC
+            LIMIT ?,?`,
+        [offset, limit], (error, result, fields) => {
+            if (error) res.status(500).send(error);
 
-            else res.send(result);
-        })
+            else return res.send(result);
+        });
     } else res.redirect('/');
-});
-
-app.get('/home/:id.:offset.:limit', (req, res) => {
-    if (req.headers.referer) {
-        var final;
-        const id = req.params.id;
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
-        if (offset === 0) {
-            pool.query(`SELECT * FROM topics WHERE idParent = ? AND status IS NULL`, id, (error, result, fields) => {
-                if (error) return res.status(500).send(error);
-
-                else {
-                    final = result;
-
-                    pool.query(`
-                        SELECT 
-                            p1.id,
-                            p1.idTopic,
-                            p1.idParent,
-                            p1.idUser,
-                            p1.title,
-                            IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
-                            IFNULL(t1.body, p1.body) AS body,
-                            IFNULL(t1.update, p1.update) AS 'update',
-                            IFNULL(t1.link, p1.link) AS link,
-                            IFNULL(t1.type, p1.type) AS type,
-                            p1.perm,
-                            p1.ts,
-                            IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                            users.username AS username,
-                            users.nickname AS nickname,
-                            users.avatar AS avatar
-                        FROM posts AS p1
-                        LEFT JOIN users
-                        ON p1.idUser = users.id
-                        LEFT JOIN (
-                            SELECT *
-                            FROM posts AS p
-                            INNER JOIN (
-                                SELECT MAX(id) AS id
-                                FROM posts
-                                WHERE idTopic = ? AND posts.update = 'UPDT'
-                                GROUP BY idParent) AS t
-                            USING (id)) AS t1
-                        ON p1.id = t1.idParent
-                        WHERE p1.idTopic = ? AND p1.idParent IS NULL
-                        AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
-                        ORDER BY p1.lastTs DESC
-                        LIMIT ?,?`,
-                    [id, id, offset, limit], (error, result, fields) => {
-                        if (error) res.status(500).send(error);
-
-                        else {
-                            final = final.concat(result);
-                            res.send(final);
-                        }
-                    })
-                }
-            })
-        } else {
-            pool.query(`
-                SELECT 
-                    p1.id,
-                    p1.idTopic,
-                    p1.idParent,
-                    p1.idUser,
-                    p1.title,
-                    IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
-                    IFNULL(t1.body, p1.body) AS body,
-                    IFNULL(t1.update, p1.update) AS 'update',
-                    IFNULL(t1.link, p1.link) AS link,
-                    IFNULL(t1.type, p1.type) AS type,
-                    p1.perm,
-                    p1.ts,
-                    IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
-                    users.username AS username,
-                    users.nickname AS nickname,
-                    users.avatar AS avatar
-                FROM posts AS p1
-                LEFT JOIN users
-                ON p1.idUser = users.id
-                LEFT JOIN (
-                    SELECT *
-                    FROM posts AS p
-                    INNER JOIN (
-                        SELECT MAX(id) AS id
-                        FROM posts
-                        WHERE idTopic = ? AND posts.update = 'UPDT'
-                        GROUP BY idParent) AS t
-                    USING (id)) AS t1
-                ON p1.id = t1.idParent
-                WHERE p1.idTopic = ? AND p1.idParent IS NULL
-                AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
-                ORDER BY p1.lastTs DESC
-                LIMIT ?,?`,
-            [id, id, offset, limit], (error, result, fields) => {
-                if (error) res.status(500).send(error);
-
-                else res.send(result);
-            })
-        }
-    } else res.redirect('/');
-});
+})
 
 app.post('/login/signup',
     body('username').trim().isLength({ min: 2 }).escape(),
@@ -332,8 +272,12 @@ app.get('/p/:id', (req, res) => {
 app.get('/rr/:id.:offset.:limit', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
         pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
@@ -352,8 +296,12 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
 app.get('/r/:id.:offset.:limit', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
         pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
@@ -397,81 +345,83 @@ app.post('/create/topic',
 
 app.post('/create/post',
     memUpload.single('file'),
-    body('id').isInt(),
-    body('type').notEmpty().isIn(["TEXT", "BLOG", "VIDO", "IMG"]),
-    body('name').trim().isLength({ min: 2 }).escape(),
-    body('subtitle').trim().isLength({ max: 30 }).escape(),
-    body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
-    body('body').trim().isLength({ min: 2 }).escape(),
+    body('title').trim().isLength({ min: 1, max: 64 }).escape(),
+    body('subtitle').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
+    body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().escape(),
+    body('body').trim().isLength({ min: 1, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
-        else if (!req.session.user.type === "BAN") return res.sendStatus(403);
+        else if (req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-        pool.query(`SELECT type, perm FROM topics WHERE id = ?`,
-        req.body.id, (error, result, fields) => {
-            if (error) return res.sendStatus(500);
+        const validVid = ["video/mp4", "video/webm"];
+        const validPic = ["image/png", "image/jpeg", "image/gif"];
 
-            if (result.length > 0) {
-                if (req.body.type.toUpperCase() != result[0].type) return res.status(400).json({error: "Type of this post does not match the parent topic's type."});
-                if (result[0].perm === "ADMN" && req.session.user.type != "ADMN") return res.sendStatus(403);
+        var type = "TEXT";
+        if (req.file) {
+            if (validVid.includes(req.file.mimetype)) type = "VIDO";
+            else if (validPic.includes(req.file.mimetype)) type = "IMG";
+        } else if (req.body.link) {
+            type = "VIDO";
+        }
 
-                // Upload file to Imgur and add that link
-                if (result[0].type === "VIDO" && req.body.link !== "null") {
-                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,type)
-                    VALUES(?,?,?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, req.body.link, result[0].type], (error, result, fields) => {
-                        if (error) return res.status(500).send(error);
+        // Upload file to Imgur and add that link
+        if (type === "VIDO" && req.body.link !== "") {
+            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,link,type)
+            VALUES(?,?,?,?,?,?)`,
+            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, req.body.link, type], (error, result, fields) => {
+                if (error) return res.status(500).send(error);
 
+                const resId = result.insertId.toString();
+                return res.status(200).send(resId);
+            });
+        } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
+            if (imgurCurrent <= imgurLimit) {
+                const file64 = req.file.buffer.toString('base64');
+                imgur.uploadBase64(file64,
+                        undefined,
+                        req.body.title,
+                        req.body.body)
+                    .then((json) => {
+                        if (json.link) {
+                            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,link,deletehash,type)
+                            VALUES(?,?,?,?,?,?,?)`,
+                            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, json.link, json.deletehash, type], (error, result, fields) => {
+                                if (error) return res.status(500).send(error);
+
+                                imgurCurrent++;
+                                console.log('Current Imgur upload: ' + imgurCurrent);
+
+                                const resId = result.insertId.toString();
+                                return res.status(200).send(resId);
+                            })
+                        } else return res.status(500).json({error: "Issue uploading to imgur."});
+                    })
+                    .catch((err) => {
+                        console.error(err.message);
                         res.redirect('/');
                     });
-                } else if ((result[0].type === "IMG" && req.file && req.file.buffer) || (result[0].type === "VIDO" && req.file && req.file.buffer)) {
-                    if (imgurCurrent <= imgurLimit) {
-                        const file64 = req.file.buffer.toString('base64');
-                        imgur.uploadBase64(file64,
-                                undefined,
-                                req.body.name,
-                                req.body.body)
-                            .then((json) => {
-                                if (json.link) {
-                                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,link,deletehash,type)
-                                    VALUES(?,?,?,?,?,?,?,?)`,
-                                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type], (error, result, fields) => {
-                                        if (error) return res.status(500).send(error);
+            } else {
+                res.status(503).json({error: "Imgur upload capacity reached. Please try again in one hour."});
+            }
+        // No link insert otherwise
+        } else {
+            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,type)
+            VALUES(?,?,?,?,?)`,
+            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, type], (error, result, fields) => {
+                if (error) return res.status(500).send(error);
 
-                                        imgurCurrent++;
-                                        console.log('Current Imgur upload: ' + imgurCurrent);
-
-                                        res.redirect('/');
-                                    })
-                                } else return res.status(500).json({error: "Issue uploading to imgur."});
-                            })
-                            .catch((err) => {
-                                console.error(err.message);
-                                res.redirect('/');
-                            });
-                    } else {
-                        res.status(503).json({error: "Imgur upload capacity reached. Please try again in one hour."});
-                    }
-                // No link insert otherwise
-                } else {
-                    pool.query(`INSERT INTO posts (idTopic,idUser,title,subtitle,body,type)
-                    VALUES(?,?,?,?,?,?)`,
-                    [req.body.id, req.session.user.id, req.body.name, req.body.subtitle, req.body.body, result[0].type], (error, result, fields) => {
-                        if (error) return res.status(500).send(error);
-
-                        res.redirect('/');
-                    })
-                }
-            } else return res.sendStatus(404);
-        })
+                const resId = result.insertId.toString();
+                return res.status(200).send(resId);
+            })
+        }
     }
 )
 
 app.post('/create/reply',
     body('id').notEmpty().isInt(),
-    body('reply').trim().isLength({ min: 2 }).escape(),
+    body('reply').trim().isLength({ min: 1 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
         if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
@@ -515,9 +465,9 @@ app.post('/create/reply',
                         // check if post was made by person trying to comment, don't let them
                         if (parent.type !== "RPLY" && req.session.user.id === parent.idUser) return res.sendStatus(403);
                         else {
-                            pool.query(`INSERT INTO posts (idTopic,idParent,idUser,body,type)
-                            VALUES(?,?,?,?,'RPLY')`,
-                            [parent.idTopic, parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                            pool.query(`INSERT INTO posts (idParent,idUser,body,type)
+                            VALUES(?,?,?,'RPLY')`,
+                            [parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
                                 pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
@@ -538,29 +488,40 @@ app.post('/create/reply',
 app.post('/update/post',
     memUpload.single('file'),
     body('id').notEmpty().isInt(),
-    body('subtitle').trim().isLength({ max: 30 }).escape(),
-    body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
-    body('body').trim().isLength({ min: 2 }).escape(),
+    body('subtitle').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
+    body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().escape(),
+    body('body').trim().isLength({ min: 1, max: 10000 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
-        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
+        else if (req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        const validVid = ["video/mp4", "video/webm"];
+        const validPic = ["image/png", "image/jpeg", "image/gif"];
+
+        var type = "TEXT";
+        if (req.file) {
+            if (validVid.includes(req.file.mimetype)) type = "VIDO";
+            else if (validPic.includes(req.file.mimetype)) type = "IMG";
+        } else if (req.body.link) {
+            type = "VIDO";
+        }
 
         pool.query(`SELECT * FROM posts WHERE id = ?`,
         req.body.id, (error, result, fields) => {
                 if (error) return res.status(500).send(error);
 
-                // Valid first post of topic found
+                // Valid first post found
                 if (result.length > 0) {
                     const parent = result[0];
 
                     // Check if this user is OP
                     if (req.session.user.id === parent.idUser) {
                         // Add link if it's a VIDO
-                        if (result[0].type === "VIDO" && req.body.link !== "null") {
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,?,'UPDT',?,?)",
-                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, req.body.link, result[0].type],
+                        if (type === "VIDO" && req.body.link !== "") {
+                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
+                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body, req.body.link, type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
@@ -568,10 +529,11 @@ app.post('/update/post',
                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
     
-                                    return res.redirect('/');
+                                    const resId = parent.id.toString();
+                                    return res.status(200).send(resId);
                                 })
                             })
-                        } else if ((result[0].type === "IMG" && req.file && req.file.buffer) || result[0].type === "VIDO" && req.file && req.file.buffer) {
+                        } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
                             // Upload file to imgur and update
                             if (imgurCurrent <= imgurLimit) {
                                 imgurCurrent++;
@@ -579,12 +541,12 @@ app.post('/update/post',
                                 const file64 = req.file.buffer.toString('base64');
                                 imgur.uploadBase64(file64,
                                         undefined,
-                                        result[0].title,
+                                        parent.title,
                                         req.body.subtitle)
                                     .then((json) => {
                                         if (json.link) {
-                                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,?,'UPDT',?,?,?)",
-                                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body, json.link, json.deletehash, result[0].type],
+                                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,'UPDT',?,?,?)",
+                                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body, json.link, json.deletehash, type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
@@ -592,7 +554,8 @@ app.post('/update/post',
                                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                                     if (error) return res.status(500).send(error);
                     
-                                                    return res.redirect('/');
+                                                    const resId = parent.id.toString();
+                                                    return res.status(200).send(resId);
                                                 })
                                             })
                                         } else return res.status(500).json({error: "Issue uploading to imgur."});
@@ -606,8 +569,8 @@ app.post('/update/post',
                             }
                         } else {
                         // No link insert
-                            pool.query("INSERT INTO posts (idTopic,idParent,idUser,title,subtitle,body,`update`) VALUES(?,?,?,?,?,?,'UPDT')",
-                            [parent.idTopic, parent.id, req.session.user.id, result[0].title, req.body.subtitle, req.body.body],
+                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`) VALUES(?,?,?,?,?,'UPDT')",
+                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
@@ -615,7 +578,8 @@ app.post('/update/post',
                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
 
-                                    return res.redirect('/');
+                                    const resId = parent.id.toString();
+                                    return res.status(200).send(resId);
                                 })
                             })
                         }
@@ -768,12 +732,15 @@ app.get('/user/info/:name', (req, res) => {
 app.get('/user/posts/:id.:offset.:limit', (req, res) => {
     if (req.headers.referer) {
         const id = req.params.id;
-        const offset = (req.params.offset) ? parseInt(req.params.offset) : 0;
-        const limit = (req.params.limit) ? parseInt(req.params.limit) + 1 : 0;
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
         pool.query(`
         SELECT 
             p1.id,
-            p1.idTopic,
             p1.idParent,
             p1.idUser,
             p1.title,

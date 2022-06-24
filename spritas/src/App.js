@@ -14,7 +14,7 @@ import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
 import Featured from "./featured/Featured";
 import UserContainer from './user/UserContainer';
-import AllTopics from "./topics/AllTopics";
+import TopicContainer from './topics/TopicContainer';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -104,17 +104,15 @@ export default class App extends React.Component {
           <Switch>
             <Route path='/login' component={Login} />
             <Route path='/create/topic/:id?' component={CreateTopic} />
-            <Route path='/create/post/:id' component={CreatePost} />
+            <Route path='/create/post'
+              render={props => <CreatePost user={this.state.user} {...props} />} />
             <Route path='/u/:name'
               render={props => <UserContainer postClick={this.postClick} user={this.state.user} {...props} />} />
             <Route path='/post/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/'>
-              <Featured user={this.state.user} />
-              {/* <TopicContainer postClick={this.postClick} user={this.state.user}
-                naviHide={this.naviHide} /> */}
-              <AllTopics postClick={this.postClick} user={this.state.user}
-                naviHide={this.naviHide} />
+              {/* <Featured user={this.state.user} /> */}
+              <TopicContainer postClick={this.postClick} user={this.state.user} />
             </Route>
           </Switch>
           {this.state.post}

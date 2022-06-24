@@ -1,11 +1,6 @@
 .PostContainer-rest {
     margin-top: 20px;
 }
-.PostContainer-restText {
-    width: 600px;
-    margin-top: 0;
-    margin-left: 20px;
-}
 
 .PostContainer .Reply, .PostContainer .UpdatePost, .PostContainer-controls {
     width: 100%;
@@ -23,7 +18,6 @@
 }
 
 .PostContainer-replies {
-    height: 0px;
     margin: auto;
     overflow: hidden;
 
@@ -31,12 +25,15 @@
 }
 
 .PostContainer-load, .PostContainer-loaded {
+    position: relative;
     text-align: center;
-    margin: 0 auto 20px auto;
+    margin: 0 auto;
     padding: 15px 0;
     background-color: var(--mid-grey);
     color: white;
     border-radius: 10px;
+    overflow: hidden;
+    line-height: 20px;
 
     transition: background-color 0.1s;
     -moz-user-select: none;
@@ -56,17 +53,7 @@
     background-color: transparent;
 }
 
-@media screen and (max-width: 1350px) {
-    .PostContainer-restText {
-        margin-left: 0;
-    }
-}
-
 @media screen and (max-width: 700px) {
-    .PostContainer-restText {
-        width: initial;
-    }
-
     .PostContainer-replies {
         width: initial;
         padding: 0 10px;
@@ -74,6 +61,6 @@
 
     .PostContainer-load, .PostContainer-loaded {
         width: initial;
-        margin: 0 10px 20px 10px;
+        margin: 0 10px;
     }
 }
