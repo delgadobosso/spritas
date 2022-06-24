@@ -27,7 +27,7 @@
 .PostContainer-load, .PostContainer-loaded {
     position: relative;
     text-align: center;
-    margin: 0 auto 20px auto;
+    margin: 0 auto;
     padding: 15px 0;
     background-color: var(--mid-grey);
     color: white;
