@@ -16,6 +16,7 @@ export default class PostMain extends React.Component {
         this.left = this.left.bind(this);
         this.right = this.right.bind(this);
         this.goToPost = this.goToPost.bind(this);
+        this.postTransition = this.postTransition.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.delete = this.delete.bind(this);
         this.updateMode = this.updateMode.bind(this);
@@ -60,15 +61,9 @@ export default class PostMain extends React.Component {
         const currentPost = posts[this.props.current - 1];
 
         if (this.props.current > 1 && !this.state.updateMode) {
-            const postFrom = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
-            this.props.setCurrent(this.props.current - 1, (newCurrent) => {
-                const newPost = posts[newCurrent - 1];
-                const postTo = document.getElementById(`PostMain-post${newPost.id}`);
-                postTo.getAnimations().map(animation => animation.cancel());
-                postTo.animate([
-                    { height: `${postFrom}px` },
-                    { height: `${postTo.clientHeight}px` }
-                ], { duration: 500, easing: 'ease' });
+            const fromHeight = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(this.props.current - 1, (newIndex) => {
+                this.postTransition(fromHeight, newIndex);
             });
         }
     }
@@ -78,15 +73,9 @@ export default class PostMain extends React.Component {
         const currentPost = posts[this.props.current - 1];
 
         if (this.props.current < this.props.posts.length && !this.state.updateMode) {
-            const postFrom = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
-            this.props.setCurrent(this.props.current + 1, (newCurrent) => {
-                const newPost = posts[newCurrent - 1];
-                const postTo = document.getElementById(`PostMain-post${newPost.id}`);
-                postTo.getAnimations().map(animation => animation.cancel());
-                postTo.animate([
-                    { height: `${postFrom}px` },
-                    { height: `${postTo.clientHeight}px` }
-                ], { duration: 500, easing: 'ease' });
+            const fromHeight = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(this.props.current + 1, (newIndex) => {
+                this.postTransition(fromHeight, newIndex);
             });
         }
     }
@@ -96,17 +85,22 @@ export default class PostMain extends React.Component {
         const currentPost = posts[this.props.current - 1];
 
         if (this.props.current !== index && !this.state.updateMode) {
-            const postFrom = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
-            this.props.setCurrent(index, (newCurrent) => {
-                const newPost = posts[newCurrent - 1];
-                const postTo = document.getElementById(`PostMain-post${newPost.id}`);
-                postTo.getAnimations().map(animation => animation.cancel());
-                postTo.animate([
-                    { height: `${postFrom}px` },
-                    { height: `${postTo.clientHeight}px` }
-                ], { duration: 500, easing: 'ease' });
+            const fromHeight = document.getElementById(`PostMain-post${currentPost.id}`).clientHeight;
+            this.props.setCurrent(index, (newIndex) => {
+                this.postTransition(fromHeight, newIndex);
             });
         }
+    }
+
+    postTransition(fromHeight, newIndex) {
+        const posts = this.props.posts;
+        const newPost = posts[newIndex - 1];
+        const postTo = document.getElementById(`PostMain-post${newPost.id}`);
+        postTo.getAnimations().map(animation => animation.cancel());
+        postTo.animate([
+            { height: `${fromHeight}px` },
+            { height: `${postTo.clientHeight}px` }
+        ], { duration: 500, easing: 'ease' });
     }
 
     toggleModal() {
