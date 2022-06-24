@@ -409,16 +409,13 @@ export default class PostMain extends React.Component {
         const subtitle = (currentPost.subtitle) ?
             <h3 className='PostMain-subtitle'>{he.decode(currentPost.subtitle)}</h3> : null;
 
-        var collapsable;
-        var expand = "";
-        if (this.state.collapsable) {
-            expand = (this.state.expand) ? "Show Less" : "Show More";
-            var backClass = (this.state.expand) ? " PostMain-expandBack" : "";
-            collapsable = <div className='PostMain-collapse' onClick={this.expand} title={expand}>
-                <div className={'PostMain-collapseBack' + backClass}></div>
-                <span className='PostMain-collapseText'>{expand}</span>
-            </div>;
-        }
+        var collapseNo = (!this.state.collapsable) ? " PostMain-collapseNo" : "";
+        var expand = (this.state.expand) ? "Show Less" : "Show More";
+        var backClass = (this.state.expand) ? " PostMain-expandBack" : "";
+        var collapsable = <div className={'PostMain-collapse' + collapseNo} onClick={this.state.collapsable ? this.expand : undefined} title={expand}>
+            <div className={'PostMain-collapseBack' + backClass}></div>
+            <span className='PostMain-collapseText'>{expand}</span>
+        </div>;
 
         var update;
         var deletePost;

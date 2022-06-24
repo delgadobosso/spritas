@@ -135,10 +135,18 @@
     width: 100%;
 
     animation: fadeIn 0.5s;
+    transition: opacity 0.5s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+.PostMain-collapseNo {
+    pointer-events: none;
+    cursor: initial;
+    opacity: 0;
+
+    animation: none;
 }
 .PostMain-collapseBack {
     position: absolute;
