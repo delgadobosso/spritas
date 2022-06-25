@@ -164,7 +164,6 @@
 .PostMain-collapseText, .PostMain-expandText {
     position: absolute;
     color: white;
-    text-shadow: 0 2px var(--darkest-grey);
     font-weight: bold;
     line-height: 20px;
     width: 100%;
