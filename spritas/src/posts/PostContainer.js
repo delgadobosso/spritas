@@ -4,7 +4,6 @@ import PostMain from './PostMain';
 import Post from './Post';
 import Reply from '../create/Reply';
 import scrollBounce from '../functions/scrollBounce';
-import UpdatePost from '../create/UpdatePost';
 import he from 'he';
 
 export default class PostContainer extends React.Component {
@@ -74,7 +73,7 @@ export default class PostContainer extends React.Component {
     }
 
     loadReplies(first=false) {
-        const id = (this.props.id) ? this.props.id : this.props.match.params.id;
+        const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
         if (!this.state.ever && this.state.offset > 0) this.setState({ever: true});
 
         fetch(`/r/${id}.${this.state.offset}.${this.state.amount}`)
@@ -124,8 +123,16 @@ export default class PostContainer extends React.Component {
 
     setCurrent(value, cb) {
         this.setState({
-            current: value
-        }, () => { if (cb) cb(value); });
+            current: value,
+            replies: [],
+            offset: 0,
+            more: true,
+            ever: false,
+            loadingMore: false
+        }, () => {
+            if (cb) cb(value);
+            this.loadReplies(true);
+        });
     }
 
     render() {
