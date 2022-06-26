@@ -12,8 +12,9 @@ export default class Post extends React.Component {
         this.extendReplies = this.extendReplies.bind(this);
         this.collapse = this.collapse.bind(this);
         this.delete = this.delete.bind(this);
+        this.reloadReplies = this.reloadReplies.bind(this);
         this.state = ({
-            replies: null,
+            replies: [],
             offset: 0,
             amount: 4,
             more: false,
@@ -31,11 +32,11 @@ export default class Post extends React.Component {
                 .then(res => res.json())
                 .then(data => {
                     if (data.length > 0) {
-                        const replies = data.slice(0, this.state.amount).reverse().map((reply, index) =>
+                        const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) =>
                             <Post key={index} post={reply} opid={this.props.opid} user={this.props.user} /> );
-                        this.setState({
-                            replies: replies
-                        });
+                        this.setState(state => ({
+                            replies: [...moreReplies, ...state.replies]
+                        }));
                     }
                     if (data.length < (this.state.amount + 1)) {
                         this.setState({
@@ -139,6 +140,15 @@ export default class Post extends React.Component {
         } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
 
+    reloadReplies() {
+        this.setState({
+            replies: [],
+            offset: 0,
+            more: false,
+            collapsed: false
+        }, () => this.loadReplies());
+    }
+
     render() {
         const post = this.props.post;
 
@@ -156,7 +166,7 @@ export default class Post extends React.Component {
         var reply;
         if ((this.props.user && this.props.user.type === "BAN") || (this.props.blockers && this.props.blockers.includes(this.props.opid))) reply = null;
         else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <p className="PostContainer-banBlock">{post.nickname} Has Blocked You From Replying</p>;
-        else if (this.props.user) reply = <Reply id={post.id} user={this.props.user} />;
+        else if (this.props.user) reply = <Reply id={post.id} user={this.props.user} reload={this.reloadReplies} />;
 
         const replies = (this.props.reply) ?
         <div>
@@ -184,7 +194,7 @@ export default class Post extends React.Component {
         }
 
         var collapse = null;
-        if (this.props.reply && this.state.replies) {
+        if (this.props.reply && this.state.replies.length > 0) {
             collapse = (this.state.collapsed) ?
             <div className="Post-collapse" onClick={this.collapse}>Show Replies</div> :
             <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
