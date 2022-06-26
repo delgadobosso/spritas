@@ -2,7 +2,7 @@
     margin-top: 20px;
 }
 
-.PostContainer .Reply, .PostContainer .UpdatePost, .PostContainer-controls {
+.PostContainer .UpdatePost, .PostContainer-controls {
     width: 100%;
     margin: auto;
 }
