@@ -1,5 +1,8 @@
 .Reply {
     position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 auto 20px auto;
 }
 
 .Reply-expand {
@@ -25,17 +28,15 @@
 .Reply-form {
     display: flex;
     height: 0px;
-    margin: 0 auto 20px auto;
     overflow: hidden;
     background-color: var(--darkest-grey);
-    border-radius: 10px;
 
     transition: border-radius 0.5s, height 0.5s;
 }
 .Reply-form-open {
     height: 110px;
 }
-.Post .Reply-form {
+.Post .Reply {
     border-radius: 0;
     margin: 0;
 }
