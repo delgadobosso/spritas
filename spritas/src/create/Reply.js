@@ -44,7 +44,10 @@ export default class Reply extends React.Component {
                 })
                 .then(data => {
                     setTimeout(() => {
-                        this.setState({ submitting: false }, () => {
+                        this.setState({
+                            submitting: false,
+                            open: false
+                        }, () => {
                             document.getElementById(`reply${id}`).value = "";
                             this.props.reload();
                         });
