@@ -89,7 +89,7 @@ export default class Reply extends React.Component {
                 <div className={"Reply-form" + open}>
                     <img className="Reply-img" src={avatar} alt="You" />
                     <textarea className="Reply-text" name="reply" id={`reply${id}`} rows="6" required placeholder={placeholder} />
-                    <input className="Reply-submit" type="submit" value="Send" onClick={this.submit} />
+                    <input className="Reply-submit" type="submit" value={submitText} onClick={this.submit} />
                 </div>
             </div>
         )
