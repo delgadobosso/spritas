@@ -459,12 +459,13 @@ app.post('/create/reply',
                             [parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
+                                const resId = result.insertId.toString();
                                 pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
                                 WHERE id = ? OR id = ?`,
                                 [parent.id, parent.idParent], (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
 
-                                    return res.redirect('/');
+                                    return res.status(200).send(resId);
                                 })
                             })
                         }

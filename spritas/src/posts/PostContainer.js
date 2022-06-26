@@ -13,6 +13,7 @@ export default class PostContainer extends React.Component {
         this.loadReplies = this.loadReplies.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
         this.setCurrent = this.setCurrent.bind(this);
+        this.reloadComments = this.reloadComments.bind(this);
         this.state = {
             main: null,
             replies: [],
@@ -136,13 +137,23 @@ export default class PostContainer extends React.Component {
         });
     }
 
+    reloadComments() {
+        this.setState({
+            replies: [],
+            offset: 0,
+            more: false,
+            ever: false,
+            loadingMore: false
+        }, () => this.loadReplies(true));
+    }
+
     render() {
         const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
         else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Commenting</p>;
-        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply id={id} main={true} user={this.props.user} />
+        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply id={id} main={true} user={this.props.user} reload={this.reloadComments} />
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Comments Shown</div> : null;

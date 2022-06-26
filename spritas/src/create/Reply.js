@@ -6,7 +6,11 @@ export default class Reply extends React.Component {
     constructor(props) {
         super(props);
         this.expand = this.expand.bind(this);
-        this.state = ({ open: false });
+        this.submit = this.submit.bind(this);
+        this.state = ({
+            open: false,
+            submitting: false
+        });
     }
 
     expand() {
@@ -17,6 +21,38 @@ export default class Reply extends React.Component {
                 // document.getElementById('reply').focus();
             }
         });
+    }
+
+    submit() {
+        if (!this.state.submitting) {
+            this.setState({ submitting: true }, () => {
+                const id = (this.props.id) ? this.props.id : "";
+
+                var myBody = new URLSearchParams();
+                const reply = document.getElementById(`reply${id}`).value;
+                myBody.append('id', id);
+                myBody.append('reply', reply);
+        
+                var urlForm
+        
+                fetch('/create/reply', {
+                    method: 'POST',
+                    body: myBody
+                })
+                .then(resp => {
+                    if (resp.ok) return resp.text();
+                })
+                .then(data => {
+                    setTimeout(() => {
+                        this.setState({ submitting: false }, () => {
+                            document.getElementById(`reply${id}`).value = "";
+                            this.props.reload();
+                        });
+                    }, 3000);
+                })
+                .catch(error => this.setState({ submitting: false }));
+            })
+        }
     }
 
     render() {
@@ -35,15 +71,19 @@ export default class Reply extends React.Component {
             placeholder = "Comment";
         }
 
+        var submitText = (this.state.submitting) ? "Sending..." : "Send";
+
+        const cover = (this.state.submitting) ? " LoadingCover-anim" : "";
+
         return (
             <div className="Reply">
                 {expand}
-                <form action="/create/reply" className={"Reply-form" + open} method="POST">
+                <div className={"Reply-form" + open}>
+                    <div className={'LoadingCover' + cover}></div>
                     <img className="Reply-img" src={avatar} alt="You" />
-                    <input type="hidden" name="id" id="id" value={id} />
-                    <textarea className="Reply-text" name="reply" id="reply" rows="6" required placeholder={placeholder} />
-                    <input className="Reply-submit" type="submit" value="Send" />
-                </form>
+                    <textarea className="Reply-text" name="reply" id={`reply${id}`} rows="6" required placeholder={placeholder} />
+                    <input className="Reply-submit" type="submit" value={submitText} onClick={this.submit} />
+                </div>
             </div>
         )
     }

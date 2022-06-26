@@ -19,6 +19,7 @@
 }
 
 .Reply-form {
+    position: relative;
     display: flex;
     height: 0px;
     margin: 0 auto 20px auto;
