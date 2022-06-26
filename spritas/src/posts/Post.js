@@ -28,31 +28,11 @@ export default class Post extends React.Component {
         if (this.props.reply) {
             const id = this.props.post.id;
 
-            fetch(`/rr/${id}.${this.state.offset}.${this.state.amount}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) =>
-                            <Post key={index} post={reply} opid={this.props.opid} user={this.props.user} /> );
-                        this.setState(state => ({
-                            replies: [...moreReplies, ...state.replies]
-                        }));
-                    }
-                    if (data.length < (this.state.amount + 1)) {
-                        this.setState({
-                            more: false
-                        });
-                    } else {
-                        this.setState(state => ({
-                            offset: state.offset + this.state.amount,
-                            more: true
-                        }));
-                    }
-                })
+            this.loadReplies(true);
         }
     }
 
-    loadReplies() {
+    loadReplies(first=false) {
         const id = this.props.post.id;
 
         fetch(`/rr/${id}.${this.state.offset}.${this.state.amount}`)
@@ -62,12 +42,14 @@ export default class Post extends React.Component {
                     <Post key={index + this.state.offset} post={reply}
                         opid={this.props.opid} user={this.props.user} /> );
                 var rep = document.getElementById('Replies-' + this.props.post.id);
-                let maxHeight = rep.scrollHeight;
-                rep.style.height = maxHeight + "px";
+                if (rep && !first) {
+                    let maxHeight = rep.scrollHeight;
+                    rep.style.height = maxHeight + "px";
+                }
                 this.setState(state => ({
                     replies: [...moreReplies, ...state.replies],
                     loadingMore: false
-                }), () => this.extendReplies())
+                }), () => { if (!first) this.extendReplies(); })
                 if (data.length < (this.state.amount + 1)) {
                     this.setState({
                         more: false
