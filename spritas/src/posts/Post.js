@@ -141,12 +141,18 @@ export default class Post extends React.Component {
     }
 
     reloadReplies() {
+        var repliesElem = document.getElementById('Replies-' + this.props.post.id);
+        var beforeHeight = repliesElem.scrollHeight;
+
         this.setState({
             replies: [],
             offset: 0,
             more: false,
             collapsed: false
-        }, () => this.loadReplies());
+        }, () => {
+            repliesElem.style.height = beforeHeight + "px";
+            this.loadReplies();
+        });
     }
 
     render() {

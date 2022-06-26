@@ -26,7 +26,10 @@ export default class Reply extends React.Component {
 
     submit() {
         if (!this.state.submitting) {
-            this.setState({ submitting: true }, () => {
+            this.setState({
+                submitting: true,
+                open: false
+            }, () => {
                 const id = (this.props.id) ? this.props.id : "";
 
                 var myBody = new URLSearchParams();
@@ -46,8 +49,7 @@ export default class Reply extends React.Component {
                 .then(data => {
                     setTimeout(() => {
                         this.setState({
-                            submitting: false,
-                            open: false
+                            submitting: false
                         }, () => {
                             document.getElementById(`reply${id}`).value = "";
                             this.props.reload();
@@ -68,6 +70,7 @@ export default class Reply extends React.Component {
         <div className="Reply-expand" onClick={this.expand}>Close</div> :
         <div className="Reply-expand" onClick={this.expand}>Reply</div>;
         var open = (this.state.open || this.props.main) ? " Reply-form-open" : "";
+        if (this.state.submitting) expand = <div className="Reply-expand" onClick={this.expand}>Sending...</div>
 
         var placeholder = "Reply";
         if (this.props.main) {
@@ -81,12 +84,12 @@ export default class Reply extends React.Component {
 
         return (
             <div className="Reply">
+                <div className={'LoadingCover' + cover}></div>
                 {expand}
                 <div className={"Reply-form" + open}>
-                    <div className={'LoadingCover' + cover}></div>
                     <img className="Reply-img" src={avatar} alt="You" />
                     <textarea className="Reply-text" name="reply" id={`reply${id}`} rows="6" required placeholder={placeholder} />
-                    <input className="Reply-submit" type="submit" value={submitText} onClick={this.submit} />
+                    <input className="Reply-submit" type="submit" value="Send" onClick={this.submit} />
                 </div>
             </div>
         )
