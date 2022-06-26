@@ -20,7 +20,7 @@ export default class PostContainer extends React.Component {
             current: 0,
             offset: 0,
             amount: 4,
-            more: true,
+            more: false,
             ever: false,
             opid: null,
             blockers: [],
@@ -94,12 +94,13 @@ export default class PostContainer extends React.Component {
                     loadingMore: false
                 }), () => { if (!first) this.extendReplies(); })
                 if (data.length < (this.state.amount + 1)) {
-                    this.setState(state => ({
-                        more: !state.more
-                    }));
+                    this.setState({
+                        more: false
+                    });
                 } else {
                     this.setState(state => ({
-                        offset: state.offset + this.state.amount
+                        offset: state.offset + this.state.amount,
+                        more: true
                     }));
                 }
             })
@@ -126,7 +127,7 @@ export default class PostContainer extends React.Component {
             current: value,
             replies: [],
             offset: 0,
-            more: true,
+            more: false,
             ever: false,
             loadingMore: false
         }, () => {
