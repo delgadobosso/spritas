@@ -154,7 +154,7 @@ export default class Post extends React.Component {
         var reply;
         if ((this.props.user && this.props.user.type === "BAN") || (this.props.blockers && this.props.blockers.includes(this.props.opid))) reply = null;
         else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <p className="PostContainer-banBlock">{post.nickname} Has Blocked You From Replying</p>;
-        else if (this.props.user) reply = <Reply parentId={post.id} user={this.props.user} />;
+        else if (this.props.user) reply = <Reply id={post.id} user={this.props.user} />;
 
         const replies = (this.props.reply) ?
         <div>

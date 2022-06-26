@@ -20,7 +20,7 @@ export default class Reply extends React.Component {
     }
 
     render() {
-        const parentId = (this.props.parentId) ? this.props.parentId : "";
+        const id = (this.props.id) ? this.props.id : "";
 
         var avatar = (this.props.user && this.props.user.avatar) ? `/media/avatars/${this.props.user.avatar}` : pfp;
 
@@ -40,7 +40,7 @@ export default class Reply extends React.Component {
                 {expand}
                 <form action="/create/reply" className={"Reply-form" + open} method="POST">
                     <img className="Reply-img" src={avatar} alt="You" />
-                    <input type="hidden" name="id" id="id" value={parentId} />
+                    <input type="hidden" name="id" id="id" value={id} />
                     <textarea className="Reply-text" name="reply" id="reply" rows="6" required placeholder={placeholder} />
                     <input className="Reply-submit" type="submit" value="Send" />
                 </form>

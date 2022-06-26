@@ -136,12 +136,12 @@ export default class PostContainer extends React.Component {
     }
 
     render() {
-        const id = (this.state.post) ? this.state.post.id : "";
+        const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
         else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Commenting</p>;
-        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply parentId={id} main={true} user={this.props.user} />
+        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply id={id} main={true} user={this.props.user} />
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Comments Shown</div> : null;
