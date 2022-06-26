@@ -16,7 +16,7 @@ export default class Post extends React.Component {
             replies: null,
             offset: 0,
             amount: 4,
-            more: true,
+            more: false,
             collapsed: false,
             toggleTime: false,
             loadingMore: false
@@ -38,12 +38,13 @@ export default class Post extends React.Component {
                         });
                     }
                     if (data.length < (this.state.amount + 1)) {
-                        this.setState(state => ({
-                            more: !state.more
-                        }));
+                        this.setState({
+                            more: false
+                        });
                     } else {
                         this.setState(state => ({
-                            offset: state.offset + this.state.amount
+                            offset: state.offset + this.state.amount,
+                            more: true
                         }));
                     }
                 })
@@ -67,12 +68,13 @@ export default class Post extends React.Component {
                     loadingMore: false
                 }), () => this.extendReplies())
                 if (data.length < (this.state.amount + 1)) {
-                    this.setState(state => ({
-                        more: !state.more
-                    }));
+                    this.setState({
+                        more: false
+                    });
                 } else {
                     this.setState(state => ({
-                        offset: state.offset + this.state.amount
+                        offset: state.offset + this.state.amount,
+                        more: true
                     }));
                 }
             })
