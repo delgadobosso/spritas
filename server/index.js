@@ -410,7 +410,7 @@ app.post('/create/post',
 
 app.post('/create/reply',
     body('id').notEmpty().isInt(),
-    body('reply').trim().isLength({ min: 1 }).escape(),
+    body('reply').trim().isLength({ min: 1, max: 2500 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
         if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);

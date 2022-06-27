@@ -6,6 +6,7 @@ export default class Reply extends React.Component {
     constructor(props) {
         super(props);
         this.expand = this.expand.bind(this);
+        this.bodyCheck = this.bodyCheck.bind(this);
         this.submit = this.submit.bind(this);
         this.state = ({
             open: false,
@@ -22,6 +23,15 @@ export default class Reply extends React.Component {
                 document.getElementById(`reply${id}`).focus();
             }
         });
+    }
+
+    bodyCheck(e) {
+        var body = e.target.value;
+        var newLines = body.match(/(\r\n|\n|\r)/g);
+        var trueCount = body.length;
+        if (newLines) trueCount += newLines.length;
+        if (trueCount > 2499 && newLines) e.target.value = body.slice(0, 2499 - newLines.length);
+        else if (trueCount > 2499) e.target.value = body.slice(0, 2499);
     }
 
     submit() {
@@ -88,7 +98,7 @@ export default class Reply extends React.Component {
                 {expand}
                 <div className={"Reply-form" + open}>
                     <img className="Reply-img" src={avatar} alt="You" />
-                    <textarea className="Reply-text" name="reply" id={`reply${id}`} rows="6" required placeholder={placeholder} />
+                    <textarea className="Reply-text" name="reply" id={`reply${id}`} rows="6" required placeholder={placeholder} onChange={this.bodyCheck} />
                     <input className="Reply-submit" type="submit" value={submitText} onClick={this.submit} />
                 </div>
             </div>
