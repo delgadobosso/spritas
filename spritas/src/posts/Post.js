@@ -8,12 +8,15 @@ import relativeTime from '../functions/relativeTime';
 export default class Post extends React.Component {
     constructor(props) {
         super(props);
+        this.resizeHandle = this.resizeHandle.bind(this);
         this.loadReplies = this.loadReplies.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
         this.correctExtend = this.correctExtend.bind(this);
         this.collapse = this.collapse.bind(this);
         this.delete = this.delete.bind(this);
         this.reloadReplies = this.reloadReplies.bind(this);
+        this.collapsable = this.collapsable.bind(this);
+        this.expand = this.expand.bind(this);
         this.state = ({
             replies: [],
             offset: 0,
@@ -21,15 +24,29 @@ export default class Post extends React.Component {
             more: false,
             collapsed: false,
             toggleTime: false,
-            loadingMore: false
+            loadingMore: false,
+            collapsable: false,
+            expand: false,
+            resize: true
          });
     }
 
     componentDidMount() {
-        if (this.props.reply) {
-            const id = this.props.post.id;
+        window.addEventListener('resize', this.resizeHandle);
 
-            this.loadReplies(true);
+        this.collapsable();
+        if (this.props.reply) this.loadReplies(true);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.resizeHandle);
+    }
+
+    resizeHandle() {
+        // Throttle resize handle
+        if (this.state.resize) {
+            this.setState({ resize: false });
+            setTimeout(() => this.setState({ resize: true }, () => this.collapsable()), 500);
         }
     }
 
@@ -169,6 +186,50 @@ export default class Post extends React.Component {
         });
     }
 
+    collapsable() {
+        const post = document.getElementById(`pMain${this.props.post.id}`);
+        if (post && post.scrollHeight > 300) {
+            post.style.height = '300px';
+            this.setState({
+                collapsable: true,
+                expand: false
+            });
+        }
+        else {
+            this.setState({
+                collapsable: false,
+                expand: false
+            });
+        }
+    }
+
+    expand() {
+        const post = document.getElementById(`pMain${this.props.post.id}`);
+        const durr = (post.scrollHeight > 1000) ? 1000 : 500;
+
+        if (!this.state.expand) this.setState({
+            expand: true
+        }, () => {
+            post.getAnimations().map(animation => animation.cancel());
+            post.animate([
+                { height: `300px` },
+                { height: `${post.scrollHeight + 50}px` }
+            ], { duration: durr, easing: 'ease' });
+            post.style.height = `${post.scrollHeight + 50}px`;
+        });
+        else this.setState({
+            expand: false
+        }, () => {
+            post.scrollIntoView({ behavior: "smooth" });
+            post.getAnimations().map(animation => animation.cancel());
+            post.animate([
+                { height: `${post.scrollHeight}px` },
+                { height: `300px` },
+            ], { duration: durr, easing: 'ease' });
+            post.style.height = `300px`;
+        });
+    }
+
     render() {
         const post = this.props.post;
 
@@ -246,9 +307,17 @@ export default class Post extends React.Component {
             </div>
         )
 
+        var collapseNo = (!this.state.collapsable) ? " PostMain-collapseNo" : "";
+        var expand = (this.state.expand) ? "Show Less" : "Show More";
+        var backClass = (this.state.expand) ? " PostMain-expandBack" : "";
+        var collapsable = <div className={'PostMain-collapse' + collapseNo} onClick={this.state.collapsable ? this.expand : undefined} title={expand}>
+            <div className={'PostMain-collapseBack' + backClass}></div>
+            <span className={!this.state.expand ? 'PostMain-collapseText' : 'PostMain-expandText'}>{expand}</span>
+        </div>;
+
         return (
             <div className={"Post" + op + opreply + youreply} id={"p" + post.id} style={{animationDelay: `${this.props.delay * 100}ms`}}>
-                <div className="Post-main">
+                <div className="Post-main" id={"pMain" + post.id}>
                     <div className='Post-info'>
                         <a className='Post-a' href={`/u/${post.username}`} title={"@" + post.username}>
                             <div className="Post-user">
@@ -260,6 +329,7 @@ export default class Post extends React.Component {
                     </div>
                     <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
                     {actions}
+                    {collapsable}
                 </div>
                 <div className="Post-controls">
                     {collapse}
