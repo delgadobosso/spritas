@@ -657,7 +657,7 @@ app.post('/delete/reply',
             if (error) return res.status(500).send(error);
 
             if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
-                var byWho = (req.session.user.type === 'ADMN') ? 'Deleted By Admin' : 'Deleted By User';
+                var byWho = (req.session.user.type === 'ADMN' && req.session.user.id !== result[0].idUser) ? 'Deleted By Admin' : 'Deleted By User';
                 pool.query(`UPDATE posts AS p
                 SET body = ?, p.update = 'DELE'
                 WHERE id = ?`, [byWho, req.body.id], (error, result, fields) => {
