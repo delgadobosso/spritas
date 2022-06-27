@@ -59,7 +59,7 @@ export default class Post extends React.Component {
             .then(data => {
                 const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) => 
                     <Post key={index + this.state.offset} post={reply}
-                        opid={this.props.opid} user={this.props.user} /> );
+                        opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                 var rep = document.getElementById('Replies-' + this.props.post.id);
                 if (rep && !first) {
                     let maxHeight = rep.scrollHeight;
@@ -155,6 +155,7 @@ export default class Post extends React.Component {
     }
 
     delete() {
+        console.log(document.getElementById('Replies-' + this.props.post.id), this.props.post.id);
         if (!this.state.deleting) {
             const post = this.props.post;
             var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.username}" to confirm:`, '');
@@ -169,7 +170,7 @@ export default class Post extends React.Component {
                     })
                     .then((resp) => {
                         this.setState({ deleting: false }, () => {
-                            if (resp.ok) window.location.href = '/';
+                            if (resp.ok) this.props.reload();
                             else alert('Post deletion error');
                         });
                     })

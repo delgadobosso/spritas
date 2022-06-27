@@ -83,7 +83,7 @@ export default class PostContainer extends React.Component {
                 const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
                     <Post key={index + this.state.offset} post={reply}
                         reply={true} opid={this.state.opid} user={this.props.user}
-                        blockers={this.state.blockers} delay={index} />
+                        blockers={this.state.blockers} delay={index} reload={this.reloadComments} />
                 );
                 var rep = document.getElementById('Replies');
                 if (rep && !first) {
