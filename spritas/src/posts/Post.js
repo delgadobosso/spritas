@@ -27,7 +27,8 @@ export default class Post extends React.Component {
             loadingMore: false,
             collapsable: false,
             expand: false,
-            resize: true
+            resize: true,
+            deleting: false
          });
     }
 
@@ -154,21 +155,28 @@ export default class Post extends React.Component {
     }
 
     delete() {
-        const post = this.props.post;
-        var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.username}" to confirm:`, '');
-        if (answer === post.username) {
-            var myBody = new URLSearchParams();
-            myBody.append('id', post.id);
-            
-            fetch('/delete/reply', {
-                method: 'POST',
-                body: myBody
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/';
-                else alert('Post deletion error');
-            })
-        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+        if (!this.state.deleting) {
+            const post = this.props.post;
+            var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.username}" to confirm:`, '');
+            if (answer === post.username) {
+                this.setState({ deleting: true }, () => {
+                    var myBody = new URLSearchParams();
+                    myBody.append('id', post.id);
+                    
+                    fetch('/delete/reply', {
+                        method: 'POST',
+                        body: myBody
+                    })
+                    .then((resp) => {
+                        this.setState({ deleting: false }, () => {
+                            if (resp.ok) window.location.href = '/';
+                            else alert('Post deletion error');
+                        });
+                    })
+                    .catch(error => this.setState({ deleting: false }));
+                })
+            } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+        }
     }
 
     reloadReplies() {
@@ -291,9 +299,13 @@ export default class Post extends React.Component {
 
         const deleted = (post.update === 'DELE') ? ' Post-bodyDel' : '';
 
+        var deleting = (this.state.deleting) ? " LoadingCover-anim" : "";
         const deleteReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user &&
         (this.props.user.id === post.idUser || this.props.user.type === 'ADMN') && this.props.user.type !== "BAN") ? (
-            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>Delete</div>
+            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>
+                <div className={'LoadingCover' + deleting}></div>
+                Delete
+            </div>
         ) : null;
 
         const reportReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user && this.props.user.id !== post.idUser && this.props.user.type !== 'ADMN' && this.props.user.type !== 'BAN') ? (
