@@ -10,6 +10,7 @@ export default class Post extends React.Component {
         super(props);
         this.loadReplies = this.loadReplies.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
+        this.correctExtend = this.correctExtend.bind(this);
         this.collapse = this.collapse.bind(this);
         this.delete = this.delete.bind(this);
         this.reloadReplies = this.reloadReplies.bind(this);
@@ -32,7 +33,7 @@ export default class Post extends React.Component {
         }
     }
 
-    loadReplies(first=false) {
+    loadReplies(first=false, reload=false) {
         const id = this.props.post.id;
 
         fetch(`/rr/${id}.${this.state.offset}.${this.state.amount}`)
@@ -49,7 +50,10 @@ export default class Post extends React.Component {
                 this.setState(state => ({
                     replies: [...moreReplies, ...state.replies],
                     loadingMore: false
-                }), () => { if (!first) this.extendReplies(); })
+                }), () => {
+                    if (!first && !reload) this.extendReplies();
+                    if (reload) this.correctExtend(data);
+                })
                 if (data.length < (this.state.amount + 1)) {
                     this.setState({
                         more: false
@@ -78,6 +82,34 @@ export default class Post extends React.Component {
                     controller.abort();
                 }
             }, {signal: controller.signal});
+        }
+    }
+
+    correctExtend(replies) {
+        var totalHeight = 0;
+        var parentId;
+        replies.slice(0, this.state.amount).forEach(reply => {
+            totalHeight += document.getElementById(`p${reply.id}`).offsetHeight;
+            parentId = reply.idParent;
+        });
+        
+        var rep = document.getElementById('Replies-' + this.props.post.id);
+        var parent = document.getElementById(`p${parentId}`);
+        if (rep && totalHeight !== rep.clientHeight) {
+            rep.style.height = totalHeight + "px";
+            rep.scrollTop = totalHeight;
+            if (parent) parent.scrollIntoView({ behavior: "smooth" });
+            if (this.state.collapsed) this.setState({ collapsed: false });
+            const controller = new AbortController();
+            rep.addEventListener('transitionend', (e) => {
+                if (e.currentTarget === e.target) {
+                    rep.style.height = "auto";
+                    controller.abort();
+                }
+            }, {signal: controller.signal});
+        } else if (rep) {
+            rep.style.height = "auto";
+            if (parent) parent.scrollIntoView({ behavior: "smooth" });
         }
     }
 
@@ -133,7 +165,7 @@ export default class Post extends React.Component {
             collapsed: false
         }, () => {
             repliesElem.style.height = beforeHeight + "px";
-            this.loadReplies();
+            this.loadReplies(false, true);
         });
     }
 
