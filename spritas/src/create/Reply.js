@@ -35,15 +35,21 @@ export default class Reply extends React.Component {
     }
 
     submit() {
+        const id = (this.props.id) ? this.props.id : "";
+
+        const bodyElem = document.getElementById(`reply${id}`);
+        if (!bodyElem.checkValidity()) {
+            bodyElem.setCustomValidity('Your message requires text.');
+            return bodyElem.reportValidity();
+        }
+
         if (!this.state.submitting) {
             this.setState({
                 submitting: true,
                 open: false
             }, () => {
-                const id = (this.props.id) ? this.props.id : "";
-
                 var myBody = new URLSearchParams();
-                const reply = document.getElementById(`reply${id}`).value;
+                const reply = bodyElem.value;
                 myBody.append('id', id);
                 myBody.append('reply', reply);
         
@@ -98,7 +104,7 @@ export default class Reply extends React.Component {
                 {expand}
                 <div className={"Reply-form" + open}>
                     <img className="Reply-img" src={avatar} alt="You" />
-                    <textarea className="Reply-text" name="reply" id={`reply${id}`} rows="6" required placeholder={placeholder} onChange={this.bodyCheck} />
+                    <textarea className="Reply-text" name="reply" id={`reply${id}`} rows="6" required placeholder={placeholder} onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
                     <input className="Reply-submit" type="submit" value={submitText} onClick={this.submit} />
                 </div>
             </div>
