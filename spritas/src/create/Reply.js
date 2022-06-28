@@ -70,7 +70,7 @@ export default class Reply extends React.Component {
                             document.getElementById(`reply${id}`).value = "";
                             this.props.reload();
                         });
-                    }, 3000);
+                    }, 1000);
                 })
                 .catch(error => this.setState({ submitting: false }));
             })
