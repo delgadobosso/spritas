@@ -1,25 +1,25 @@
-# Spritas Website
+# Spritas Website (NodeJS, ReactJS, MySQL)
 ## Work In Progress Previews
 ### Main Page
-![Screenshot 2022-06-10 at 19-17-38 The Spritas](https://user-images.githubusercontent.com/15951232/173161714-e6f5b54f-711e-47ad-8ade-9befa3374bd5.png)
+![image](https://user-images.githubusercontent.com/15951232/176080410-9b2dcb69-317a-47cd-8437-5c29363a26db.png)
 
-### Image Post (Desktop)
-![Screenshot 2022-06-10 at 19-18-57 cat](https://user-images.githubusercontent.com/15951232/173161791-65615d00-63af-47da-a5e3-9b680374c8da.png)
+### Viewing Image Post & Version History
+https://user-images.githubusercontent.com/15951232/176080721-bb4e1ad9-c11b-4e84-b19b-0d579ca83c42.mp4
 
-### Image Post (Mobile)
-![Screenshot_20220610-192004](https://user-images.githubusercontent.com/15951232/173161879-8f43c00d-e64c-4080-a2d2-ea0cb4055044.jpg)
+### Mixed Media Post - Images, Videos, and Text
+https://user-images.githubusercontent.com/15951232/176081137-e909d165-2e3c-4cd3-aa66-791a623ca6b1.mp4
 
-### Post Replies
-![comments](https://user-images.githubusercontent.com/15951232/173250261-631afa7c-b9ea-4c24-b71c-2b40a4ec9334.png)
+### Update Post
+https://user-images.githubusercontent.com/15951232/176081790-999a8cdd-ab1f-43dd-96e7-9cd1373dfc0b.mp4
 
-### Post Navigation (Desktop)
-![f13ba5ec3b804befce9f3b2e2ec886db](https://user-images.githubusercontent.com/15951232/173162548-82ea3498-79c7-4eac-b27c-373e2c5b21bd.gif)
+### Comments and Replies
+https://user-images.githubusercontent.com/15951232/176082190-a917003d-2a81-4c47-b301-b661effb328d.mp4
 
-### Post Version History
-![fbd1f4a0563e2d75e3df71c6684bdf24](https://user-images.githubusercontent.com/15951232/173162144-c4a9e0c8-a47d-4100-aee1-356469e307c7.gif)
+### Responsive Design
+https://user-images.githubusercontent.com/15951232/176082440-4c8dee3e-3c2c-4f4e-8a79-21c7fd562d86.mp4
 
-### User Profile (Desktop)
-![Screenshot 2022-05-29 at 14-05-15 BryanDB](https://user-images.githubusercontent.com/15951232/170885036-5abd47dd-eff7-4d3f-b64b-0239001215b2.png)
+### User Page
+![image](https://user-images.githubusercontent.com/15951232/176082586-7148a280-e704-4ca6-81ab-b7fb56b87d4b.png)
 
-### User Profile (Mobile)
-![Screenshot_20220610-192144](https://user-images.githubusercontent.com/15951232/173161988-e6eca439-20da-4a75-8077-9f17b5d52ec6.jpg)
+### Mobile
+https://user-images.githubusercontent.com/15951232/176084631-81ea7c38-5354-493f-9702-3e5db87383f0.mp4
