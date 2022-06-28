@@ -32,10 +32,10 @@ export default class TopicPost extends React.Component {
         var ts = new Date(post.ts);
         var relTime = relativeTime(post.ts);
         ts = `Posted ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        if (post.update === 'UPDT') {
-            var lastTs = new Date(post.lastTs);
-            var lastRelTime = relativeTime(post.lastTs);
-            ts = `Updated ${('0' + lastTs.getHours()).slice(-2)}:${('0' + lastTs.getMinutes()).slice(-2)} on ${lastTs.toDateString()}`
+        if (post.status === 'UPDT') {
+            var tsUpdate = new Date(post.tsUpdate);
+            var lastRelTime = relativeTime(post.tsUpdate);
+            ts = `Updated ${('0' + tsUpdate.getHours()).slice(-2)}:${('0' + tsUpdate.getMinutes()).slice(-2)} on ${tsUpdate.toDateString()}`
             relTime = `Updated ${lastRelTime}`;
         } else relTime = `Posted ${relTime}`;
 
@@ -68,7 +68,7 @@ export default class TopicPost extends React.Component {
                 } else if (post.link) {
                     // let thumbnail load
                     var currentTime = new Date();
-                    var postedTime = new Date(post.lastTs);
+                    var postedTime = new Date(post.tsUpdate);
                     var elapsed = currentTime - postedTime;
                     var seconds = 5 * 1000;
 
@@ -94,7 +94,7 @@ export default class TopicPost extends React.Component {
                 if (post.link) {
                     // let thumbnail load
                     var currentTime = new Date();
-                    var postedTime = new Date(post.lastTs);
+                    var postedTime = new Date(post.tsUpdate);
                     var elapsed = currentTime - postedTime;
                     var seconds = 5 * 1000;
 

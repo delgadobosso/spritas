@@ -256,7 +256,7 @@ export default class Post extends React.Component {
         var reply;
         if ((this.props.user && this.props.user.type === "BAN") || (this.props.blockers && this.props.blockers.includes(this.props.opid))) reply = null;
         else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <p className="PostContainer-banBlock">{post.nickname} Has Blocked You From Replying</p>;
-        else if (this.props.user) reply = <Reply id={post.id} user={this.props.user} reload={this.reloadReplies} />;
+        else if (this.props.user) reply = <Reply id={post.id} user={this.props.user} reload={this.reloadReplies} target={'comment'} />;
 
         const replies = (this.props.reply) ?
         <div>
@@ -298,10 +298,10 @@ export default class Post extends React.Component {
         const opreply = (this.props.opid === post.idUser) ? " Post-replyop" : "";
         const optag = ((op || opreply) && !youreply) ? <span className="Post-optag" title="Original Poster"> OP</span> : null;
 
-        const deleted = (post.update === 'DELE') ? ' Post-bodyDel' : '';
+        const deleted = (post.status === 'DELE') ? ' Post-bodyDel' : '';
 
         var deleting = (this.state.deleting) ? " LoadingCover-anim" : "";
-        const deleteReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user &&
+        const deleteReply = (post.status !== 'DELE' && this.props.user &&
         (this.props.user.id === post.idUser || this.props.user.type === 'ADMN') && this.props.user.type !== "BAN") ? (
             <div className='Post-delete' onClick={this.delete} title='Delete Reply'>
                 <div className={'LoadingCover' + deleting}></div>
@@ -309,7 +309,7 @@ export default class Post extends React.Component {
             </div>
         ) : null;
 
-        const reportReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user && this.props.user.id !== post.idUser && this.props.user.type !== 'ADMN' && this.props.user.type !== 'BAN') ? (
+        const reportReply = (post.status !== 'DELE' && this.props.user && this.props.user.id !== post.idUser && this.props.user.type !== 'ADMN' && this.props.user.type !== 'BAN') ? (
             <div className='Post-delete' title='Report Reply'>Report</div>
         ) : null;
 

@@ -55,7 +55,7 @@ export default class Reply extends React.Component {
         
                 var urlForm
         
-                fetch('/create/reply', {
+                fetch('/create/reply/' + this.props.target, {
                     method: 'POST',
                     body: myBody
                 })
