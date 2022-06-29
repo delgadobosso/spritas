@@ -4,7 +4,6 @@ import PostMain from './PostMain';
 import Post from './Post';
 import Reply from '../create/Reply';
 import scrollBounce from '../functions/scrollBounce';
-import UpdatePost from '../create/UpdatePost';
 import he from 'he';
 
 export default class PostContainer extends React.Component {
@@ -14,6 +13,7 @@ export default class PostContainer extends React.Component {
         this.loadReplies = this.loadReplies.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
         this.setCurrent = this.setCurrent.bind(this);
+        this.reloadComments = this.reloadComments.bind(this);
         this.state = {
             main: null,
             replies: [],
@@ -21,7 +21,7 @@ export default class PostContainer extends React.Component {
             current: 0,
             offset: 0,
             amount: 4,
-            more: true,
+            more: false,
             ever: false,
             opid: null,
             blockers: [],
@@ -74,7 +74,7 @@ export default class PostContainer extends React.Component {
     }
 
     loadReplies(first=false) {
-        const id = (this.props.id) ? this.props.id : this.props.match.params.id;
+        const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
         if (!this.state.ever && this.state.offset > 0) this.setState({ever: true});
 
         fetch(`/r/${id}.${this.state.offset}.${this.state.amount}`)
@@ -83,7 +83,7 @@ export default class PostContainer extends React.Component {
                 const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
                     <Post key={index + this.state.offset} post={reply}
                         reply={true} opid={this.state.opid} user={this.props.user}
-                        blockers={this.state.blockers} delay={index} />
+                        blockers={this.state.blockers} delay={index} reload={this.reloadComments} />
                 );
                 var rep = document.getElementById('Replies');
                 if (rep && !first) {
@@ -95,12 +95,13 @@ export default class PostContainer extends React.Component {
                     loadingMore: false
                 }), () => { if (!first) this.extendReplies(); })
                 if (data.length < (this.state.amount + 1)) {
-                    this.setState(state => ({
-                        more: !state.more
-                    }));
+                    this.setState({
+                        more: false
+                    });
                 } else {
                     this.setState(state => ({
-                        offset: state.offset + this.state.amount
+                        offset: state.offset + this.state.amount,
+                        more: true
                     }));
                 }
             })
@@ -124,17 +125,35 @@ export default class PostContainer extends React.Component {
 
     setCurrent(value, cb) {
         this.setState({
-            current: value
-        }, () => { if (cb) cb(value); });
+            current: value,
+            replies: [],
+            offset: 0,
+            more: false,
+            ever: false,
+            loadingMore: false
+        }, () => {
+            if (cb) cb(value);
+            this.loadReplies(true);
+        });
+    }
+
+    reloadComments() {
+        this.setState({
+            replies: [],
+            offset: 0,
+            more: false,
+            ever: false,
+            loadingMore: false
+        }, () => this.loadReplies(true));
     }
 
     render() {
-        const id = (this.state.post) ? this.state.post.id : "";
+        const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
         else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Commenting</p>;
-        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply parentId={id} main={true} user={this.props.user} />
+        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Comments Shown</div> : null;

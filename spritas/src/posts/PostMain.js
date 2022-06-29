@@ -443,10 +443,10 @@ export default class PostMain extends React.Component {
         var update;
         var deletePost;
         var report;
-        if (this.props.user && this.props.user.id === currentPost.idUser && currentPost.update !== 'DELE' && this.props.user.type !== 'BAN') {
+        if (this.props.user && this.props.user.id === currentPost.idUser && currentPost.status !== 'DELE' && this.props.user.type !== 'BAN') {
             update = <div className='PostMain-optionItem' onClick={() => this.updateMode(true)}>Update Post</div>;
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post</div>;
-        } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.update !== 'DELE') {
+        } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.status !== 'DELE') {
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post As Admin</div>;
         } else if (this.props.user && this.props.user.type !== 'BAN') {
             report = <div className='PostMain-optionItem PostMain-optionItemRed'>Report Post</div>;

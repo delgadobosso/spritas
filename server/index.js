@@ -126,12 +126,12 @@ app.get('/home/new/:offset.:limit', (req, res) => {
                 p1.title,
                 IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
                 IFNULL(t1.body, p1.body) AS body,
-                IFNULL(t1.update, p1.update) AS 'update',
+                IFNULL(t1.status, p1.status) AS status,
                 IFNULL(t1.link, p1.link) AS link,
                 IFNULL(t1.type, p1.type) AS type,
                 p1.perm,
                 p1.ts,
-                IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
+                IFNULL(t1.tsUpdate, p1.tsUpdate) AS tsUpdate,
                 users.username AS username,
                 users.nickname AS nickname,
                 users.avatar AS avatar
@@ -144,13 +144,13 @@ app.get('/home/new/:offset.:limit', (req, res) => {
                 INNER JOIN (
                     SELECT MAX(id) AS id
                     FROM posts
-                    WHERE posts.update = 'UPDT'
+                    WHERE posts.status = 'UPDT'
                     GROUP BY idParent) AS t
                 USING (id)) AS t1
             ON p1.id = t1.idParent
             WHERE p1.idParent IS NULL
-            AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
-            ORDER BY p1.lastTs DESC
+            AND (p1.status IS NULL OR (p1.status = 'DELE' AND t1.id IS NOT NULL))
+            ORDER BY p1.tsUpdate DESC
             LIMIT ?,?`,
         [offset, limit], (error, result, fields) => {
             if (error) res.status(500).send(error);
@@ -246,10 +246,34 @@ app.get('/p/:id', (req, res) => {
         pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
-            WHERE (posts.id = ? AND (posts.update != "DELE" OR posts.update IS NULL))
-            OR (posts.update = "UPDT" AND posts.idParent = ?)
+            WHERE (posts.id = ? AND (posts.status != "DELE" OR posts.status IS NULL))
+            OR (posts.status = "UPDT" AND posts.idParent = ?)
             ORDER BY posts.id = ? DESC, posts.ts`,
         [id, id, id], (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+            
+            else res.send(result);
+        })
+    } else res.redirect('/post/' + req.params.id);
+})
+
+// Get replies to posts
+app.get('/r/:id.:offset.:limit', (req, res) => {
+    if (req.headers.referer) {
+        const id = req.params.id;
+        var offset;
+        var limit;
+        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
+        else offset = 0;
+        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
+        else limit = 0;
+        pool.query(`SELECT replies.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
+            FROM replies
+            LEFT JOIN users ON replies.idUser = users.id
+            WHERE replies.idPost = ? AND replies.idParent IS NULL
+            ORDER BY replies.id = ? DESC, replies.ts DESC
+            LIMIT ?,?`,
+        [id, id, offset, limit], (error, result, fields) => {
             if (error) return res.status(500).send(error);
             
             else res.send(result);
@@ -267,11 +291,11 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
         else offset = 0;
         if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
         else limit = 0;
-        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
-            FROM posts
-            LEFT JOIN users ON posts.idUser = users.id
-            WHERE posts.idParent = ? AND posts.type = 'RPLY'
-            ORDER BY posts.ts DESC
+        pool.query(`SELECT replies.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
+            FROM replies
+            LEFT JOIN users ON replies.idUser = users.id
+            WHERE replies.idParent = ?
+            ORDER BY replies.ts DESC
             LIMIT ?,?`,
         [id, offset, limit], (error, result, fields) => {
             if (error) return res.status(500).send(error);
@@ -279,30 +303,6 @@ app.get('/rr/:id.:offset.:limit', (req, res) => {
             else res.send(result);
         })
     } else res.redirect('/');
-})
-
-// Get replies to posts
-app.get('/r/:id.:offset.:limit', (req, res) => {
-    if (req.headers.referer) {
-        const id = req.params.id;
-        var offset;
-        var limit;
-        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
-        else offset = 0;
-        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
-        else limit = 0;
-        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
-            FROM posts
-            LEFT JOIN users ON posts.idUser = users.id
-            WHERE posts.idParent = ? AND posts.type = 'RPLY'
-            ORDER BY posts.id = ? DESC, posts.lastTs DESC
-            LIMIT ?,?`,
-        [id, id, offset, limit], (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-            
-            else res.send(result);
-        })
-    } else res.redirect('/post/' + req.params.id);
 })
 
 app.post('/create/topic',
@@ -408,68 +408,105 @@ app.post('/create/post',
     }
 )
 
-app.post('/create/reply',
+app.post('/create/reply/post',
     body('id').notEmpty().isInt(),
-    body('reply').trim().isLength({ min: 1 }).escape(),
+    body('reply').trim().isLength({ min: 1, max: 2500 }).escape(),
     (req, res) => {
         if (!req.session.user) return res.sendStatus(401);
-        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
+        if (req.session.user.type === "BAN") return res.sendStatus(403);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-        // Working on insert
-        pool.query(`SELECT *
-        FROM posts
-        WHERE id = ?
-        OR (id = (
-            SELECT idParent
-            FROM posts
-            WHERE id = ?) AND type != 'RPLY')
-        OR id = (
-            SELECT idParent
-            FROM posts
-            WHERE id = (
-                SELECT idParent
-                FROM posts
-                WHERE id = ?))
-        ORDER BY id DESC;`, [req.body.id, req.body.id, req.body.id], (error, result, fields) => {
+        // Get the post this comment is for
+        pool.query(`SELECT * FROM posts WHERE id = ?`, req.body.id, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
-            var ogOpId;
-            var replyOpId;
-            // If this is reply to reply, get the op id of original post
-            if (result.length > 1) ogOpId = result[1].idUser;
-            // Valid first post of a topic is found
             if (result.length > 0) {
                 const parent = result[0];
-                replyOpId = result[0].idUser;
-                // Check if this user is blocked by the op
+                // Check if this user is blocked by the OP
                 pool.query(`SELECT * FROM users_blocked
-                    WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
-                    [ogOpId, req.session.user.id, replyOpId, req.session.user.id], (error, blockRes, fields) => {
-                        if (error) return res.status(500).send(error);
+                WHERE (blockerId = ? AND blockedId = ?)`,
+                [parent.idUser, req.session.user.id], (error, result, fields) => {
+                    if (error) return res.status(500).send(error);
 
-                        if (blockRes.length > 0) return res.sendStatus(403);
+                    if (result.length > 0) return res.sendStatus(403);
 
-                        // check if post was made by person trying to comment, don't let them
-                        if (parent.type !== "RPLY" && req.session.user.id === parent.idUser) return res.sendStatus(403);
-                        else {
-                            pool.query(`INSERT INTO posts (idParent,idUser,body,type)
-                            VALUES(?,?,?,'RPLY')`,
-                            [parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                    // Don't let OP comment on own post
+                    if (req.session.user.id === parent.idUser) return res.sendStatus(403);
+                    else {
+                        pool.query(`INSERT INTO replies (idPost,idUser,body)
+                        VALUES (?,?,?)`, [parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                            if (error) return res.status(500).send(error);
+
+                            const resId = result.insertId.toString();
+                            
+                            pool.query(`UPDATE posts SET tsReply = CURRENT_TIMESTAMP WHERE id = ?`,
+                            parent.id, (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
-                                pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
-                                WHERE id = ? OR id = ?`,
-                                [parent.id, parent.idParent], (error, result, fields) => {
-                                    if (error) return res.status(500).send(error);
+                                return res.status(200).send(resId);
+                            })
+                        })
+                    }
+                })
+            } else return res.status(400).json({error: "No post to reply to."});
+        })
+    }
+)
 
-                                    return res.redirect('/');
-                                })
+app.post('/create/reply/comment',
+    body('id').notEmpty().isInt(),
+    body('reply').trim().isLength({ min: 1, max: 2500 }).escape(),
+    (req, res) => {
+        if (!req.session.user) return res.sendStatus(401);
+        if (req.session.user.type === "BAN") return res.sendStatus(403);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+
+        var parentPost;
+        var parentComment;
+        // Get parent comment
+        pool.query(`SELECT * FROM replies WHERE id = ?`, req.body.id, (error, result, fields) => {
+            if (error) return res.status(500).send(error);
+
+            if (result.length > 0) {
+                parentComment = result[0];
+
+                // Get parent post
+                pool.query(`SELECT * FROM posts WHERE id = ?`, parentComment.idPost, (error, result, fields) => {
+                    if (error) return res.status(500).send(error);
+
+                    parentPost = result[0];
+
+                    // Check if post or comment OPs are blocking this user
+                    pool.query(`SELECT * FROM users_blocked
+                    WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
+                    [parentPost.idUser, req.session.user.id, parentComment.idUser, req.session.user.id],
+                    (error, result, fields) => {
+                        if (error) return res.status(500).send(error);
+
+                        if (result.length > 0) return res.sendStatus(403);
+                        else {
+                            pool.query(`INSERT INTO replies (idParent,idUser,body)
+                            VALUES (?,?,?)`, [parentComment.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                                if (error) return res.status(500).send(error);
+
+                                const resId = result.insertId.toString();
+
+                                // Only update post ts if not the OP replying
+                                if (req.session.user.id === parentPost.idUser) return res.status(200).send(resId);
+                                else {
+                                    pool.query(`UPDATE posts SET tsReply = CURRENT_TIMESTAMP WHERE id = ?`, parentPost.id, (error, result, fields) => {
+                                        if (error) return res.status(500).send(error);
+
+                                        return res.status(200).send(resId);
+                                    })
+                                }
                             })
                         }
                     })
-            } else return res.status(400).json({error: "No post to reply to."});
+                })
+            } else return res.status(400).json({error: "No comment to reply to."});
         })
     }
 )
@@ -509,12 +546,12 @@ app.post('/update/post',
                     if (req.session.user.id === parent.idUser) {
                         // Add link if it's a VIDO
                         if (type === "VIDO" && req.body.link !== "") {
-                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
+                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,status,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
                             [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body, req.body.link, type],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
-                                pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
+                                pool.query(`UPDATE posts SET tsUpdate = CURRENT_TIMESTAMP
                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
     
@@ -534,12 +571,12 @@ app.post('/update/post',
                                         req.body.subtitle)
                                     .then((json) => {
                                         if (json.link) {
-                                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`,link,deletehash,type) VALUES(?,?,?,?,?,'UPDT',?,?,?)",
+                                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,status,link,deletehash,type) VALUES(?,?,?,?,?,'UPDT',?,?,?)",
                                             [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body, json.link, json.deletehash, type],
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
-                                                pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
+                                                pool.query(`UPDATE posts SET tsUpdate = CURRENT_TIMESTAMP
                                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                                     if (error) return res.status(500).send(error);
                     
@@ -558,12 +595,12 @@ app.post('/update/post',
                             }
                         } else {
                         // No link insert
-                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,`update`) VALUES(?,?,?,?,?,'UPDT')",
+                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,status) VALUES(?,?,?,?,?,'UPDT')",
                             [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body],
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
-                                pool.query(`UPDATE posts SET lastTs = CURRENT_TIMESTAMP
+                                pool.query(`UPDATE posts SET tsUpdate = CURRENT_TIMESTAMP
                                 WHERE id = ?`, parent.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
 
@@ -623,7 +660,7 @@ app.post('/delete/post',
                 var deletehash = result[0].deletehash;
                 var byWho = (req.session.user.type === 'ADMN') ? 'Deleted By Admin' : 'Deleted By User';
                 pool.query(`UPDATE posts AS p
-                SET subtitle = NULL, body = ?, p.update = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
+                SET subtitle = NULL, body = ?, p.status = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
                 WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
                     if (error) return res.status(500).send(error);
 
@@ -651,14 +688,14 @@ app.post('/delete/reply',
         if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
         pool.query(`SELECT *
-        FROM posts AS p
+        FROM replies
         WHERE id = ?`, req.body.id, (error, result, fields) => {
             if (error) return res.status(500).send(error);
 
             if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
-                var byWho = (req.session.user.type === 'ADMN') ? 'Deleted By Admin' : 'Deleted By User';
-                pool.query(`UPDATE posts AS p
-                SET body = ?, p.update = 'DELE'
+                var byWho = (req.session.user.type === 'ADMN' && req.session.user.id !== result[0].idUser) ? 'Deleted By Admin' : 'Deleted By User';
+                pool.query(`UPDATE replies
+                SET body = ?, status = 'DELE'
                 WHERE id = ?`, [byWho, req.body.id], (error, result, fields) => {
                     if (error) return res.status(500).send(error);
                     else return res.sendStatus(200);
@@ -735,12 +772,12 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
             p1.title,
             IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
             IFNULL(t1.body, p1.body) AS body,
-            IFNULL(t1.update, p1.update) AS 'update',
+            IFNULL(t1.status, p1.status) AS status,
             IFNULL(t1.link, p1.link) AS link,
             IFNULL(t1.type, p1.type) AS type,
             p1.perm,
             p1.ts,
-            IFNULL(t1.lastTs, p1.lastTs) AS lastTs,
+            IFNULL(t1.tsUpdate, p1.tsUpdate) AS tsUpdate,
             users.username AS username,
             users.nickname AS nickname,
             users.avatar AS avatar
@@ -753,13 +790,13 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
             INNER JOIN (
                 SELECT MAX(id) AS id
                 FROM posts
-                WHERE idUser = ? AND posts.update = 'UPDT'
+                WHERE idUser = ? AND posts.status = 'UPDT'
                 GROUP BY idParent) AS t
             USING (id)) AS t1
         ON p1.id = t1.idParent
         WHERE p1.idUser = ? AND p1.idParent IS NULL
-        AND (p1.update IS NULL OR (p1.update = 'DELE' AND t1.id IS NOT NULL))
-        ORDER BY p1.lastTs DESC
+        AND (p1.status IS NULL OR (p1.status = 'DELE' AND t1.id IS NOT NULL))
+        ORDER BY p1.tsUpdate DESC
         LIMIT ?,?
         `, [id, id, offset, limit], (error, result, fields) => {
             if (error) return res.status(500).send(error);

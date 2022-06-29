@@ -22,8 +22,10 @@
 }
 
 .Post-main {
+    position: relative;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .Post-info {
@@ -141,6 +143,7 @@
 }
 
 .Post-delete {
+    position: relative;
     width: max-content;
     cursor: pointer;
     color: white;
@@ -149,6 +152,7 @@
     padding: 5px 10px;
     margin: 0 5px 10px 5px;
     font-size: 0.9em;
+    overflow: hidden;
 
     transition: color 0.1s, background-color 0.1s;
     -moz-user-select: none;

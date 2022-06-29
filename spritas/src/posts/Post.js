@@ -8,49 +8,50 @@ import relativeTime from '../functions/relativeTime';
 export default class Post extends React.Component {
     constructor(props) {
         super(props);
+        this.resizeHandle = this.resizeHandle.bind(this);
         this.loadReplies = this.loadReplies.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
+        this.correctExtend = this.correctExtend.bind(this);
         this.collapse = this.collapse.bind(this);
         this.delete = this.delete.bind(this);
+        this.reloadReplies = this.reloadReplies.bind(this);
+        this.collapsable = this.collapsable.bind(this);
+        this.expand = this.expand.bind(this);
         this.state = ({
-            replies: null,
+            replies: [],
             offset: 0,
             amount: 4,
-            more: true,
+            more: false,
             collapsed: false,
             toggleTime: false,
-            loadingMore: false
+            loadingMore: false,
+            collapsable: false,
+            expand: false,
+            resize: true,
+            deleting: false
          });
     }
 
     componentDidMount() {
-        if (this.props.reply) {
-            const id = this.props.post.id;
+        window.addEventListener('resize', this.resizeHandle);
 
-            fetch(`/rr/${id}.${this.state.offset}.${this.state.amount}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const replies = data.slice(0, this.state.amount).reverse().map((reply, index) =>
-                            <Post key={index} post={reply} opid={this.props.opid} user={this.props.user} /> );
-                        this.setState({
-                            replies: replies
-                        });
-                    }
-                    if (data.length < (this.state.amount + 1)) {
-                        this.setState(state => ({
-                            more: !state.more
-                        }));
-                    } else {
-                        this.setState(state => ({
-                            offset: state.offset + this.state.amount
-                        }));
-                    }
-                })
+        this.collapsable();
+        if (this.props.reply) this.loadReplies(true);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.resizeHandle);
+    }
+
+    resizeHandle() {
+        // Throttle resize handle
+        if (this.state.resize) {
+            this.setState({ resize: false });
+            setTimeout(() => this.setState({ resize: true }, () => this.collapsable()), 500);
         }
     }
 
-    loadReplies() {
+    loadReplies(first=false, reload=false) {
         const id = this.props.post.id;
 
         fetch(`/rr/${id}.${this.state.offset}.${this.state.amount}`)
@@ -58,21 +59,27 @@ export default class Post extends React.Component {
             .then(data => {
                 const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) => 
                     <Post key={index + this.state.offset} post={reply}
-                        opid={this.props.opid} user={this.props.user} /> );
+                        opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                 var rep = document.getElementById('Replies-' + this.props.post.id);
-                let maxHeight = rep.scrollHeight;
-                rep.style.height = maxHeight + "px";
+                if (rep && !first) {
+                    let maxHeight = rep.scrollHeight;
+                    rep.style.height = maxHeight + "px";
+                }
                 this.setState(state => ({
                     replies: [...moreReplies, ...state.replies],
                     loadingMore: false
-                }), () => this.extendReplies())
+                }), () => {
+                    if (!first && !reload) this.extendReplies();
+                    if (reload) this.correctExtend(data);
+                })
                 if (data.length < (this.state.amount + 1)) {
-                    this.setState(state => ({
-                        more: !state.more
-                    }));
+                    this.setState({
+                        more: false
+                    });
                 } else {
                     this.setState(state => ({
-                        offset: state.offset + this.state.amount
+                        offset: state.offset + this.state.amount,
+                        more: true
                     }));
                 }
             })
@@ -93,6 +100,34 @@ export default class Post extends React.Component {
                     controller.abort();
                 }
             }, {signal: controller.signal});
+        }
+    }
+
+    correctExtend(replies) {
+        var totalHeight = 0;
+        var parentId;
+        replies.slice(0, this.state.amount).forEach(reply => {
+            totalHeight += document.getElementById(`p${reply.id}`).offsetHeight;
+            parentId = reply.idParent;
+        });
+        
+        var rep = document.getElementById('Replies-' + this.props.post.id);
+        var parent = document.getElementById(`p${parentId}`);
+        if (rep && totalHeight !== rep.clientHeight) {
+            rep.style.height = totalHeight + "px";
+            rep.scrollTop = totalHeight;
+            if (parent) parent.scrollIntoView({ behavior: "smooth" });
+            if (this.state.collapsed) this.setState({ collapsed: false });
+            const controller = new AbortController();
+            rep.addEventListener('transitionend', (e) => {
+                if (e.currentTarget === e.target) {
+                    rep.style.height = "auto";
+                    controller.abort();
+                }
+            }, {signal: controller.signal});
+        } else if (rep) {
+            rep.style.height = "auto";
+            if (parent) parent.scrollIntoView({ behavior: "smooth" });
         }
     }
 
@@ -120,21 +155,88 @@ export default class Post extends React.Component {
     }
 
     delete() {
-        const post = this.props.post;
-        var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.username}" to confirm:`, '');
-        if (answer === post.username) {
-            var myBody = new URLSearchParams();
-            myBody.append('id', post.id);
-            
-            fetch('/delete/reply', {
-                method: 'POST',
-                body: myBody
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/';
-                else alert('Post deletion error');
-            })
-        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+        console.log(document.getElementById('Replies-' + this.props.post.id), this.props.post.id);
+        if (!this.state.deleting) {
+            const post = this.props.post;
+            var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.username}" to confirm:`, '');
+            if (answer === post.username) {
+                this.setState({ deleting: true }, () => {
+                    var myBody = new URLSearchParams();
+                    myBody.append('id', post.id);
+                    
+                    fetch('/delete/reply', {
+                        method: 'POST',
+                        body: myBody
+                    })
+                    .then((resp) => {
+                        this.setState({ deleting: false }, () => {
+                            if (resp.ok) this.props.reload();
+                            else alert('Post deletion error');
+                        });
+                    })
+                    .catch(error => this.setState({ deleting: false }));
+                })
+            } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+        }
+    }
+
+    reloadReplies() {
+        var repliesElem = document.getElementById('Replies-' + this.props.post.id);
+        var beforeHeight = repliesElem.scrollHeight;
+
+        this.setState({
+            replies: [],
+            offset: 0,
+            more: false,
+            collapsed: false
+        }, () => {
+            repliesElem.style.height = beforeHeight + "px";
+            this.loadReplies(false, true);
+        });
+    }
+
+    collapsable() {
+        const post = document.getElementById(`pMain${this.props.post.id}`);
+        if (post && post.scrollHeight > 300) {
+            post.style.height = '300px';
+            this.setState({
+                collapsable: true,
+                expand: false
+            });
+        }
+        else {
+            this.setState({
+                collapsable: false,
+                expand: false
+            });
+        }
+    }
+
+    expand() {
+        const post = document.getElementById(`pMain${this.props.post.id}`);
+        const durr = (post.scrollHeight > 1000) ? 1000 : 500;
+
+        if (!this.state.expand) this.setState({
+            expand: true
+        }, () => {
+            post.getAnimations().map(animation => animation.cancel());
+            post.animate([
+                { height: `300px` },
+                { height: `${post.scrollHeight + 50}px` }
+            ], { duration: durr, easing: 'ease' });
+            post.style.height = `${post.scrollHeight + 50}px`;
+        });
+        else this.setState({
+            expand: false
+        }, () => {
+            post.scrollIntoView({ behavior: "smooth" });
+            post.getAnimations().map(animation => animation.cancel());
+            post.animate([
+                { height: `${post.scrollHeight}px` },
+                { height: `300px` },
+            ], { duration: durr, easing: 'ease' });
+            post.style.height = `300px`;
+        });
     }
 
     render() {
@@ -154,7 +256,7 @@ export default class Post extends React.Component {
         var reply;
         if ((this.props.user && this.props.user.type === "BAN") || (this.props.blockers && this.props.blockers.includes(this.props.opid))) reply = null;
         else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <p className="PostContainer-banBlock">{post.nickname} Has Blocked You From Replying</p>;
-        else if (this.props.user) reply = <Reply parentId={post.id} user={this.props.user} />;
+        else if (this.props.user) reply = <Reply id={post.id} user={this.props.user} reload={this.reloadReplies} target={'comment'} />;
 
         const replies = (this.props.reply) ?
         <div>
@@ -182,7 +284,7 @@ export default class Post extends React.Component {
         }
 
         var collapse = null;
-        if (this.props.reply && this.state.replies) {
+        if (this.props.reply && this.state.replies.length > 0) {
             collapse = (this.state.collapsed) ?
             <div className="Post-collapse" onClick={this.collapse}>Show Replies</div> :
             <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
@@ -196,14 +298,18 @@ export default class Post extends React.Component {
         const opreply = (this.props.opid === post.idUser) ? " Post-replyop" : "";
         const optag = ((op || opreply) && !youreply) ? <span className="Post-optag" title="Original Poster"> OP</span> : null;
 
-        const deleted = (post.update === 'DELE') ? ' Post-bodyDel' : '';
+        const deleted = (post.status === 'DELE') ? ' Post-bodyDel' : '';
 
-        const deleteReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user &&
+        var deleting = (this.state.deleting) ? " LoadingCover-anim" : "";
+        const deleteReply = (post.status !== 'DELE' && this.props.user &&
         (this.props.user.id === post.idUser || this.props.user.type === 'ADMN') && this.props.user.type !== "BAN") ? (
-            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>Delete</div>
+            <div className='Post-delete' onClick={this.delete} title='Delete Reply'>
+                <div className={'LoadingCover' + deleting}></div>
+                Delete
+            </div>
         ) : null;
 
-        const reportReply = (post.type === 'RPLY' && post.update !== 'DELE' && this.props.user && this.props.user.id !== post.idUser && this.props.user.type !== 'ADMN' && this.props.user.type !== 'BAN') ? (
+        const reportReply = (post.status !== 'DELE' && this.props.user && this.props.user.id !== post.idUser && this.props.user.type !== 'ADMN' && this.props.user.type !== 'BAN') ? (
             <div className='Post-delete' title='Report Reply'>Report</div>
         ) : null;
 
@@ -214,9 +320,17 @@ export default class Post extends React.Component {
             </div>
         )
 
+        var collapseNo = (!this.state.collapsable) ? " PostMain-collapseNo" : "";
+        var expand = (this.state.expand) ? "Show Less" : "Show More";
+        var backClass = (this.state.expand) ? " PostMain-expandBack" : "";
+        var collapsable = <div className={'PostMain-collapse' + collapseNo} onClick={this.state.collapsable ? this.expand : undefined} title={expand}>
+            <div className={'PostMain-collapseBack' + backClass}></div>
+            <span className={!this.state.expand ? 'PostMain-collapseText' : 'PostMain-expandText'}>{expand}</span>
+        </div>;
+
         return (
             <div className={"Post" + op + opreply + youreply} id={"p" + post.id} style={{animationDelay: `${this.props.delay * 100}ms`}}>
-                <div className="Post-main">
+                <div className="Post-main" id={"pMain" + post.id}>
                     <div className='Post-info'>
                         <a className='Post-a' href={`/u/${post.username}`} title={"@" + post.username}>
                             <div className="Post-user">
@@ -228,6 +342,7 @@ export default class Post extends React.Component {
                     </div>
                     <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
                     {actions}
+                    {collapsable}
                 </div>
                 <div className="Post-controls">
                     {collapse}

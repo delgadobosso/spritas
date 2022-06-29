@@ -157,6 +157,9 @@
 
     transition: opacity 0.5s, height 0.5s;
 }
+.Post-replies .PostMain-collapseBack {
+    background: linear-gradient(0deg, var(--darkest-grey) 10%, rgba(0,0,0,0));
+}
 .PostMain-expandBack {
     height: 50px;
     opacity: 0;
@@ -384,6 +387,7 @@
     }
 
     .PostMain-mediaContainer {
+        position: relative;
         width: 640px;
         height: 360px;
         margin-right: 0;
