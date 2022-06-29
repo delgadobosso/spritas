@@ -1,8 +1,8 @@
 import React from 'react';
-import './Reply.css';
+import './CreateReply.css';
 import pfp from '../images/pfp.png';
 
-export default class Reply extends React.Component {
+export default class CreateReply extends React.Component {
     constructor(props) {
         super(props);
         this.expand = this.expand.bind(this);

@@ -12,7 +12,6 @@ import PostContainer from './posts/PostContainer';
 import CreateTopic from './create/CreateTopic';
 import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
-import Featured from "./featured/Featured";
 import UserContainer from './user/UserContainer';
 import TopicContainer from './topics/TopicContainer';
 

@@ -1,133 +1,45 @@
-.Post {
-    margin: 0 0 20px 0;
-    border-radius: 10px;
-    background-color: var(--mid-grey);
-    overflow: hidden;
-    opacity: 0;
+.PostMain-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
 
-    transition: border-radius 0.5s;
-    animation-name: fadeIn;
-    animation-duration: 0.5s;
-    animation-fill-mode: forwards;
+    transition: margin 0.5s;
 }
 
-.Post-optag {
-    font-size: 0.9em;
-    color: var(--spritan-gold);
+.PostMain-cards {
+    width: 600px;
+
+    transition: width 0.5s, height 0.5s, margin 0.5s;
 }
 
-.Post-youtag {
-    font-size: 0.9em;
-    color: var(--spritan-red);
+.PostMain-postOption {
+    display: flex;
+    flex-direction: column;
 }
 
-.Post-main {
+.PostMain-post {
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-}
-
-.Post-info {
-    display: flex;
-    align-items: center;
-    margin: 10px 8px 0 8px;
-    flex-wrap: wrap;
-    max-width: 100%;
-}
-
-.Post-a {
-    max-width: 100%;
-}
-
-.Post-user {
-    display: flex;
-    align-items: center;
-    width: max-content;
-    max-width: 100%;
-    border-radius: 10px;
-
-    transition: background-color 0.25s;
-}
-.Post-user:active {
-    cursor: pointer;
-    background-color: var(--darkest-grey);
-}
-.Post-user:active .Post-user-img {
-    border-radius: 10px;
-    filter: brightness(1.1);
-}
-.Post-replies .Post-user:active {
-    cursor: pointer;
     background-color: var(--mid-grey);
-}
-
-.Post-user-img {
-    width: 32px;
-    height: 32px;
-    border-radius: 16px;
-
-    transition: filter 0.5s, border-radius 0.25s;
-}
-
-.Post-nickname {
-    margin: 0 5px;
-    font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.Post-ts {
-    color: var(--info-grey);
-    font-size: 0.9em;
-    margin: 11px 0 10px 0;
-
-    transition: color 0.1s;
-}
-
-.Post-body {
-    margin: 5px 10px 10px 10px;
-}
-.Post-bodyDel {
-    font-style: italic;
-    color: var(--info-grey);
-    font-size: 0.9em;
-}
-
-.Post-replies {
-    height: auto;
-    overflow: hidden;
-
-    transition: height 0.5s;
-}
-
-.Post-replies .Post {
-    margin: 0;
-    border-radius: 0;
-    border-bottom: solid 5px var(--light-grey);
-    background-color: var(--darkest-grey);
-}
-
-.Post-replies .Post:last-child {
-    border-bottom: none;
-}
-
-.Post-controls {
-    display: flex;
-    width: 100%;
-    text-align: center;
+    border-radius: 10px;
     overflow: hidden;
 }
 
-.Post-load, .Post-collapse, .Post-gap {
-    position: relative;
-    flex-grow: 1;
-    flex-basis: 0;
-    padding: 5px 0;
-    background-color: var(--light-grey);
+.PostMain-option {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: var(--mid-grey);
+    overflow: hidden;
+}
+
+.PostMain-optionItem {
     color: white;
-    font-size: 0.9em;
+    padding: 10px 5px;
+    background-color: var(--mid-grey);
+    border-radius: 10px;
+    text-align: center;
     line-height: 20px;
 
     transition: background-color 0.1s;
@@ -137,61 +49,459 @@
     user-select: none;
 }
 
-.Post-actions {
-    display: flex;
-    justify-content: end;
+.PostMain-title {
+    margin: 0;
+    padding: 10px 10px;
+    background-color: var(--darkest-grey);
+    text-align: center;
+    word-break: break-word;
 }
 
-.Post-delete {
-    position: relative;
-    width: max-content;
-    cursor: pointer;
-    color: white;
-    background-color: var(--light-grey);
-    border-radius: 10px;
-    padding: 5px 10px;
-    margin: 0 5px 10px 5px;
-    font-size: 0.9em;
-    overflow: hidden;
+.PostMain-info {
+    display: flex;
+    align-items: center;
+    margin: 10px 10px 0 10px;
+    flex-wrap: wrap;
+}
 
-    transition: color 0.1s, background-color 0.1s;
+.PostMain-a {
+    max-width: 100%;
+}
+
+.PostMain-user {
+    display: flex;
+    width: max-content;
+    max-width: 100%;
+    align-items: center;
+    padding-right: 5px;
+    border-radius: 10px;
+    margin-left: -2px;
+
+    transition: background-color 0.1s;
+}
+.PostMain-user:active {
+    background-color: var(--darkest-grey);
+}
+.PostMain-user:active .TopicPost-img {
+    border-radius: 5px;
+    filter: brightness(1.1);
+}
+
+.PostMain-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+
+    transition: filter 0.5s, border-radius 0.25s;
+}
+
+.PostMain-nickname {
+    margin: 0 5px;
+    font-weight: bold;
+    overflow: hidden;
+    padding-left: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.PostMain-ts {
+    color: var(--info-grey);
+    font-size: 0.9em;
+    margin: 11px 0 10px 0;
+
+    transition: color 0.1s;
+}
+
+.PostMain-subtitle {
+    width: fit-content;
+    color: var(--spritan-gold);
+    margin: 10px 10px 0 10px;
+    word-break: break-all;
+
+    animation: fadeIn 0.5s;
+}
+
+.PostMain-body {
+    color: white;
+    margin: 10px 10px 15px 10px;
+
+    animation: fadeIn 0.5s;
+}
+
+.PostMain-collapse {
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+
+    animation: fadeIn 0.5s;
+    transition: opacity 0.5s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
+.PostMain-collapseNo {
+    pointer-events: none;
+    cursor: initial;
+    opacity: 0;
+
+    animation: none;
+}
+.PostMain-collapseBack {
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(0deg, var(--mid-grey) 10%, rgba(0,0,0,0));
+    bottom: 0;
+
+    transition: opacity 0.5s, height 0.5s;
+}
+.Post-replies .PostMain-collapseBack {
+    background: linear-gradient(0deg, var(--darkest-grey) 10%, rgba(0,0,0,0));
+}
+.PostMain-expandBack {
+    height: 50px;
+    opacity: 0;
+}
+.PostMain-collapseText, .PostMain-expandText {
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    line-height: 20px;
+    width: 100%;
+    text-align: center;
+    bottom: 15px;
+
+    transition: color 0.1s;
+}
+
+.PostMain-controls {
+    display: flex;
+    width: 100%;
+    height: 30px;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px 0;
+    background-color: var(--light-grey);
+}
+
+.PostMain-arrowContainer {
+    width: 80px;
+    height: 40px;
+}
+
+.PostMain-notEnd {
+    transform-origin: center;
+
+    transition: transform 0.1s;
+}
+
+.PostMain-arrowL, .PostMain-arrowR {
+    transition: transform 0.1s, stroke 0.1s;
+}
+.PostMain-notEnd:active .PostMain-arrowL {
+    transform: translate(-10px);
+}
+.PostMain-notEnd:active .PostMain-arrowR {
+    transform: translate(10px);
+}
+
+.PostMain-update {
+    width: 100%;
+    height: 40px;
+}
+
+.PostMain-nodeContainer {
+    overflow: visible;
+
+    transition: transform 0.5s;
+}
+
+.PostMain-node, .PostMain-nodeCurrent {
+    transition: fill 0.25s, r 0.25s;
+}
+.PostMain-nodeHit {
+    cursor: pointer;
+}
+
+.PostMain-updateNode {
+    animation-name: updateBreathe;
+    animation-duration: 2s;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+@keyframes updateBreathe {
+    from { fill: var(--spritan-red); }
+    to { fill: var(--spritan-gold); }
+}
+
+.PostMain-mediaContainer {
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 20px;
+    width: 1200px;
+    height: 675px;
+    max-width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-right: 20px;
+    background-color: var(--darkest-grey);
+    flex-shrink: 0;
+    opacity: 1;
+    z-index: 1;
+
+    transition: width, height, margin, opacity, padding;
+    transition-duration: 0.5s;
+}
+.PostMain-mediaText {
+    width: 0;
+    height: 0;
+    margin: 0;
+    opacity: 0;
+}
+.PostMain-videoElem {
+    border: 0;
+    width: 1200px;
+    height: 675px;
+
+    transition: width 0.5s, height 0.5s;
+    animation: fadeIn 0.5s;
+}
+.PostMain-return {
+    width: 1200px;
+    height: 755px;
+    opacity: 1;
+    transition: none;
+}
+
+.PostMain-imageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+
+    transition: background-color 0.5s;
+    animation: fadeIn 0.5s;
+}
+
+.PostMain-image {
+    max-width: 1200px;
+    max-height: 675px;
+
+    transition: max-width 0.5s, max-height 0.5s;
+}
+
+.PostMain-view {
+    position: absolute;
+    color: white;
+    background-color: rgba(0,0,0,0.75);
+    padding: 10px;
+    border-radius: 10px;
+
+    animation: fadeout 0.5s 1s forwards;
+}
+@keyframes fadeout {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@media screen and (max-width: 1860px) {
+    .PostMain-mediaContainer {
+        width: 960px;
+        height: 540px;
+    }
+    .PostMain-mediaText {
+        width: 0;
+        height: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    .PostMain-videoElem {
+        width: 960px;
+        height: 540px;
+    }
+    .PostMain-image {
+        max-width: 960px;
+        max-height: 540px;
+    }
+    .PostMain-return {
+        width: 960px;
+        height: 620px;
+        opacity: 1;
+    }
+}
+
+@media screen and (max-width: 1620px) {
+    .PostMain-cards {
+        width: 500px;
+    }
+    .PostMain-cardsText {
+        width: 600px;
+    }
+    .PostMain-returnCards {
+        width: 500px;
+    }
+
+    .PostMain-mediaContainer {
+        width: 800px;
+        height: 450px;
+    }
+    .PostMain-mediaText {
+        width: 0;
+        height: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    .PostMain-videoElem {
+        width: 800px;
+        height: 450px;
+    }
+    .PostMain-image {
+        max-width: 800px;
+        max-height: 450px;
+    }
+    .PostMain-return {
+        width: 800px;
+        height: 530px;
+        opacity: 1;
+    }
+}
+
+@media screen and (max-width: 1350px) {
+    .PostMain-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .PostMain-cards {
+        width: 600px;
+        margin-top: 20px;
+    }
+    .PostMain-cardsText {
+        margin: 0;
+    }
+
+    .PostMain-mediaContainer {
+        position: relative;
+        width: 640px;
+        height: 360px;
+        margin-right: 0;
+        top: -1px;
+    }
+    .PostMain-mediaText {
+        width: 0;
+        height: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    .PostMain-videoElem {
+        width: 640px;
+        height: 360px;
+    }
+    .PostMain-image {
+        max-width: 640px;
+        max-height: 360px;
+    }
+    .PostMain-return {
+        width: 640px;
+        height: 440px;
+        opacity: 1;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .PostMain-container {
+        margin: 0 0 20px 0;
+    }
+
+    .PostMain-cards {
+        width: 100%;
+        margin: 0;
+    }
+
+    .PostMain-post, .PostMain-option {
+        border-radius: 0;
+    }
+
+    .PostMain-mediaContainer {
+        width: 100%;
+        height: 100%;
+        padding-bottom: 56.25%;
+        border-radius: 0;
+    }
+    .PostMain-mediaText {
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    .PostMain-return {
+        padding-bottom: calc(56.25% + 80px);
+        opacity: 1;
+    }
+
+    .PostMain-videoElem, .PostMain-imageContainer {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        border-radius: 0;
+    }
+    .PostMain-image {
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
 
 @media (hover: hover) {
-    .Post-collapse:hover, .Post-load:hover {
+    .PostMain-user:hover {
+        cursor: pointer;
+        background-color: var(--darkest-grey);
+    }
+    .PostMain-user:hover .PostMain-img {
+        border-radius: 10px;
+        filter: brightness(1.1);
+    }
+
+    .PostMain-notEnd:hover {
+        cursor: pointer;
+    }
+
+    .PostMain-notEnd:hover .PostMain-arrowL, .PostMain-notEnd:hover .PostMain-arrowR {
+        stroke: var(--spritan-gold);
+    }
+
+    .PostMain-nodeHit:hover .PostMain-node {
+        fill: var(--spritan-gold);
+        r: 10px;
+    }
+
+    .PostMain-ts:hover {
+        cursor: pointer;
+        color: white;
+    }
+
+    .PostMain-collapse:hover .PostMain-collapseBack {
+        opacity: 0.75;
+    }
+    .PostMain-collapse:hover .PostMain-collapseText {
+        color: var(--spritan-gold);
+    }
+    .PostMain-collapse:hover .PostMain-expandText {
+        color: var(--spritan-red);
+    }
+
+    .PostMain-optionItem:hover {
         cursor: pointer;
         background-color: var(--lightest-grey);
     }
 
-    .Post-delete:hover {
-        color: white;
+    .PostMain-optionItemRed:hover {
         background-color: var(--spritan-red);
-    }
-
-    .Post-ts:hover {
-        cursor: pointer;
-        color: white;
-    }
-
-    .Post-user:hover {
-        cursor: pointer;
-        background-color: var(--darkest-grey);
-    }
-    .Post-user:hover .Post-user-img {
-        border-radius: 10px;
-        filter: brightness(1.1);
-    }
-
-    .Post-replies .Post-user:hover {
-        cursor: pointer;
-        background-color: var(--mid-grey);
-    }
-    .Post-replies .Post-user:hover .Post-user-img {
-        border-radius: 10px;
-        filter: brightness(1.1);
     }
 }

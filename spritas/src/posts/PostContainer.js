@@ -1,8 +1,8 @@
 import React from 'react';
 import './PostContainer.css';
-import PostMain from './PostMain';
 import Post from './Post';
-import Reply from '../create/Reply';
+import Reply from './Reply';
+import CreateReply from '../create/CreateReply';
 import scrollBounce from '../functions/scrollBounce';
 import he from 'he';
 
@@ -81,7 +81,7 @@ export default class PostContainer extends React.Component {
             .then(res => res.json())
             .then(data => {
                 const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
-                    <Post key={index + this.state.offset} post={reply}
+                    <Reply key={index + this.state.offset} post={reply}
                         reply={true} opid={this.state.opid} user={this.props.user}
                         blockers={this.state.blockers} delay={index} reload={this.reloadComments} />
                 );
@@ -153,7 +153,7 @@ export default class PostContainer extends React.Component {
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
         else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Commenting</p>;
-        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <Reply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
+        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <CreateReply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Comments Shown</div> : null;
@@ -185,7 +185,7 @@ export default class PostContainer extends React.Component {
             </div>
         ) : null;
 
-        const main = (this.state.main) ? <PostMain posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} /> : null;
+        const main = (this.state.main) ? <Post posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} /> : null;
 
         return (
             <div className={"PostContainer"}>

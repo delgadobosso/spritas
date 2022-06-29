@@ -1,0 +1,197 @@
+.Post {
+    margin: 0 0 20px 0;
+    border-radius: 10px;
+    background-color: var(--mid-grey);
+    overflow: hidden;
+    opacity: 0;
+
+    transition: border-radius 0.5s;
+    animation-name: fadeIn;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+.Post-optag {
+    font-size: 0.9em;
+    color: var(--spritan-gold);
+}
+
+.Post-youtag {
+    font-size: 0.9em;
+    color: var(--spritan-red);
+}
+
+.Post-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.Post-info {
+    display: flex;
+    align-items: center;
+    margin: 10px 8px 0 8px;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.Post-a {
+    max-width: 100%;
+}
+
+.Post-user {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+    border-radius: 10px;
+
+    transition: background-color 0.25s;
+}
+.Post-user:active {
+    cursor: pointer;
+    background-color: var(--darkest-grey);
+}
+.Post-user:active .Post-user-img {
+    border-radius: 10px;
+    filter: brightness(1.1);
+}
+.Post-replies .Post-user:active {
+    cursor: pointer;
+    background-color: var(--mid-grey);
+}
+
+.Post-user-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+
+    transition: filter 0.5s, border-radius 0.25s;
+}
+
+.Post-nickname {
+    margin: 0 5px;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.Post-ts {
+    color: var(--info-grey);
+    font-size: 0.9em;
+    margin: 11px 0 10px 0;
+
+    transition: color 0.1s;
+}
+
+.Post-body {
+    margin: 5px 10px 10px 10px;
+}
+.Post-bodyDel {
+    font-style: italic;
+    color: var(--info-grey);
+    font-size: 0.9em;
+}
+
+.Post-replies {
+    height: auto;
+    overflow: hidden;
+
+    transition: height 0.5s;
+}
+
+.Post-replies .Post {
+    margin: 0;
+    border-radius: 0;
+    border-bottom: solid 5px var(--light-grey);
+    background-color: var(--darkest-grey);
+}
+
+.Post-replies .Post:last-child {
+    border-bottom: none;
+}
+
+.Post-controls {
+    display: flex;
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+}
+
+.Post-load, .Post-collapse, .Post-gap {
+    position: relative;
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 5px 0;
+    background-color: var(--light-grey);
+    color: white;
+    font-size: 0.9em;
+    line-height: 20px;
+
+    transition: background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.Post-actions {
+    display: flex;
+    justify-content: end;
+}
+
+.Post-delete {
+    position: relative;
+    width: max-content;
+    cursor: pointer;
+    color: white;
+    background-color: var(--light-grey);
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin: 0 5px 10px 5px;
+    font-size: 0.9em;
+    overflow: hidden;
+
+    transition: color 0.1s, background-color 0.1s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@media (hover: hover) {
+    .Post-collapse:hover, .Post-load:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
+    }
+
+    .Post-delete:hover {
+        color: white;
+        background-color: var(--spritan-red);
+    }
+
+    .Post-ts:hover {
+        cursor: pointer;
+        color: white;
+    }
+
+    .Post-user:hover {
+        cursor: pointer;
+        background-color: var(--darkest-grey);
+    }
+    .Post-user:hover .Post-user-img {
+        border-radius: 10px;
+        filter: brightness(1.1);
+    }
+
+    .Post-replies .Post-user:hover {
+        cursor: pointer;
+        background-color: var(--mid-grey);
+    }
+    .Post-replies .Post-user:hover .Post-user-img {
+        border-radius: 10px;
+        filter: brightness(1.1);
+    }
+}
