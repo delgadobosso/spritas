@@ -102,17 +102,18 @@ export default class App extends React.Component {
           <Navi user={this.state.user} hide={this.state.naviHide} />
           <Header />
           <Switch>
-            <Route path='/admin' component={AdminPortal} />
-            <Route path='/login' component={Login} />
+            <Route path='/admin'>
+              <AdminPortal user={this.state.user} />
+            </Route>
             <Route path='/create/topic/:id?' component={CreateTopic} />
             <Route path='/create/post'
               render={props => <CreatePost user={this.state.user} {...props} />} />
-            <Route path='/u/:name'
-              render={props => <UserContainer postClick={this.postClick} user={this.state.user} {...props} />} />
+            <Route path='/login' component={Login} />
             <Route path='/post/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
+            <Route path='/u/:name'
+              render={props => <UserContainer postClick={this.postClick} user={this.state.user} {...props} />} />
             <Route path='/'>
-              {/* <Featured user={this.state.user} /> */}
               <TopicContainer postClick={this.postClick} user={this.state.user} />
             </Route>
           </Switch>
