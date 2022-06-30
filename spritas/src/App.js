@@ -14,6 +14,7 @@ import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
 import UserContainer from './user/UserContainer';
 import TopicContainer from './topics/TopicContainer';
+import AdminPortal from "./admin/AdminPortal";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -101,6 +102,7 @@ export default class App extends React.Component {
           <Navi user={this.state.user} hide={this.state.naviHide} />
           <Header />
           <Switch>
+            <Route path='/admin' component={AdminPortal} />
             <Route path='/login' component={Login} />
             <Route path='/create/topic/:id?' component={CreateTopic} />
             <Route path='/create/post'

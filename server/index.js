@@ -110,6 +110,12 @@ app.get('/create/post', (req, res) => {
     else return res.sendFile(reactApp);
 })
 
+app.get('/admin', (req, res) => {
+    if (!req.session.user) res.sendStatus(401);
+    else if (req.session.user.type !== "ADMN") res.sendStatus(403);
+    else return res.sendFile(reactApp);
+})
+
 app.get('/home/new/:offset.:limit', (req, res) => {
     if (req.headers.referer) {
         var offset;
