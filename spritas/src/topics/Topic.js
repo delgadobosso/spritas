@@ -1,9 +1,7 @@
 import React from 'react';
 import './Topic.css';
-import status from '../images/spritan.png';
 import TopicPortal from './TopicPortal';
 import TopicPost from './TopicPost';
-import he from 'he';
 
 export default class Topic extends React.Component {
     constructor(props) {

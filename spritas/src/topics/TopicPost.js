@@ -44,6 +44,10 @@ export default class TopicPost extends React.Component {
         <p className="TopicPost-ts" title={relTime} onClick={() => this.setState({ toggleTime: false})}>{ts}</p>;
 
         var thumb;
+        var currentTime;
+        var postedTime;
+        var elapsed;
+        var seconds;
         switch(post.type) {
             case 'VIDO':
                 const re_vid = new RegExp(Regex.regex_video);
@@ -67,10 +71,10 @@ export default class TopicPost extends React.Component {
                     }
                 } else if (post.link) {
                     // let thumbnail load
-                    var currentTime = new Date();
-                    var postedTime = new Date(post.tsUpdate);
-                    var elapsed = currentTime - postedTime;
-                    var seconds = 5 * 1000;
+                    currentTime = new Date();
+                    postedTime = new Date(post.tsUpdate);
+                    elapsed = currentTime - postedTime;
+                    seconds = 5 * 1000;
 
                     const link_img = he.decode(post.link);
                     const dot = post.link.lastIndexOf('.');
@@ -93,10 +97,10 @@ export default class TopicPost extends React.Component {
             case 'IMG':
                 if (post.link) {
                     // let thumbnail load
-                    var currentTime = new Date();
-                    var postedTime = new Date(post.tsUpdate);
-                    var elapsed = currentTime - postedTime;
-                    var seconds = 5 * 1000;
+                    currentTime = new Date();
+                    postedTime = new Date(post.tsUpdate);
+                    elapsed = currentTime - postedTime;
+                    seconds = 5 * 1000;
 
                     const link_img = he.decode(post.link);
                     const dot = post.link.lastIndexOf('.');

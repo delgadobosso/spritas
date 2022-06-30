@@ -53,8 +53,6 @@ export default class CreateReply extends React.Component {
                 myBody.append('id', id);
                 myBody.append('reply', reply);
         
-                var urlForm
-        
                 fetch('/create/reply/' + this.props.target, {
                     method: 'POST',
                     body: myBody

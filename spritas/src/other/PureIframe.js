@@ -13,7 +13,7 @@ export default class PureIframe extends React.PureComponent {
         const {src, width, height} = this.props;
         return (
             <iframe src={src} width={width} height={height} allowFullScreen
-            className='PostMain-videoElem' id={this.props.elementId} />
+            className='PostMain-videoElem' id={this.props.elementId} title="Post Video Embed" />
         );
     }
 }
