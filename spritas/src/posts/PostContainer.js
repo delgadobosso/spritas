@@ -149,6 +149,7 @@ export default class PostContainer extends React.Component {
 
     render() {
         const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
+        const ogId = (this.props.id) ? this.props.id : this.props.match.params.id;
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
@@ -185,7 +186,7 @@ export default class PostContainer extends React.Component {
             </div>
         ) : null;
 
-        const main = (this.state.main) ? <Post posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} /> : null;
+        const main = (this.state.main) ? <Post posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} ogId={ogId} /> : null;
 
         return (
             <div className={"PostContainer"}>

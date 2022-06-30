@@ -136,8 +136,7 @@ app.get('/home/new/:offset.:limit', (req, res) => {
                 IFNULL(t1.link, p1.link) AS link,
                 IFNULL(t1.type, p1.type) AS type,
                 p1.perm,
-                p1.ts,
-                IFNULL(t1.tsUpdate, p1.tsUpdate) AS tsUpdate,
+                IFNULL(t1.ts, p1.ts) AS ts,
                 users.username AS username,
                 users.nickname AS nickname,
                 users.avatar AS avatar
@@ -156,7 +155,7 @@ app.get('/home/new/:offset.:limit', (req, res) => {
             ON p1.id = t1.idParent
             WHERE p1.idParent IS NULL
             AND (p1.status IS NULL OR (p1.status = 'DELE' AND t1.id IS NOT NULL))
-            ORDER BY p1.tsUpdate DESC
+            ORDER BY IFNULL(t1.ts, p1.ts) DESC
             LIMIT ?,?`,
         [offset, limit], (error, result, fields) => {
             if (error) res.status(500).send(error);
@@ -557,13 +556,8 @@ app.post('/update/post',
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
     
-                                pool.query(`UPDATE posts SET tsUpdate = CURRENT_TIMESTAMP
-                                WHERE id = ?`, parent.id, (error, result, fields) => {
-                                    if (error) return res.status(500).send(error);
-    
-                                    const resId = parent.id.toString();
-                                    return res.status(200).send(resId);
-                                })
+                                const resId = parent.id.toString();
+                                return res.status(200).send(resId);
                             })
                         } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
                             // Upload file to imgur and update
@@ -582,13 +576,8 @@ app.post('/update/post',
                                             (error, result, fields) => {
                                                 if (error) return res.status(500).send(error);
 
-                                                pool.query(`UPDATE posts SET tsUpdate = CURRENT_TIMESTAMP
-                                                WHERE id = ?`, parent.id, (error, result, fields) => {
-                                                    if (error) return res.status(500).send(error);
-                    
-                                                    const resId = parent.id.toString();
-                                                    return res.status(200).send(resId);
-                                                })
+                                                const resId = parent.id.toString();
+                                                return res.status(200).send(resId);
                                             })
                                         } else return res.status(500).json({error: "Issue uploading to imgur."});
                                     })
@@ -606,13 +595,8 @@ app.post('/update/post',
                             (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
-                                pool.query(`UPDATE posts SET tsUpdate = CURRENT_TIMESTAMP
-                                WHERE id = ?`, parent.id, (error, result, fields) => {
-                                    if (error) return res.status(500).send(error);
-
-                                    const resId = parent.id.toString();
-                                    return res.status(200).send(resId);
-                                })
+                                const resId = parent.id.toString();
+                                return res.status(200).send(resId);
                             })
                         }
                     } else return res.sendStatus(403);
@@ -782,8 +766,7 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
             IFNULL(t1.link, p1.link) AS link,
             IFNULL(t1.type, p1.type) AS type,
             p1.perm,
-            p1.ts,
-            IFNULL(t1.tsUpdate, p1.tsUpdate) AS tsUpdate,
+            IFNULL(t1.ts, p1.ts) AS ts,
             users.username AS username,
             users.nickname AS nickname,
             users.avatar AS avatar
@@ -802,7 +785,7 @@ app.get('/user/posts/:id.:offset.:limit', (req, res) => {
         ON p1.id = t1.idParent
         WHERE p1.idUser = ? AND p1.idParent IS NULL
         AND (p1.status IS NULL OR (p1.status = 'DELE' AND t1.id IS NOT NULL))
-        ORDER BY p1.tsUpdate DESC
+        ORDER BY IFNULL(t1.ts, p1.ts) DESC
         LIMIT ?,?
         `, [id, id, offset, limit], (error, result, fields) => {
             if (error) return res.status(500).send(error);

@@ -492,7 +492,7 @@ export default class Post extends React.Component {
             </div>
         ) : (
             <div>
-                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} height={this.state.height} />
+                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} height={this.state.height} ogId={this.props.ogId} />
             </div>
         );
 

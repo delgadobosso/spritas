@@ -31,13 +31,13 @@ export default class TopicPost extends React.Component {
 
         var ts = new Date(post.ts);
         var relTime = relativeTime(post.ts);
-        ts = `Posted ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
         if (post.status === 'UPDT') {
-            var tsUpdate = new Date(post.tsUpdate);
-            var lastRelTime = relativeTime(post.tsUpdate);
-            ts = `Updated ${('0' + tsUpdate.getHours()).slice(-2)}:${('0' + tsUpdate.getMinutes()).slice(-2)} on ${tsUpdate.toDateString()}`
-            relTime = `Updated ${lastRelTime}`;
-        } else relTime = `Posted ${relTime}`;
+            ts = `Updated ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`
+            relTime = `Updated ${relTime}`;
+        } else {
+            ts = `Posted ${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+            relTime = `Posted ${relTime}`;
+        }
 
         const time = (!this.state.toggleTime) ?
         <p className="TopicPost-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
@@ -72,7 +72,7 @@ export default class TopicPost extends React.Component {
                 } else if (post.link) {
                     // let thumbnail load
                     currentTime = new Date();
-                    postedTime = new Date(post.tsUpdate);
+                    postedTime = new Date(post.ts);
                     elapsed = currentTime - postedTime;
                     seconds = 5 * 1000;
 
@@ -98,7 +98,7 @@ export default class TopicPost extends React.Component {
                 if (post.link) {
                     // let thumbnail load
                     currentTime = new Date();
-                    postedTime = new Date(post.tsUpdate);
+                    postedTime = new Date(post.ts);
                     elapsed = currentTime - postedTime;
                     seconds = 5 * 1000;
 

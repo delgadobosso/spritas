@@ -278,7 +278,7 @@ export default class CreatePost extends React.Component {
                 var fetchURL = '/create/post';
 
                 if (this.props.ogPost) {
-                    formData.append('id', this.props.ogPost.id);
+                    formData.append('id', this.props.ogId);
                     fetchURL = '/update/post';
                 }
         
