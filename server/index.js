@@ -648,7 +648,7 @@ app.post('/delete/post',
 
             if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
                 var deletehash = result[0].deletehash;
-                var byWho = (req.session.user.type === 'ADMN') ? 'Deleted By Admin' : 'Deleted By User';
+                var byWho = (req.session.user.type === 'ADMN' && req.session.user.id !== result[0].idUser) ? 'Deleted By Admin' : 'Deleted By User';
                 pool.query(`UPDATE posts AS p
                 SET subtitle = NULL, body = ?, p.status = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
                 WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
