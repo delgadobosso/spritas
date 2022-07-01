@@ -244,6 +244,9 @@ app.use('/create/post',
     (req, res, next) => {
         req.pool = pool;
         req.validationResult = validationResult;
+        req.imgur = imgur;
+        req.imgurCurrent = imgurCurrent;
+        req.imgurLimit = imgurLimit;
         next();
     }, createPost);
 

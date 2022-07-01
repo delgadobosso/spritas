@@ -29,9 +29,9 @@ router.post('/', (req, res) => {
             return res.status(200).send(resId);
         });
     } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
-        if (imgurCurrent <= imgurLimit) {
+        if (req.imgurCurrent <= req.imgurLimit) {
             const file64 = req.file.buffer.toString('base64');
-            imgur.uploadBase64(file64,
+            req.imgur.uploadBase64(file64,
                     undefined,
                     req.body.title,
                     req.body.body)
@@ -42,8 +42,8 @@ router.post('/', (req, res) => {
                         [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, json.link, json.deletehash, type], (error, result, fields) => {
                             if (error) return res.status(500).send(error);
 
-                            imgurCurrent++;
-                            console.log('Current Imgur upload: ' + imgurCurrent);
+                            req.imgurCurrent++;
+                            console.log('Current Imgur upload: ' + req.imgurCurrent);
 
                             const resId = result.insertId.toString();
                             return res.status(200).send(resId);
