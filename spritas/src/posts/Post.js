@@ -167,8 +167,10 @@ export default class Post extends React.Component {
         const posts = this.props.posts;
         const currentPost = (newIndex) ? posts[newIndex - 1] : posts[this.props.current - 1];
         const post = document.getElementById(`PostMain-post${currentPost.id}`);
-        post.getAnimations().map(animation => animation.cancel());
-        post.style.height = 'initial';
+        if (post) {
+            post.getAnimations().map(animation => animation.cancel());
+            post.style.height = 'initial';
+        }
         if (post && post.scrollHeight > 675) {
             post.style.height = '675px';
             this.setState({
