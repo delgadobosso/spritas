@@ -21,6 +21,13 @@ const MySQLStore = require('express-mysql-session')(session);
 const { body, validationResult } = require('express-validator');
 const app = express();
 const port = process.env.PORT;
+// Routers
+const homeNew = require('./routers/homeNew');
+const post = require('./routers/post');
+const comments = require('./routers/comments');
+const replies = require('./routers/replies');
+const createPost = require('./routers/create/post');
+const createReplyPost = require('./routers/create/replyPost');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -116,54 +123,12 @@ app.get('/admin', (req, res) => {
     else return res.sendFile(reactApp);
 })
 
-app.get('/home/new/:offset.:limit', (req, res) => {
-    if (req.headers.referer) {
-        var offset;
-        var limit;
-        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
-        else offset = 0;
-        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
-        else limit = 0;
-        pool.query(`
-            SELECT 
-                p1.id,
-                p1.idParent,
-                p1.idUser,
-                p1.title,
-                IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
-                IFNULL(t1.body, p1.body) AS body,
-                IFNULL(t1.status, p1.status) AS status,
-                IFNULL(t1.link, p1.link) AS link,
-                IFNULL(t1.type, p1.type) AS type,
-                p1.perm,
-                IFNULL(t1.ts, p1.ts) AS ts,
-                users.username AS username,
-                users.nickname AS nickname,
-                users.avatar AS avatar
-            FROM posts AS p1
-            LEFT JOIN users
-            ON p1.idUser = users.id
-            LEFT JOIN (
-                SELECT *
-                FROM posts AS p
-                INNER JOIN (
-                    SELECT MAX(id) AS id
-                    FROM posts
-                    WHERE posts.status = 'UPDT'
-                    GROUP BY idParent) AS t
-                USING (id)) AS t1
-            ON p1.id = t1.idParent
-            WHERE p1.idParent IS NULL
-            AND (p1.status IS NULL OR (p1.status = 'DELE' AND t1.id IS NOT NULL))
-            ORDER BY IFNULL(t1.ts, p1.ts) DESC
-            LIMIT ?,?`,
-        [offset, limit], (error, result, fields) => {
-            if (error) res.status(500).send(error);
-
-            else return res.send(result);
-        });
-    } else res.redirect('/');
-})
+app.use('/home/new/:offset.:limit', (req, res, next) => {
+    req.offset = req.params.offset;
+    req.limit = req.params.limit;
+    req.pool = pool;
+    next();
+}, homeNew);
 
 app.post('/login/signup',
     body('username').trim().isLength({ min: 2 }).escape(),
@@ -245,219 +210,52 @@ app.get('/session/user', (req, res) => {
 })
 
 // Get post
-app.get('/p/:id', (req, res) => {
-    if (req.headers.referer) {
-        const id = req.params.id;
-        pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
-            FROM posts
-            LEFT JOIN users ON posts.idUser = users.id
-            WHERE (posts.id = ? AND (posts.status != "DELE" OR posts.status IS NULL))
-            OR (posts.status = "UPDT" AND posts.idParent = ?)
-            ORDER BY posts.id = ? DESC, posts.ts`,
-        [id, id, id], (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-            
-            else res.send(result);
-        })
-    } else res.redirect('/post/' + req.params.id);
-})
+app.use('/p/:id', (req, res, next) => {
+    req.id = req.params.id;
+    req.pool = pool;
+    next();
+}, post);
 
-// Get replies to posts
-app.get('/r/:id.:offset.:limit', (req, res) => {
-    if (req.headers.referer) {
-        const id = req.params.id;
-        var offset;
-        var limit;
-        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
-        else offset = 0;
-        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
-        else limit = 0;
-        pool.query(`SELECT replies.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
-            FROM replies
-            LEFT JOIN users ON replies.idUser = users.id
-            WHERE replies.idPost = ? AND replies.idParent IS NULL
-            ORDER BY replies.id = ? DESC, replies.ts DESC
-            LIMIT ?,?`,
-        [id, id, offset, limit], (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-            
-            else res.send(result);
-        })
-    } else res.redirect('/post/' + req.params.id);
-})
+// Get comments to posts
+app.use('/r/:id.:offset.:limit', (req, res, next) => {
+    req.id = req.params.id;
+    req.offset = req.params.offset;
+    req.limit = req.params.limit;
+    req.pool = pool;
+    next();
+}, comments);
 
 // Get replies to replies
-app.get('/rr/:id.:offset.:limit', (req, res) => {
-    if (req.headers.referer) {
-        const id = req.params.id;
-        var offset;
-        var limit;
-        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
-        else offset = 0;
-        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
-        else limit = 0;
-        pool.query(`SELECT replies.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
-            FROM replies
-            LEFT JOIN users ON replies.idUser = users.id
-            WHERE replies.idParent = ?
-            ORDER BY replies.ts DESC
-            LIMIT ?,?`,
-        [id, offset, limit], (error, result, fields) => {
-            if (error) return res.status(500).send(error);
+app.use('/rr/:id.:offset.:limit', (req, res, next) => {
+    req.id = req.params.id;
+    req.offset = req.params.offset;
+    req.limit = req.params.limit;
+    req.pool = pool;
+    next();
+}, replies);
 
-            else res.send(result);
-        })
-    } else res.redirect('/');
-})
-
-app.post('/create/topic',
-    body('id').isInt().optional({checkFalsy: true}),
-    body('name').trim().isLength({ min: 2 }).escape(),
-    body('description').trim().isLength({ min: 2 }).escape(),
-    body('type').isIn(["TEXT", "BLOG", "VIDO", "IMG"]),
-    body('perm').isIn(["ALL", "ADMN"]),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        else if (req.session.user.type != "ADMN") return res.sendStatus(403);
-
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        var id;
-        if (req.body.id != "") id = req.body.id;
-        else id = null;
-        pool.query(`INSERT INTO topics (idParent,name,description,type,perm)
-        VALUES(?,?,?,?,?)`,
-        [id, req.body.name, req.body.description, req.body.type, req.body.perm],
-        (error, results, fields) => {
-            if (error) return res.status(500).send(error);
-
-            res.redirect('/');
-        })
-    }
-)
-
-app.post('/create/post',
+// Create post
+app.use('/create/post',
     memUpload.single('file'),
     body('title').trim().isLength({ min: 1, max: 64 }).escape(),
     body('subtitle').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
     body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().escape(),
     body('body').trim().isLength({ min: 1, max: 10000 }).escape(),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        else if (req.session.user.type === "BAN") return res.sendStatus(403);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+    (req, res, next) => {
+        req.pool = pool;
+        req.validationResult = validationResult;
+        next();
+    }, createPost);
 
-        const validVid = ["video/mp4", "video/webm"];
-        const validPic = ["image/png", "image/jpeg", "image/gif"];
-
-        var type = "TEXT";
-        if (req.file) {
-            if (validVid.includes(req.file.mimetype)) type = "VIDO";
-            else if (validPic.includes(req.file.mimetype)) type = "IMG";
-        } else if (req.body.link) {
-            type = "VIDO";
-        }
-
-        // Upload file to Imgur and add that link
-        if (type === "VIDO" && req.body.link !== "") {
-            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,link,type)
-            VALUES(?,?,?,?,?,?)`,
-            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, req.body.link, type], (error, result, fields) => {
-                if (error) return res.status(500).send(error);
-
-                const resId = result.insertId.toString();
-                return res.status(200).send(resId);
-            });
-        } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
-            if (imgurCurrent <= imgurLimit) {
-                const file64 = req.file.buffer.toString('base64');
-                imgur.uploadBase64(file64,
-                        undefined,
-                        req.body.title,
-                        req.body.body)
-                    .then((json) => {
-                        if (json.link) {
-                            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,link,deletehash,type)
-                            VALUES(?,?,?,?,?,?,?)`,
-                            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, json.link, json.deletehash, type], (error, result, fields) => {
-                                if (error) return res.status(500).send(error);
-
-                                imgurCurrent++;
-                                console.log('Current Imgur upload: ' + imgurCurrent);
-
-                                const resId = result.insertId.toString();
-                                return res.status(200).send(resId);
-                            })
-                        } else return res.status(500).json({error: "Issue uploading to imgur."});
-                    })
-                    .catch((err) => {
-                        console.error(err.message);
-                        res.redirect('/');
-                    });
-            } else {
-                res.status(503).json({error: "Imgur upload capacity reached. Please try again in one hour."});
-            }
-        // No link insert otherwise
-        } else {
-            pool.query(`INSERT INTO posts (idUser,title,subtitle,body,type)
-            VALUES(?,?,?,?,?)`,
-            [req.session.user.id, req.body.title, req.body.subtitle, req.body.body, type], (error, result, fields) => {
-                if (error) return res.status(500).send(error);
-
-                const resId = result.insertId.toString();
-                return res.status(200).send(resId);
-            })
-        }
-    }
-)
-
-app.post('/create/reply/post',
+// Create comment
+app.use('/create/reply/post',
     body('id').notEmpty().isInt(),
     body('reply').trim().isLength({ min: 1, max: 2500 }).escape(),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        if (req.session.user.type === "BAN") return res.sendStatus(403);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        // Get the post this comment is for
-        pool.query(`SELECT * FROM posts WHERE id = ?`, req.body.id, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            if (result.length > 0) {
-                const parent = result[0];
-                // Check if this user is blocked by the OP
-                pool.query(`SELECT * FROM users_blocked
-                WHERE (blockerId = ? AND blockedId = ?)`,
-                [parent.idUser, req.session.user.id], (error, result, fields) => {
-                    if (error) return res.status(500).send(error);
-
-                    if (result.length > 0) return res.sendStatus(403);
-
-                    // Don't let OP comment on own post
-                    if (req.session.user.id === parent.idUser) return res.sendStatus(403);
-                    else {
-                        pool.query(`INSERT INTO replies (idPost,idUser,body)
-                        VALUES (?,?,?)`, [parent.id, req.session.user.id, req.body.reply], (error, result, fields) => {
-                            if (error) return res.status(500).send(error);
-
-                            const resId = result.insertId.toString();
-                            
-                            pool.query(`UPDATE posts SET tsReply = CURRENT_TIMESTAMP WHERE id = ?`,
-                            parent.id, (error, result, fields) => {
-                                if (error) return res.status(500).send(error);
-
-                                return res.status(200).send(resId);
-                            })
-                        })
-                    }
-                })
-            } else return res.status(400).json({error: "No post to reply to."});
-        })
-    }
-)
+    (req, res, next) => {
+        req.pool = pool;
+        req.validationResult = validationResult;
+        next();
+    }, createReplyPost);
 
 app.post('/create/reply/comment',
     body('id').notEmpty().isInt(),
