@@ -9,7 +9,6 @@ import Header from './header/Header'
 import Login from './login/Login';
 import Navi from './navigation/Navi';
 import PostContainer from './posts/PostContainer';
-import CreateTopic from './create/CreateTopic';
 import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
 import UserContainer from './user/UserContainer';
@@ -105,7 +104,6 @@ export default class App extends React.Component {
             <Route path='/admin'>
               <AdminPortal user={this.state.user} />
             </Route>
-            <Route path='/create/topic/:id?' component={CreateTopic} />
             <Route path='/create/post'
               render={props => <CreatePost user={this.state.user} {...props} />} />
             <Route path='/login' component={Login} />
