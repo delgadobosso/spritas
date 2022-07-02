@@ -1,6 +1,5 @@
 require('dotenv').config();
 const path = require('path');
-const fs = require('fs');
 const reactApp = path.join(__dirname, process.env.REACT_BUILD);
 
 const bcrypt = require('bcrypt');
@@ -23,19 +22,25 @@ const app = express();
 const port = process.env.PORT;
 // Routers
 const homeNew = require('./routers/homeNew');
+
 const post = require('./routers/post');
 const comments = require('./routers/comments');
 const replies = require('./routers/replies');
+
 const createPost = require('./routers/create/post');
 const createReplyPost = require('./routers/create/replyPost');
 const createReplyComment = require('./routers/create/replyComment');
 const createUpdate = require('./routers/create/update');
+
 const loginSignup = require('./routers/login/signup');
 const loginSignin = require('./routers/login/signin');
+
 const deletePost = require('./routers/delete/post');
 const deleteReply = require('./routers/delete/reply');
+
 const userInfo = require('./routers/user/info');
 const userPosts = require('./routers/user/posts');
+const userUpdate = require('./routers/user/update');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -280,74 +285,16 @@ app.use('/user/posts/:id.:offset.:limit',
         next();
     }, userPosts);
 
-app.post('/user/update',
+app.use('/user/update',
     avatarUpload.single('avatar'),
     body('id').isInt(),
-    body('nickname').trim().isLength({ min: 2 }).escape(),
-    body('bio').isLength({ max: 256 }),
-    (req, res) => {
-        if (parseInt(req.body.id) === req.session.user.id) {
-            if (req.session.user.type === 'BAN') return res.sendStatus(403);
-
-            // Check if it's been long enough to make change
-            pool.query(`SELECT avatar, lastTs FROM users WHERE id = ?`, req.body.id, (error, result, fields) => {
-                if (error) return res.status(500).send(error);
-
-                var last = new Date(result[0].lastTs);
-                var current = new Date();
-                var elapsed = (current - last) / 60000;
-
-                if (elapsed >= 5) {
-                    var avatar = (req.file) ? req.file.filename : null;
-                    var ogAvatar = result[0].avatar;
-                    var nickname = (req.body.nickname !== "") ? req.body.nickname : null;
-                    var bio = req.body.bio;
-                    pool.query(`
-                    UPDATE users
-                    SET
-                        avatar = CASE WHEN ? IS NOT NULL
-                            THEN ?
-                            ELSE avatar
-                        END,
-                        nickname = CASE WHEN ? IS NOT NULL
-                            THEN ?
-                            ELSE nickname
-                        END,
-                        bio = CASE WHEN ? IS NOT NULL
-                            THEN ?
-                            ELSE bio
-                        END,
-                        lastTs = CURRENT_TIMESTAMP
-                    WHERE id = ?
-                    `, [avatar, avatar, nickname, nickname, bio, bio, req.body.id], (error, result, fields) => {
-                        if (error) return res.status(500).send(error);
-
-                        else {
-                            // delete old avatar
-                            if (avatar && ogAvatar) {
-                                const ogPath = path.join(__dirname, "/media/avatars/", ogAvatar);
-                                if (fs.existsSync(ogPath)) {
-                                    fs.unlink(ogPath, (err) => {
-                                        if (err) return console.error(err);
-                                    });
-                                }
-                            }
-
-                            // update sessions user info
-                            if (req.file) req.session.user.avatar = avatar;
-                            if (req.body.nickname !== "") req.session.user.nickname = nickname;
-
-                            return res.status(200).send('updated');
-                        }
-                    })
-                }
-                // it hasn't been enough time yet
-                else return res.status(200).send('time');
-            })
-        }
-
-        else return res.sendStatus(200);
-})
+    body('nickname').optional({ checkFalsy: true }).trim().isLength({ min: 2 }).escape(),
+    body('bio').optional({ checkFalsy: true }).isLength({ max: 256 }),
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.pool = pool;
+        next();
+    }, userUpdate);
 
 app.get('/media/avatars/:avatar', express.static(path.join(__dirname, '/media/avatars')), (req, res) => {
     res.sendFile(path.join(__dirname, '/media/avatars/', req.params.avatar));
