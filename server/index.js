@@ -109,12 +109,6 @@ app.get('/post/:id', (req, res) => {
     })
 })
 
-app.get('/create/topic/:id?', (req, res) => {
-    if (!req.session.user) res.sendStatus(401);
-    else if (req.session.user.type != "ADMN") res.sendStatus(403);
-    else res.sendFile(reactApp);
-})
-
 app.get('/create/post', (req, res) => {
     if (!req.session.user) res.sendStatus(401);
     else if (req.session.user.type === "BAN") res.sendStatus(403);
@@ -307,23 +301,6 @@ app.post('/delete/reply',
                     else return res.sendStatus(200);
                 })
             }
-        })
-    }
-)
-
-app.post('/delete/topic',
-    body('id').notEmpty().isInt(),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        pool.query(`UPDATE topics AS t
-        SET status = 'DELE'
-        WHERE id = ?`, req.body.id, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-            else return res.sendStatus(200);
         })
     }
 )
