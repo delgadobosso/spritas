@@ -5,7 +5,7 @@ router.post('/', (req, res) => {
     const errors = req.validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-    req.bcrypt.hash(req.body.pass, saltRounds, function(err, hash) {
+    req.bcrypt.hash(req.body.pass, req.saltRounds, function(err, hash) {
         req.pool.query(`INSERT INTO users (email,username,nickname,pass,type) VALUES(?,?,?,?,"USER")`,
         [req.body.email, req.body.username, req.body.nickname, hash],
         (error, result, fields) => {

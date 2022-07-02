@@ -31,6 +31,7 @@ const createReplyPost = require('./routers/create/replyPost');
 const createReplyComment = require('./routers/create/replyComment');
 const createUpdate = require('./routers/create/update');
 const loginSignup = require('./routers/login/signup');
+const loginSignin = require('./routers/login/signin');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -133,7 +134,7 @@ app.use('/home/new/:offset.:limit', (req, res, next) => {
     next();
 }, homeNew);
 
-app.post('/login/signup',
+app.use('/login/signup',
     body('username').trim().isLength({ min: 2 }).escape(),
     body('nickname').trim().isLength({ min: 2 }).escape(),
     body('pass').isLength({ min: 8 }),
@@ -141,46 +142,20 @@ app.post('/login/signup',
     (req, res, next) => {
         req.validationResult = validationResult;
         req.bcrypt = bcrypt;
+        req.saltRounds = saltRounds;
         req.pool = pool;
+        next();
     }, loginSignup);
 
-app.post('/login/signin',
+app.use('/login/signin',
     body('username').trim().isLength({ min: 2 }).escape(),
     body('pass').isLength({ min: 8 }),
-    (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        pool.query(`SELECT * FROM users WHERE username = ? LIMIT 1`,
-        req.body.username, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            else if (result.length > 0) {
-                bcrypt.compare(req.body.pass, result[0].pass, (err, ress) => {
-                    if (ress) {
-                        req.session.regenerate(() => {
-                            req.session.save((err) => {
-                                const userRes = result[0];
-                                pool.query(`INSERT INTO users_sessions (idUser, session_id) VALUES (?, ?)`, [userRes.id, req.session.id], (error, result, fields) => {
-                                    if (error) return res.status(500).send(error);
-
-                                    else {
-                                        const user = (({id, username, nickname, avatar, type}) => ({id, username, nickname, avatar, type}))(userRes);
-                                        req.session.user = user;
-                                        res.redirect('/');
-                                    }
-                                })
-                            })
-                        })
-                    }
-                    else res.send({'status': 'failure', 'message': 'wrong username or password'});
-                })
-            } else {
-                res.send({'status': 'failure', 'message': 'wrong username or password'});
-            }
-        })
-    }
-)
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.bcrypt = bcrypt;
+        req.pool = pool;
+        next();
+    }, loginSignin);
 
 app.get('/logout', (req, res) => {
     if (req.session.user) {
