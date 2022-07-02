@@ -29,6 +29,7 @@ const replies = require('./routers/replies');
 const createPost = require('./routers/create/post');
 const createReplyPost = require('./routers/create/replyPost');
 const createReplyComment = require('./routers/create/replyComment');
+const createUpdate = require('./routers/create/update');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -261,6 +262,7 @@ app.use('/create/reply/post',
         next();
     }, createReplyPost);
 
+// Create reply
 app.use('/create/reply/comment',
     body('id').notEmpty().isInt(),
     body('reply').trim().isLength({ min: 1, max: 2500 }).escape(),
@@ -270,121 +272,21 @@ app.use('/create/reply/comment',
         next();
     }, createReplyComment);
 
-app.post('/update/post',
+// Update post
+app.use('/update/post',
     memUpload.single('file'),
     body('id').notEmpty().isInt(),
     body('subtitle').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
     body('link').optional({ checkFalsy: true }).matches(/(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>[\w-]+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>[\w-]+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>[\w-]+)/).trim().escape(),
     body('body').trim().isLength({ min: 1, max: 10000 }).escape(),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        else if (req.session.user.type === "BAN") return res.sendStatus(403);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        const validVid = ["video/mp4", "video/webm"];
-        const validPic = ["image/png", "image/jpeg", "image/gif"];
-
-        var type = "TEXT";
-        if (req.file) {
-            if (validVid.includes(req.file.mimetype)) type = "VIDO";
-            else if (validPic.includes(req.file.mimetype)) type = "IMG";
-        } else if (req.body.link) {
-            type = "VIDO";
-        }
-
-        pool.query(`SELECT * FROM posts WHERE id = ?`,
-        req.body.id, (error, result, fields) => {
-                if (error) return res.status(500).send(error);
-
-                // Valid first post found
-                if (result.length > 0) {
-                    const parent = result[0];
-
-                    // Check if this user is OP
-                    if (req.session.user.id === parent.idUser) {
-                        // Add link if it's a VIDO
-                        if (type === "VIDO" && req.body.link !== "") {
-                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,status,link,type) VALUES(?,?,?,?,?,'UPDT',?,?)",
-                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body, req.body.link, type],
-                            (error, result, fields) => {
-                                if (error) return res.status(500).send(error);
-    
-                                const resId = parent.id.toString();
-                                return res.status(200).send(resId);
-                            })
-                        } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
-                            // Upload file to imgur and update
-                            if (imgurCurrent <= imgurLimit) {
-                                imgurCurrent++;
-                                console.log('Current Imgur upload: ' + imgurCurrent);
-                                const file64 = req.file.buffer.toString('base64');
-                                imgur.uploadBase64(file64,
-                                        undefined,
-                                        parent.title,
-                                        req.body.subtitle)
-                                    .then((json) => {
-                                        if (json.link) {
-                                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,status,link,deletehash,type) VALUES(?,?,?,?,?,'UPDT',?,?,?)",
-                                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body, json.link, json.deletehash, type],
-                                            (error, result, fields) => {
-                                                if (error) return res.status(500).send(error);
-
-                                                const resId = parent.id.toString();
-                                                return res.status(200).send(resId);
-                                            })
-                                        } else return res.status(500).json({error: "Issue uploading to imgur."});
-                                    })
-                                    .catch((err) => {
-                                        console.error(err.message);
-                                        res.redirect('/');
-                                    });
-                            } else {
-                                res.status(503).json({error: "Imgur upload capacity reached. Please try again in one hour."});
-                            }
-                        } else {
-                        // No link insert
-                            pool.query("INSERT INTO posts (idParent,idUser,title,subtitle,body,status) VALUES(?,?,?,?,?,'UPDT')",
-                            [parent.id, req.session.user.id, parent.title, req.body.subtitle, req.body.body],
-                            (error, result, fields) => {
-                                if (error) return res.status(500).send(error);
-
-                                const resId = parent.id.toString();
-                                return res.status(200).send(resId);
-                            })
-                        }
-                    } else return res.sendStatus(403);
-                } else return res.status(400).json({error: "No post to update."});
-            })
-    }
-)
-
-app.get('/featured', (req, res) => {
-    if (req.headers.referer) {
-        pool.query(`SELECT * FROM featured
-        WHERE id = 1`, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            else res.send(result);
-        })
-    } else res.redirect('/');
-})
-
-app.post('/update/featured',
-    body('link').matches(/null|(https:\/\/www\.)?(www\.)?(?<source1>youtube)\.com\/watch\?v=(?<id>\w+)|(https:\/\/)?(?<source2>youtu\.be)\/(?<id2>\w+)|(https:\/\/)?(?<source3>streamable)\.com\/(?<id3>\w+)/).trim().isLength({ min: 2 }).escape(),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        if (req.session.user.type != "ADMN") return res.sendStatus(403);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        pool.query(`UPDATE featured SET link = ? WHERE id = 1`, req.body.link, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            return res.redirect('/');
-        })
-    }
-)
+    (req, res, next) => {
+        req.pool = pool;
+        req.validationResult = validationResult;
+        req.imgur = imgur;
+        req.imgurCurrent = imgurCurrent;
+        req.imgurLimit = imgurLimit;
+        next();
+    }, createUpdate);
 
 app.post('/delete/post',
     body('ogid').notEmpty().isInt(),
