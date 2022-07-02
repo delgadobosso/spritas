@@ -34,6 +34,8 @@ const loginSignup = require('./routers/login/signup');
 const loginSignin = require('./routers/login/signin');
 const deletePost = require('./routers/delete/post');
 const deleteReply = require('./routers/delete/reply');
+const userInfo = require('./routers/user/info');
+const userPosts = require('./routers/user/posts');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -262,88 +264,21 @@ app.use('/delete/reply',
         next();
     }, deleteReply);
 
-app.get('/user/info/:name', (req, res) => {
-    if (req.headers.referer) {
-        pool.query(`SELECT id, username, nickname, bio, avatar, type, ts, lastTs FROM users WHERE username = ?`,
-        req.params.name, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
+app.use('/user/info/:name', 
+    (req, res, next) => {
+        req.name = req.params.name;
+        req.pool = pool;
+        next();
+    }, userInfo);
 
-            else {
-                var info = result[0];
-                if (req.session.user) {
-                    pool.query(`SELECT * FROM users_blocked
-                    WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
-                    [req.session.user.id, info.id, info.id, req.session.user.id], (error, result, fields) => {
-                        if (error) return res.status(500).send(error);
-                        else if (result.length > 1) {
-                            info.blocked = true;
-                            info.blocking = true;
-                            return res.send(info);
-                        } else if (result.length > 0 && result[0].blockedId === info.id) {
-                            info.blocking = true;
-                            return res.send(info);
-                        } else if (result.length > 0 && result[0].blockedId === req.session.user.id) {
-                            info.blocked = true;
-                            return res.send(info);
-                        } else return res.send(info);
-                    })
-                } else {
-                    return res.send(info);
-                }
-            }
-        });
-    } else res.redirect('/user/' + req.params.id);
-})
-
-app.get('/user/posts/:id.:offset.:limit', (req, res) => {
-    if (req.headers.referer) {
-        const id = req.params.id;
-        var offset;
-        var limit;
-        if (req.params.offset && parseInt(req.params.offset)) offset = parseInt(req.params.offset);
-        else offset = 0;
-        if (req.params.limit && parseInt(req.params.limit)) limit = Math.min(24, parseInt(req.params.limit)) + 1;
-        else limit = 0;
-        pool.query(`
-        SELECT 
-            p1.id,
-            p1.idParent,
-            p1.idUser,
-            p1.title,
-            IFNULL(t1.subtitle, p1.subtitle) AS subtitle,
-            IFNULL(t1.body, p1.body) AS body,
-            IFNULL(t1.status, p1.status) AS status,
-            IFNULL(t1.link, p1.link) AS link,
-            IFNULL(t1.type, p1.type) AS type,
-            p1.perm,
-            IFNULL(t1.ts, p1.ts) AS ts,
-            users.username AS username,
-            users.nickname AS nickname,
-            users.avatar AS avatar
-        FROM posts AS p1
-        LEFT JOIN users
-        ON p1.idUser = users.id
-        LEFT JOIN (
-            SELECT *
-            FROM posts AS p
-            INNER JOIN (
-                SELECT MAX(id) AS id
-                FROM posts
-                WHERE idUser = ? AND posts.status = 'UPDT'
-                GROUP BY idParent) AS t
-            USING (id)) AS t1
-        ON p1.id = t1.idParent
-        WHERE p1.idUser = ? AND p1.idParent IS NULL
-        AND (p1.status IS NULL OR (p1.status = 'DELE' AND t1.id IS NOT NULL))
-        ORDER BY IFNULL(t1.ts, p1.ts) DESC
-        LIMIT ?,?
-        `, [id, id, offset, limit], (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            else res.send(result);
-        });
-    } else redirect('/');
-})
+app.use('/user/posts/:id.:offset.:limit', 
+    (req, res, next) => {
+        req.id = req.params.id;
+        req.offset = req.params.offset;
+        req.limit = req.params.limit;
+        req.pool = pool;
+        next();
+    }, userPosts);
 
 app.post('/user/update',
     avatarUpload.single('avatar'),
