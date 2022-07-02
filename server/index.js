@@ -28,6 +28,7 @@ const comments = require('./routers/comments');
 const replies = require('./routers/replies');
 const createPost = require('./routers/create/post');
 const createReplyPost = require('./routers/create/replyPost');
+const createReplyComment = require('./routers/create/replyComment');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -260,62 +261,14 @@ app.use('/create/reply/post',
         next();
     }, createReplyPost);
 
-app.post('/create/reply/comment',
+app.use('/create/reply/comment',
     body('id').notEmpty().isInt(),
     body('reply').trim().isLength({ min: 1, max: 2500 }).escape(),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        if (req.session.user.type === "BAN") return res.sendStatus(403);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        var parentPost;
-        var parentComment;
-        // Get parent comment
-        pool.query(`SELECT * FROM replies WHERE id = ?`, req.body.id, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            if (result.length > 0) {
-                parentComment = result[0];
-
-                // Get parent post
-                pool.query(`SELECT * FROM posts WHERE id = ?`, parentComment.idPost, (error, result, fields) => {
-                    if (error) return res.status(500).send(error);
-
-                    parentPost = result[0];
-
-                    // Check if post or comment OPs are blocking this user
-                    pool.query(`SELECT * FROM users_blocked
-                    WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
-                    [parentPost.idUser, req.session.user.id, parentComment.idUser, req.session.user.id],
-                    (error, result, fields) => {
-                        if (error) return res.status(500).send(error);
-
-                        if (result.length > 0) return res.sendStatus(403);
-                        else {
-                            pool.query(`INSERT INTO replies (idParent,idUser,body)
-                            VALUES (?,?,?)`, [parentComment.id, req.session.user.id, req.body.reply], (error, result, fields) => {
-                                if (error) return res.status(500).send(error);
-
-                                const resId = result.insertId.toString();
-
-                                // Only update post ts if not the OP replying
-                                if (req.session.user.id === parentPost.idUser) return res.status(200).send(resId);
-                                else {
-                                    pool.query(`UPDATE posts SET tsReply = CURRENT_TIMESTAMP WHERE id = ?`, parentPost.id, (error, result, fields) => {
-                                        if (error) return res.status(500).send(error);
-
-                                        return res.status(200).send(resId);
-                                    })
-                                }
-                            })
-                        }
-                    })
-                })
-            } else return res.status(400).json({error: "No comment to reply to."});
-        })
-    }
-)
+    (req, res, next) => {
+        req.pool = pool;
+        req.validationResult = validationResult;
+        next();
+    }, createReplyComment);
 
 app.post('/update/post',
     memUpload.single('file'),
