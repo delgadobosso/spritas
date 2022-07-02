@@ -32,6 +32,8 @@ const createReplyComment = require('./routers/create/replyComment');
 const createUpdate = require('./routers/create/update');
 const loginSignup = require('./routers/login/signup');
 const loginSignin = require('./routers/login/signin');
+const deletePost = require('./routers/delete/post');
+const deleteReply = require('./routers/delete/reply');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -242,68 +244,23 @@ app.use('/update/post',
         next();
     }, createUpdate);
 
-app.post('/delete/post',
+app.use('/delete/post',
     body('ogid').notEmpty().isInt(),
     body('currentid').notEmpty().isInt(),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.pool = pool;
+        req.imgur = imgur;
+        next();
+    }, deletePost);
 
-        pool.query(`SELECT *
-        FROM posts AS p
-        WHERE id = ?`, req.body.currentid, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
-                var deletehash = result[0].deletehash;
-                var byWho = (req.session.user.type === 'ADMN' && req.session.user.id !== result[0].idUser) ? 'Deleted By Admin' : 'Deleted By User';
-                pool.query(`UPDATE posts AS p
-                SET subtitle = NULL, body = ?, p.status = 'DELE', link = NULL, deletehash = NULL, type = 'TEXT'
-                WHERE id = ?`, [byWho, req.body.currentid], (error, result, fields) => {
-                    if (error) return res.status(500).send(error);
-
-                    if (deletehash) {
-                        imgur.deleteImage(deletehash)
-                            .then(() => { return res.sendStatus(200) })
-                            .catch((err) => {
-                                console.error(err.message);
-                                return res.sendStatus(200);
-                            });
-                    } else return res.sendStatus(200);
-                })
-            }
-            else return res.sendStatus(403);
-        })
-    }
-)
-
-app.post('/delete/reply',
+app.use('/delete/reply',
     body('id').notEmpty().isInt(),
-    (req, res) => {
-        if (!req.session.user) return res.sendStatus(401);
-        if (req.session.user && req.session.user.type === "BAN") return res.sendStatus(403);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        pool.query(`SELECT *
-        FROM replies
-        WHERE id = ?`, req.body.id, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-
-            if (req.session.user.id === result[0].idUser || req.session.user.type === 'ADMN') {
-                var byWho = (req.session.user.type === 'ADMN' && req.session.user.id !== result[0].idUser) ? 'Deleted By Admin' : 'Deleted By User';
-                pool.query(`UPDATE replies
-                SET body = ?, status = 'DELE'
-                WHERE id = ?`, [byWho, req.body.id], (error, result, fields) => {
-                    if (error) return res.status(500).send(error);
-                    else return res.sendStatus(200);
-                })
-            }
-        })
-    }
-)
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.pool = pool;
+        next();
+    }, deleteReply);
 
 app.get('/user/info/:name', (req, res) => {
     if (req.headers.referer) {
