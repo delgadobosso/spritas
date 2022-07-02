@@ -30,6 +30,7 @@ const createPost = require('./routers/create/post');
 const createReplyPost = require('./routers/create/replyPost');
 const createReplyComment = require('./routers/create/replyComment');
 const createUpdate = require('./routers/create/update');
+const loginSignup = require('./routers/login/signup');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -137,27 +138,11 @@ app.post('/login/signup',
     body('nickname').trim().isLength({ min: 2 }).escape(),
     body('pass').isLength({ min: 8 }),
     body('email').isEmail(),
-    (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
-
-        bcrypt.hash(req.body.pass, saltRounds, function(err, hash) {
-            pool.query(`INSERT INTO users (email,username,nickname,pass,type) VALUES(?,?,?,?,"USER")`,
-            [req.body.email, req.body.username, req.body.nickname, hash],
-            (error, result, fields) => {
-                if (error) {
-                    if (error.errno == 1062) {
-                        var errType = error.sqlMessage.split(' ').pop();
-                        if (errType === "'users.username'") res.send({'status': 'failure', 'message': 'this username is already in use'});
-                        else res.send({'status': 'failure', 'message': 'this email is already in use'});
-                    } else res.sendStatus(500);
-                } else {
-                    res.send({'status': 'success', 'message': 'successfully created account'});
-                }
-            })
-        })
-    }
-)
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.bcrypt = bcrypt;
+        req.pool = pool;
+    }, loginSignup);
 
 app.post('/login/signin',
     body('username').trim().isLength({ min: 2 }).escape(),
