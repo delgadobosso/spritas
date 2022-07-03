@@ -41,6 +41,8 @@ const deleteReply = require('./routers/delete/reply');
 const userInfo = require('./routers/user/info');
 const userPosts = require('./routers/user/posts');
 const userUpdate = require('./routers/user/update');
+const userBan = require('./routers/user/ban');
+const userUnban = require('./routers/user/unban');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -300,53 +302,21 @@ app.get('/media/avatars/:avatar', express.static(path.join(__dirname, '/media/av
     res.sendFile(path.join(__dirname, '/media/avatars/', req.params.avatar));
 })
 
-app.post('/ban/user/:id', (req, res) => {
-    if (!req.session.user) return res.sendStatus(401);
-    else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
+app.use('/ban/user/:id',
+    (req, res, next) => {
+        req.id = req.params.id;
+        req.pool = pool;
+        req.sessionStore = sessionStore;
+        next();
+    }, userBan);
 
-    pool.query(`UPDATE users
-        SET type = "BAN"
-        WHERE id = ?`, req.params.id, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-            else {
-                pool.query(`SELECT *
-                FROM users_sessions
-                WHERE idUser = ?`, req.params.id, (error, result, fields) => {
-                    result.forEach(userSession => {
-                        sessionStore.get(userSession.session_id, (err, session) => {
-                            session.user.type = 'BAN';
-                            sessionStore.set(userSession.session_id, session);
-                        })
-                    });
-                    return res.sendStatus(200);
-                })
-            }
-        })
-})
-
-app.post('/unban/user/:id', (req, res) => {
-    if (!req.session.user) return res.sendStatus(401);
-    else if (req.session.user.type !== 'ADMN') return res.sendStatus(403);
-
-    pool.query(`UPDATE users
-        SET type = "USER"
-        WHERE id = ?`, req.params.id, (error, result, fields) => {
-            if (error) return res.status(500).send(error);
-            else {
-                pool.query(`SELECT *
-                FROM users_sessions
-                WHERE idUser = ?`, req.params.id, (error, result, fields) => {
-                    result.forEach(userSession => {
-                        sessionStore.get(userSession.session_id, (err, session) => {
-                            session.user.type = 'USER';
-                            sessionStore.set(userSession.session_id, session);
-                        })
-                    });
-                    return res.sendStatus(200);
-                })
-            }
-        })
-})
+app.use('/unban/user/:id',
+    (req, res, next) => {
+        req.id = req.params.id;
+        req.pool = pool;
+        req.sessionStore = sessionStore;
+        next();
+    }, userUnban);
 
 app.post('/block/user/:id', (req, res) => {
     if (!req.session.user) return res.sendStatus(401);
