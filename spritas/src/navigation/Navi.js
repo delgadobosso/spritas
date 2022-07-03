@@ -60,7 +60,7 @@ export default class Navi extends React.Component {
             avatar = (user.avatar) ? `/media/avatars/${user.avatar}` : pfp;
             userItem = <a className={"Navi-item" + itemOpen} href={"/u/" + user.username}>{user.nickname} (@{user.username})</a>;
             if (user.type === "ADMN") admin = <a className={"Navi-item" + itemOpen} href="/admin">Admin Portal</a>
-            createPost = <a className={"Navi-item" + itemOpen} href="/create/post">Create Post</a>;
+            createPost = (user.type !== "BAN") ? <a className={"Navi-item" + itemOpen} href="/create/post">Create Post</a> : null;
             logout = <a className={"Navi-item" + itemOpen} href="/logout">Logout</a>;
         } else {
             avatar = pfp;
