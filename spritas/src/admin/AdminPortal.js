@@ -1,5 +1,6 @@
 import React from 'react';
 import './AdminPortal.css';
+import AuditLog from './AuditLog';
 
 export default class AdminPortal extends React.Component {
     constructor(props) {
@@ -8,7 +9,9 @@ export default class AdminPortal extends React.Component {
 
     render() {
         return (
-            <div className='AdminPortal'></div>
+            <div className='AdminPortal'>
+                <AuditLog />
+            </div>
         )
     }
 }
