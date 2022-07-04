@@ -21,11 +21,11 @@ const { body, validationResult } = require('express-validator');
 const app = express();
 const port = process.env.PORT;
 // Routers
-const homeNew = require('./routers/homeNew');
+const homeNew = require('./routers/posts/homeNew');
 
-const post = require('./routers/post');
-const comments = require('./routers/comments');
-const replies = require('./routers/replies');
+const post = require('./routers/posts/post');
+const comments = require('./routers/posts/comments');
+const replies = require('./routers/posts/replies');
 
 const createPost = require('./routers/create/post');
 const createReplyPost = require('./routers/create/replyPost');
@@ -43,6 +43,8 @@ const userPosts = require('./routers/user/posts');
 const userUpdate = require('./routers/user/update');
 const userBan = require('./routers/user/ban');
 const userUnban = require('./routers/user/unban');
+
+const adminAudit = require('./routers/admin/audit');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -349,6 +351,14 @@ app.get('/user/blockers', (req, res) => {
         })
     } else res.redirect('/');
 })
+
+app.use('/admin/audit/:offset.:limit', 
+    (req, res, next) => {
+        req.offset = req.params.offset;
+        req.limit = req.params.limit;
+        req.pool = pool;
+        next();
+    }, adminAudit);
 
 app.listen(port, () => {
     console.log(`Spritas Server listening at http://localhost:${port}`);
