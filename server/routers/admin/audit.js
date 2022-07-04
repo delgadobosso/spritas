@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+    if (req.session.user.type !== "ADMN") return res.sendStatus(403);
     var offset;
     var limit;
     if (req.offset && parseInt(req.offset)) offset = parseInt(req.offset);

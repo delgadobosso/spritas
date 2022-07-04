@@ -46,6 +46,8 @@ const userUnban = require('./routers/user/unban');
 
 const adminAudit = require('./routers/admin/audit');
 
+const reportPost = require('./routers/posts/reportPost');
+
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
 const memUpload = multer({
@@ -359,6 +361,15 @@ app.use('/admin/audit/:offset.:limit',
         req.pool = pool;
         next();
     }, adminAudit);
+
+app.use('/report/post',
+    body('id').notEmpty().isInt(),
+    body('reason').optional({ checkFalsy: true }).escape(),
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.pool = pool;
+        next();
+    }, reportPost);
 
 app.listen(port, () => {
     console.log(`Spritas Server listening at http://localhost:${port}`);
