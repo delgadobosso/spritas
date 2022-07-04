@@ -12,10 +12,10 @@ router.post('/', (req, res) => {
 
         if (result.length > 0) {
             req.pool.query(`INSERT INTO audit_log (idFrom,idTo,idContent,type,reason)
-            VALUES (?,?,?,'RP',?)`, [req.session.id, result[0].idUser, req.body.id, req.body.reason], (error, result, fields) => {
+            VALUES (?,?,?,'RP',?)`, [req.session.user.id, result[0].idUser, req.body.id, req.body.reason], (error, result, fields) => {
                 if (error) res.status(500).send(error);
 
-                return res.status(200);
+                return res.sendStatus(200);
             })
         }
     })

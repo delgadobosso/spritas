@@ -364,7 +364,7 @@ app.use('/admin/audit/:offset.:limit',
 
 app.use('/report/post',
     body('id').notEmpty().isInt(),
-    body('reason').optional({ checkFalsy: true }).escape(),
+    body('reason').trim().escape(),
     (req, res, next) => {
         req.validationResult = validationResult;
         req.pool = pool;

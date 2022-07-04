@@ -19,6 +19,7 @@ export default class Post extends React.Component {
         this.postTransition = this.postTransition.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.delete = this.delete.bind(this);
+        this.report = this.report.bind(this);
         this.collapsable = this.collapsable.bind(this);
         this.expand = this.expand.bind(this);
         this.updateMode = this.updateMode.bind(this);
@@ -161,6 +162,24 @@ export default class Post extends React.Component {
                 else console.error('Post deletion error');
             });
         } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+    }
+
+    report(post) {
+        var answer = prompt(`Why are you reporting this post?`, '');
+        if (answer) {
+            var myBody = new URLSearchParams();
+            myBody.append('id', post.id);
+            myBody.append('reason', answer);
+
+            fetch('/report/post', {
+                method: 'POST',
+                body: myBody
+            })
+            .then((resp) => {
+                if (resp.ok) alert('This post has been reported to the Admins.');
+                else alert('Error reporting post. Please try again.');
+            });
+        } else if (answer === '') alert(`You must give a reason to report this post.`);
     }
 
     collapsable(newIndex) {
@@ -450,7 +469,7 @@ export default class Post extends React.Component {
         } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.status !== 'DELE') {
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post As Admin</div>;
         } else if (this.props.user && this.props.user.type !== 'BAN') {
-            report = <div className='PostMain-optionItem PostMain-optionItemRed'>Report Post</div>;
+            report = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.report(currentPost)}>Report Post</div>;
         }
 
         const options = (update || deletePost || report) ? (
