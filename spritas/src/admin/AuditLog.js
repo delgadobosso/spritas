@@ -22,17 +22,18 @@ export default class AuditLog extends React.Component {
         .then(res => res.json())
         .then(data => {
             if (data.length > 0) {
-                var newItems = data.slice(0, this.state.amount).map((item, index) =>
-                    <tr>
-                        <td>{item.idFrom}</td>
-                        <td>{item.idTo}</td>
-                        <td>{item.idContent}</td>
-                        <td>{item.type}</td>
-                        <td>{item.reason}</td>
-                        <td>{item.ts}</td>
-                    </tr>
-                );
-                console.log(newItems);
+                var newItems = data.slice(0, this.state.amount).map((item, index) => {
+                    return (
+                        <tr className='AuditLog-row'>
+                            <td>{item.idFrom}</td>
+                            <td>{item.idTo}</td>
+                            <td>{item.idContent}</td>
+                            <td>{item.type}</td>
+                            <td>{item.reason}</td>
+                            <td>{item.ts}</td>
+                        </tr>
+                    )
+                });
                 if (data.length < (this.state.amount + 1)) this.setState({ more: false });
                 else this.setState(state => ({ offset: state.offset + this.state.amount }));
                 this.setState(state => ({ audit: [newItems, ...state.audit] }));
@@ -45,7 +46,12 @@ export default class AuditLog extends React.Component {
             <table className='AuditLog'>
                 <thead>
                     <tr>
-                        <th>Audit Log</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Content</th>
+                        <th>Type</th>
+                        <th>Reason</th>
+                        <th>Timestamp</th>
                     </tr>
                 </thead>
                 <tbody>

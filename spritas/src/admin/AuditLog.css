@@ -1,0 +1,22 @@
+.AuditLog {
+    color: white;
+    background-color: var(--darkest-grey);
+    border-radius: 10px;
+    padding: 5px;
+    margin: 20px auto 20px auto;
+}
+
+.AuditLog-row {
+    background-color: var(--dark-grey);
+
+    transition: background-color 0.1s;
+}
+.AuditLog-row:nth-child(odd) {
+    background-color: var(--mid-grey);
+}
+
+@media (hover: hover) {
+    .AuditLog-row:hover {
+        background-color: var(--lightest-grey);
+    }
+}
