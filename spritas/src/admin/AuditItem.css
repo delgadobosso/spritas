@@ -1,0 +1,14 @@
+.AuditItem {
+    background-color: var(--dark-grey);
+
+    transition: background-color 0.1s;
+}
+.AuditItem:nth-child(odd) {
+    background-color: var(--mid-grey);
+}
+
+@media (hover: hover) {
+    .AuditItem:hover {
+        background-color: var(--lightest-grey);
+    }
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import AuditItem from './AuditItem';
 import './AuditLog.css';
 
 export default class AuditLog extends React.Component {
@@ -22,18 +23,8 @@ export default class AuditLog extends React.Component {
         .then(res => res.json())
         .then(data => {
             if (data.length > 0) {
-                var newItems = data.slice(0, this.state.amount).map((item, index) => {
-                    return (
-                        <tr className='AuditLog-row'>
-                            <td>{item.idFrom}</td>
-                            <td>{item.idTo}</td>
-                            <td>{item.idContent}</td>
-                            <td>{item.type}</td>
-                            <td>{item.reason}</td>
-                            <td>{item.ts}</td>
-                        </tr>
-                    )
-                });
+                var newItems = data.slice(0, this.state.amount).map((item, index) => 
+                    <AuditItem item={item} />);
                 if (data.length < (this.state.amount + 1)) this.setState({ more: false });
                 else this.setState(state => ({ offset: state.offset + this.state.amount }));
                 this.setState(state => ({ audit: [newItems, ...state.audit] }));
