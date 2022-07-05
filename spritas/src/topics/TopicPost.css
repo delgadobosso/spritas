@@ -1,6 +1,5 @@
 .TopicPost {
     width: 300px;
-    margin: 0 0 20px 20px;
     background-color: var(--darkest-grey);
     border-radius: 10px;
     overflow: hidden;
@@ -9,6 +8,9 @@
     animation-name: fadeIn;
     animation-duration: 0.5s;
     animation-fill-mode: forwards;
+}
+.TopicPortal .TopicPost {
+    margin: 0 0 20px 20px;
 }
 
 .TopicPost-link {
