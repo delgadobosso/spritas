@@ -77,7 +77,7 @@ export default class App extends React.Component {
       this.setState({ post: post }, () => {
         if (push) {
           let stateObj = { id: id };
-          window.history.pushState(stateObj, "", "/p/" + id);
+          window.history.pushState(stateObj, "", window.location.pathname + "/p/" + id);
           window.history.scrollRestoration = 'manual';
         }
         const posthome = document.getElementById("PostHome-" + this.state.post.props.id)
