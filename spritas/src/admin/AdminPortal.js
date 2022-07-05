@@ -10,7 +10,7 @@ export default class AdminPortal extends React.Component {
     render() {
         return (
             <div className='AdminPortal'>
-                <AuditLog />
+                <AuditLog postClick={this.props.postClick} />
             </div>
         )
     }

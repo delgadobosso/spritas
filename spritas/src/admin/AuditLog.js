@@ -24,7 +24,7 @@ export default class AuditLog extends React.Component {
         .then(data => {
             if (data.length > 0) {
                 var newItems = data.slice(0, this.state.amount).map((item, index) => 
-                    <AuditItem item={item} />);
+                    <AuditItem item={item} postClick={this.props.postClick} />);
                 if (data.length < (this.state.amount + 1)) this.setState({ more: false });
                 else this.setState(state => ({ offset: state.offset + this.state.amount }));
                 this.setState(state => ({ audit: [newItems, ...state.audit] }));

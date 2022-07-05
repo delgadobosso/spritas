@@ -28,7 +28,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    if (window.location.pathname === "/" || window.location.pathname.startsWith('/u/')) window.history.replaceState({}, "", window.location.pathname);
+    if (window.location.pathname === "/" || window.location.pathname.startsWith('/u/') || window.location.pathname.startsWith('/admin')) window.history.replaceState({}, "", window.location.pathname);
     window.history.scrollRestoration = 'manual';
 
     // Navi Hiding
@@ -102,7 +102,7 @@ export default class App extends React.Component {
           <Header />
           <Switch>
             <Route path='/admin'>
-              <AdminPortal user={this.state.user} />
+              <AdminPortal postClick={this.postClick} user={this.state.user} />
             </Route>
             <Route path='/create/post'
               render={props => <CreatePost user={this.state.user} {...props} />} />
