@@ -51,7 +51,7 @@ export default class AuditItem extends React.Component {
 
         return (
             <tr className='AuditItem'>
-                <td className='AuditItem-td'>{result}</td>
+                <td className='AuditItem-td AuditItem-action'>{result}</td>
                 <td className='AuditItem-td'>{he.decode(item.reason)}</td>
             </tr>
         )
