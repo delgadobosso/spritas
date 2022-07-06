@@ -31,8 +31,8 @@ router.post('/', (req, res) => {
 
                     if (result.length > 0) return res.sendStatus(403);
                     else {
-                        req.pool.query(`INSERT INTO replies (idParent,idUser,body)
-                        VALUES (?,?,?)`, [parentComment.id, req.session.user.id, req.body.reply], (error, result, fields) => {
+                        req.pool.query(`INSERT INTO replies (idPost,idParent,idUser,body)
+                        VALUES (?,?,?,?)`, [parentComment.idPost, parentComment.id, req.session.user.id, req.body.reply], (error, result, fields) => {
                             if (error) return res.status(500).send(error);
 
                             const resId = result.insertId.toString();
