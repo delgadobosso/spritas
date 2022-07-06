@@ -74,38 +74,44 @@ export default class PostContainer extends React.Component {
     }
 
     loadReplies(first=false) {
-        const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
-        if (!this.state.ever && this.state.offset > 0) this.setState({ever: true});
+        if (!this.state.loadingMore) {
+            this.setState({
+                loadingMore: true
+            }, () => {
+                const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
+                if (!this.state.ever && this.state.offset > 0) this.setState({ever: true});
 
-        fetch(`/r/${id}.${this.state.offset}.${this.state.amount}`)
-            .then(res => res.json())
-            .then(data => {
-                const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
-                    <Reply key={index + this.state.offset} post={reply}
-                        reply={true} opid={this.state.opid} user={this.props.user}
-                        blockers={this.state.blockers} delay={index} reload={this.reloadComments} />
-                );
-                var rep = document.getElementById('Replies');
-                if (rep && !first) {
-                    let maxHeight = rep.scrollHeight;
-                    rep.style.height = maxHeight + "px";
-                }
-                this.setState(state => ({
-                    replies: [...state.replies, ...moreReplies],
-                    loadingMore: false
-                }), () => { if (!first) this.extendReplies(); })
-                if (data.length < (this.state.amount + 1)) {
-                    this.setState({
-                        more: false
-                    });
-                } else {
-                    this.setState(state => ({
-                        offset: state.offset + this.state.amount,
-                        more: true
-                    }));
-                }
-            })
-            .catch(error => this.setState({ loadingMore: false }));
+                fetch(`/r/${id}.${this.state.offset}.${this.state.amount}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
+                            <Reply key={index + this.state.offset} post={reply}
+                                reply={true} opid={this.state.opid} user={this.props.user}
+                                blockers={this.state.blockers} delay={index} reload={this.reloadComments} />
+                        );
+                        var rep = document.getElementById('Replies');
+                        if (rep && !first) {
+                            let maxHeight = rep.scrollHeight;
+                            rep.style.height = maxHeight + "px";
+                        }
+                        this.setState(state => ({
+                            replies: [...state.replies, ...moreReplies],
+                            loadingMore: false
+                        }), () => { if (!first) this.extendReplies(); })
+                        if (data.length < (this.state.amount + 1)) {
+                            this.setState({
+                                more: false
+                            });
+                        } else {
+                            this.setState(state => ({
+                                offset: state.offset + this.state.amount,
+                                more: true
+                            }));
+                        }
+                    })
+                    .catch(error => this.setState({ loadingMore: false }));
+            });
+        }
     }
 
     extendReplies(first=false) {
@@ -166,11 +172,7 @@ export default class PostContainer extends React.Component {
             cover = " LoadingCover-anim";
         }
         const load = (this.state.more) ? (
-        <div className="PostContainer-load" onClick={() => {
-            this.setState({
-                loadingMore: true
-            }, () => this.loadReplies())
-        }}>
+        <div className="PostContainer-load" onClick={this.loadReplies}>
             <div className={'LoadingCover' + cover}></div>
             {loadMsg}
         </div>

@@ -9,8 +9,9 @@ export default class AuditLog extends React.Component {
         this.state = {
             audit: [],
             offset: 0,
-            amount: 10,
-            more: true
+            amount: 2,
+            more: false,
+            loadingMore: false
         }
     }
 
@@ -19,20 +20,47 @@ export default class AuditLog extends React.Component {
     }
 
     audit() {
-        fetch(`/admin/audit/${this.state.offset}.${this.state.amount}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.length > 0) {
-                var newItems = data.slice(0, this.state.amount).map((item, index) => 
-                    <AuditItem item={item} postClick={this.props.postClick} />);
-                if (data.length < (this.state.amount + 1)) this.setState({ more: false });
-                else this.setState(state => ({ offset: state.offset + this.state.amount }));
-                this.setState(state => ({ audit: [newItems, ...state.audit] }));
-            }
-        })
+        if (!this.state.loadingMore) {
+            this.setState({
+                loadingMore: true
+            }, () => {
+                fetch(`/admin/audit/${this.state.offset}.${this.state.amount}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        var newItems = data.slice(0, this.state.amount).map((item, index) => 
+                            <AuditItem item={item} postClick={this.props.postClick} />);
+                        if (data.length < (this.state.amount + 1)) this.setState({ more: false });
+                        else this.setState(state => ({
+                            offset: state.offset + this.state.amount,
+                            more: true
+                        }));
+                        this.setState(state => ({
+                            audit: [...state.audit, newItems],
+                            loadingMore: false
+                        }));
+                    }
+                })
+                .catch(error => this.setState({ loadingMore: false }));
+            });
+        }
     }
 
     render() {
+        var loadMsg = "Show More Items";
+        var cover = "";
+        if (this.state.loadingMore) {
+            loadMsg = "Loading More Items...";
+            cover = " LoadingCover-anim";
+        }
+
+        const load = (this.state.more) ? (
+            <div className='PostContainer-load' onClick={this.audit}>
+                <div className={'LoadingCover' + cover}></div>
+                {loadMsg}
+            </div>
+        ) : <div className='PostContainer-loaded'>All Items Shown</div>;
+
         return (
             <div className='AuditLog'>
                 <div className='AuditLog-header'>
@@ -48,6 +76,7 @@ export default class AuditLog extends React.Component {
                     </thead>
                     <tbody>
                         {this.state.audit}
+                        {load}
                     </tbody>
             </table>
             </div>

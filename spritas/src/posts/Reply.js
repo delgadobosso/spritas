@@ -52,38 +52,43 @@ export default class Reply extends React.Component {
     }
 
     loadReplies(first=false, reload=false) {
-        const id = this.props.post.id;
-
-        fetch(`/rr/${id}.${this.state.offset}.${this.state.amount}`)
-            .then(res => res.json())
-            .then(data => {
-                const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) => 
-                    <Reply key={index + this.state.offset} post={reply}
-                        opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
-                var rep = document.getElementById('Replies-' + this.props.post.id);
-                if (rep && !first) {
-                    let maxHeight = rep.scrollHeight;
-                    rep.style.height = maxHeight + "px";
-                }
-                this.setState(state => ({
-                    replies: [...moreReplies, ...state.replies],
-                    loadingMore: false
-                }), () => {
-                    if (!first && !reload) this.extendReplies();
-                    if (reload) this.correctExtend(data);
-                })
-                if (data.length < (this.state.amount + 1)) {
-                    this.setState({
-                        more: false
-                    });
-                } else {
-                    this.setState(state => ({
-                        offset: state.offset + this.state.amount,
-                        more: true
-                    }));
-                }
-            })
-            .catch(error => this.setState({ loadingMore: false }));
+        if (!this.state.loadingMore) {
+            this.setState({
+                loadingMore: true
+            }, () => {
+                const id = this.props.post.id;
+                fetch(`/rr/${id}.${this.state.offset}.${this.state.amount}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) => 
+                            <Reply key={index + this.state.offset} post={reply}
+                                opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
+                        var rep = document.getElementById('Replies-' + this.props.post.id);
+                        if (rep && !first) {
+                            let maxHeight = rep.scrollHeight;
+                            rep.style.height = maxHeight + "px";
+                        }
+                        this.setState(state => ({
+                            replies: [...moreReplies, ...state.replies],
+                            loadingMore: false
+                        }), () => {
+                            if (!first && !reload) this.extendReplies();
+                            if (reload) this.correctExtend(data);
+                        })
+                        if (data.length < (this.state.amount + 1)) {
+                            this.setState({
+                                more: false
+                            });
+                        } else {
+                            this.setState(state => ({
+                                offset: state.offset + this.state.amount,
+                                more: true
+                            }));
+                        }
+                    })
+                    .catch(error => this.setState({ loadingMore: false }));
+            });
+        }
     }
 
     extendReplies() {
@@ -275,9 +280,7 @@ export default class Reply extends React.Component {
         }
         var load = null;
         if (this.props.reply && this.state.more) {
-            load = <div className="Post-load" onClick={() => this.setState({
-                loadingMore: true
-            }, () => this.loadReplies())}>
+            load = <div className="Post-load" onClick={this.loadReplies}>
                 <div className={'LoadingCover' + cover}></div>
                 {loadMsg}
             </div>;
