@@ -14,9 +14,9 @@ router.get('/', (req, res) => {
             FROM replies
             LEFT JOIN users ON replies.idUser = users.id
             WHERE replies.idPost = ? AND replies.idParent IS NULL
-            ORDER BY replies.id = ? DESC, replies.ts DESC
+            ORDER BY replies.tsReply DESC
             LIMIT ?,?`,
-        [id, id, offset, limit], (error, result, fields) => {
+        [id, offset, limit], (error, result, fields) => {
             if (error) return res.status(500).send(error);
             
             else res.send(result);

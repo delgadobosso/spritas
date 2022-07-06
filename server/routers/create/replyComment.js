@@ -43,7 +43,11 @@ router.post('/', (req, res) => {
                                 req.pool.query(`UPDATE posts SET tsReply = CURRENT_TIMESTAMP WHERE id = ?`, parentPost.id, (error, result, fields) => {
                                     if (error) return res.status(500).send(error);
 
-                                    return res.status(200).send(resId);
+                                    req.pool.query(`UPDATE replies SET tsReply = CURRENT_TIMESTAMP WHERE id = ?`, parentComment.id, (error, result, fields) => {
+                                        if (error) return res.status(500).send(error);
+
+                                        return res.status(200).send(resId);
+                                    })
                                 })
                             }
                         })
