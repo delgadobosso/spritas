@@ -38,6 +38,8 @@
 
 .Post-a {
     max-width: 100%;
+    text-decoration: none;
+    color: white;
 }
 
 .Post-user {
