@@ -12,11 +12,15 @@
 
 .AuditLog-title {
     margin: 0;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .AuditLog-table {
     width: 100%;
-    text-align: center;
     padding: 10px;
     border-radius: 10px;
     table-layout: fixed;

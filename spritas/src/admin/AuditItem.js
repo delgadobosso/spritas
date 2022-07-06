@@ -1,11 +1,15 @@
 import React from 'react';
-import TopicPost from '../topics/TopicPost';
 import './AuditItem.css';
+import he from 'he';
+import relativeTime from '../functions/relativeTime';
 
 export default class AuditItem extends React.Component {
     constructor(props) {
         super(props);
         this.handleClick = this.handleClick.bind(this);
+        this.state = {
+            toggleTime: false
+        }
     }
 
     handleClick(e) {
@@ -36,11 +40,21 @@ export default class AuditItem extends React.Component {
                 break;
         }
 
+        var ts = new Date(item.ts);
+        ts = `${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
+        var relTime = relativeTime(item.ts);
+
+        const time = (!this.state.toggleTime) ?
+        <span title={ts} >{relTime}</span> :
+        <span title={relTime}>{ts}</span>;
+
         return (
             <tr className='AuditItem'>
                 <td className='AuditItem-td'>{result}</td>
-                <td className='AuditItem-td'>{item.reason}</td>
-                <td className='AuditItem-td'>{item.ts}</td>
+                <td className='AuditItem-td'>{he.decode(item.reason)}</td>
+                <td className='AuditItem-td AuditItem-ts' onClick={() => {
+                    this.setState(state => ({ toggleTime: !state.toggleTime }))}
+                }>{time}</td>
             </tr>
         )
     }
