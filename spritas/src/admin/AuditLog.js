@@ -34,18 +34,23 @@ export default class AuditLog extends React.Component {
 
     render() {
         return (
-            <table className='AuditLog'>
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Reason</th>
-                        <th>Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.state.audit}
-                </tbody>
+            <div className='AuditLog'>
+                <div className='AuditLog-header'>
+                    <h1 className='AuditLog-title'>Audit Log</h1>
+                </div>
+                <table className='AuditLog-table'>
+                    <thead>
+                        <tr>
+                            <th className='AuditLog-th'>Action</th>
+                            <th className='AuditLog-th'>Reason</th>
+                            <th className='AuditLog-th'>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.state.audit}
+                    </tbody>
             </table>
+            </div>
         )
     }
 }

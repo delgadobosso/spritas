@@ -26,7 +26,7 @@ export default class AuditItem extends React.Component {
                         <a href={`/u/${item.usernameFrom}`}>{`@${item.usernameFrom}`}</a>
                         &nbsp;reported&nbsp;
                         <a href={`/post/${item.idContent}`} onClick={this.handleClick}>{`P${item.idContent}`}</a>
-                        &nbsp;from&nbsp;
+                        &nbsp;posted by&nbsp;
                         <a href={`/u/${item.usernameTo}`}>{`@${item.usernameTo}`}</a>
                     </span>
                 );
@@ -38,9 +38,9 @@ export default class AuditItem extends React.Component {
 
         return (
             <tr className='AuditItem'>
-                <td>{result}</td>
-                <td>{item.reason}</td>
-                <td>{item.ts}</td>
+                <td className='AuditItem-td'>{result}</td>
+                <td className='AuditItem-td'>{item.reason}</td>
+                <td className='AuditItem-td'>{item.ts}</td>
             </tr>
         )
     }
