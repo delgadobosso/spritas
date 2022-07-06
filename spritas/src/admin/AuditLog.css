@@ -24,6 +24,7 @@
     padding: 10px;
     border-radius: 10px;
     table-layout: fixed;
+    word-break: break-word;
 }
 
 .AuditLog-th {

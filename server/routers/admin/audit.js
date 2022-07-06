@@ -11,7 +11,9 @@ router.get('/', (req, res) => {
     if (req.limit && parseInt(req.limit)) limit = Math.min(24, parseInt(req.limit)) + 1;
     else limit = 0;
     req.pool.query(`
-    SELECT a.*, u1.username AS usernameFrom, u2.username AS usernameTo
+    SELECT a.*,
+    u1.username AS usernameFrom, u1.nickname AS nicknameFrom,
+    u2.username AS usernameTo, u2.nickname AS nicknameTo
     FROM audit_log AS a
     LEFT JOIN users AS u1
     ON a.idFrom = u1.id
