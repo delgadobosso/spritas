@@ -3,6 +3,8 @@
     background-color: var(--darkest-grey);
     border-radius: 10px;
     margin: 20px 20px;
+
+    transition: margin 0.5s;
 }
 
 .AuditLog-header {
@@ -24,6 +26,8 @@
     padding: 0 10px;
     border-radius: 10px;
     word-break: break-word;
+
+    transition: padding 0.5s;
 }
 
 .AuditLog-th {
@@ -31,4 +35,15 @@
     top: 0;
     background-color: var(--light-grey);
     padding: 10px;
+}
+
+@media screen and (max-width: 700px) {
+    .AuditLog {
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .AuditLog-table {
+        padding: 0;
+    }
 }
