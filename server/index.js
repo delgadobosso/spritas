@@ -48,6 +48,7 @@ const adminAudit = require('./routers/admin/audit');
 
 const reportPost = require('./routers/posts/reportPost');
 const reportUser = require('./routers/user/reportUser');
+const reportReply = require('./routers/posts/reportReply');
 
 const multer = require('multer');
 const memStorage = multer.memoryStorage();
@@ -380,6 +381,15 @@ app.use('/report/user',
         req.pool = pool;
         next();
     }, reportUser);
+
+app.use('/report/reply',
+    body('id').notEmpty().isInt(),
+    body('reason').trim().escape(),
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.pool = pool;
+        next();
+    }, reportReply);
 
 app.listen(port, () => {
     console.log(`Spritas Server listening at http://localhost:${port}`);

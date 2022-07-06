@@ -14,6 +14,7 @@ export default class Reply extends React.Component {
         this.correctExtend = this.correctExtend.bind(this);
         this.collapse = this.collapse.bind(this);
         this.delete = this.delete.bind(this);
+        this.report = this.report.bind(this);
         this.reloadReplies = this.reloadReplies.bind(this);
         this.collapsable = this.collapsable.bind(this);
         this.expand = this.expand.bind(this);
@@ -185,6 +186,24 @@ export default class Reply extends React.Component {
         }
     }
 
+    report() {
+        var answer = prompt(`Why are you reporting this reply?`, '');
+        if (answer) {
+            var myBody = new URLSearchParams();
+            myBody.append('id', this.props.post.id);
+            myBody.append('reason', answer);
+
+            fetch('/report/reply', {
+                method: 'POST',
+                body: myBody
+            })
+            .then((resp) => {
+                if (resp.ok) alert('This reply has been reported to the Admins.');
+                else alert('Error reporting reply. Please try again or reach out directly to an Admin.');
+            });
+        } else if (answer === '') alert(`You must give a reason to report this reply.`);
+    }
+
     reloadReplies() {
         var repliesElem = document.getElementById('Replies-' + this.props.post.id);
         var beforeHeight = repliesElem.scrollHeight;
@@ -313,7 +332,7 @@ export default class Reply extends React.Component {
         ) : null;
 
         const reportReply = (post.status !== 'DELE' && this.props.user && this.props.user.id !== post.idUser && this.props.user.type !== 'ADMN' && this.props.user.type !== 'BAN') ? (
-            <div className='Post-delete' title='Report Reply'>Report</div>
+            <div className='Post-delete' title='Report Reply' onClick={() => this.report()}>Report</div>
         ) : null;
 
         const actions = (

@@ -45,6 +45,19 @@ export default class AuditItem extends React.Component {
                 );
                 break;
 
+            case 'RR':
+                result = (
+                    <span>
+                        <a href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
+                        <span>reported&nbsp;
+                        <a href={`/post/${item.idContent}`}>{`reply#${item.idContent}`}</a>&nbsp;</span>
+                        <span>by&nbsp;
+                        <a href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a></span>
+                        <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
+                    </span>
+                )
+                break;
+
             case 'RU':
                 result = (
                     <span>
