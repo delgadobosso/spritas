@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
 
             else {
                 var info = result[0];
-                if (req.session.user) {
+                if (req.session.user && info) {
                     req.pool.query(`SELECT * FROM users_blocked
                     WHERE (blockerId = ? AND blockedId = ?) OR (blockerId = ? AND blockedId = ?)`,
                     [req.session.user.id, info.id, info.id, req.session.user.id], (error, result, fields) => {
