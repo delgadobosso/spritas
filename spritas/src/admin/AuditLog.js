@@ -71,7 +71,7 @@ export default class AuditLog extends React.Component {
                         <tr>
                             <th className='AuditLog-th'>Action</th>
                             <th className='AuditLog-th'>Reason</th>
-                            <th className='AuditLog-th'>Timestamp</th>
+                            <th className='AuditLog-th AuditLog-ts'>Timestamp</th>
                         </tr>
                     </thead>
                     <tbody>

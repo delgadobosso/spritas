@@ -21,7 +21,7 @@
 
 .AuditLog-table {
     width: 100%;
-    padding: 10px;
+    padding: 0 10px;
     border-radius: 10px;
     table-layout: fixed;
     word-break: break-word;
@@ -30,6 +30,10 @@
 .AuditLog-th {
     position: sticky;
     top: 0;
-    background-color: var(--darkest-grey);
+    background-color: var(--light-grey);
     padding: 10px;
+}
+
+.AuditLog-ts {
+    width: 250px;
 }
