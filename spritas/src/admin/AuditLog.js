@@ -6,6 +6,7 @@ export default class AuditLog extends React.Component {
     constructor(props) {
         super(props);
         this.audit = this.audit.bind(this);
+        this.scrollTo = this.scrollTo.bind(this);
         this.state = {
             audit: [],
             offset: 0,
@@ -46,6 +47,11 @@ export default class AuditLog extends React.Component {
         }
     }
 
+    scrollTo() {
+        var con = document.getElementById('AuditLog');
+        con.scrollIntoView({ behavior: "smooth" });
+    }
+
     render() {
         var loadMsg = "Show More Items";
         var cover = "";
@@ -62,8 +68,8 @@ export default class AuditLog extends React.Component {
         ) : <td className='PostContainer-loaded' colSpan="3">All Items Shown</td>;
 
         return (
-            <div className='AuditLog'>
-                <div className='AuditLog-header'>
+            <div id='AuditLog' className='AuditLog'>
+                <div className='AuditLog-header' onClick={this.scrollTo}>
                     <h1 className='AuditLog-title'>Audit Log</h1>
                 </div>
                 <table className='AuditLog-table'>

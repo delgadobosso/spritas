@@ -1,49 +1,44 @@
 .AuditLog {
     color: white;
     background-color: var(--darkest-grey);
-    border-radius: 10px;
-    margin: 20px 20px;
-
-    transition: margin 0.5s;
 }
 
 .AuditLog-header {
+    position: sticky;
+    top: 0;
     padding: 10px 20px;
     text-align: center;
-}
+    background-color: var(--darkest-grey);
+    z-index: 1;
+    cursor: pointer;
 
-.AuditLog-title {
-    margin: 0;
-
+    transition: background-color 0.1s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
+.AuditLog-title {
+    margin: 0;
+    line-height: 40px;
+}
+
 .AuditLog-table {
     width: 100%;
-    padding: 0 10px;
     border-radius: 10px;
     word-break: break-word;
-
-    transition: padding 0.5s;
 }
 
 .AuditLog-th {
     position: sticky;
-    top: 0;
+    top: 60px;
     background-color: var(--light-grey);
     padding: 10px;
 }
 
-@media screen and (max-width: 700px) {
-    .AuditLog {
-        margin: 0;
-        border-radius: 0;
-    }
-
-    .AuditLog-table {
-        padding: 0;
+@media (hover: hover) {
+    .AuditLog-header:hover {
+        background-color: var(--lightest-grey);
     }
 }
