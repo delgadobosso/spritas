@@ -23,9 +23,11 @@ export default class AuditItem extends React.Component {
             case 'RP':
                 result = (
                     <span>
-                        <a href={`/u/${item.idFrom}`}>{`@${item.idFrom} `}</a>
-                        reported
-                        <a href={`/post/${item.idContent}`} onClick={this.handleClick}>{` P${item.idContent}`}</a>
+                        <a href={`/u/${item.usernameFrom}`}>{`@${item.usernameFrom}`}</a>
+                        &nbsp;reported&nbsp;
+                        <a href={`/post/${item.idContent}`} onClick={this.handleClick}>{`P${item.idContent}`}</a>
+                        &nbsp;from&nbsp;
+                        <a href={`/u/${item.usernameTo}`}>{`@${item.usernameTo}`}</a>
                     </span>
                 );
                 break;
