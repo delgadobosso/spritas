@@ -172,7 +172,7 @@ export default class PostContainer extends React.Component {
             cover = " LoadingCover-anim";
         }
         const load = (this.state.more) ? (
-        <div className="PostContainer-load" onClick={this.loadReplies}>
+        <div className="PostContainer-load" onClick={() => this.loadReplies()}>
             <div className={'LoadingCover' + cover}></div>
             {loadMsg}
         </div>

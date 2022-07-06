@@ -280,7 +280,7 @@ export default class Reply extends React.Component {
         }
         var load = null;
         if (this.props.reply && this.state.more) {
-            load = <div className="Post-load" onClick={this.loadReplies}>
+            load = <div className="Post-load" onClick={() => this.loadReplies()}>
                 <div className={'LoadingCover' + cover}></div>
                 {loadMsg}
             </div>;
