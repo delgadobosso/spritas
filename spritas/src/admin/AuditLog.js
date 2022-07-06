@@ -9,7 +9,7 @@ export default class AuditLog extends React.Component {
         this.state = {
             audit: [],
             offset: 0,
-            amount: 2,
+            amount: 10,
             more: false,
             loadingMore: false
         }
@@ -55,11 +55,11 @@ export default class AuditLog extends React.Component {
         }
 
         const load = (this.state.more) ? (
-            <div className='PostContainer-load' onClick={this.audit}>
+            <td className='PostContainer-load' onClick={this.audit} colSpan="3">
                 <div className={'LoadingCover' + cover}></div>
                 {loadMsg}
-            </div>
-        ) : <div className='PostContainer-loaded'>All Items Shown</div>;
+            </td>
+        ) : <td className='PostContainer-loaded' colSpan="3">All Items Shown</td>;
 
         return (
             <div className='AuditLog'>
@@ -76,7 +76,7 @@ export default class AuditLog extends React.Component {
                     </thead>
                     <tbody>
                         {this.state.audit}
-                        {load}
+                        <tr>{load}</tr>
                     </tbody>
             </table>
             </div>
