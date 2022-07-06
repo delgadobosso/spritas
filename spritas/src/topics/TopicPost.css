@@ -135,7 +135,7 @@
 }
 
 @media screen and (max-width: 716px) {
-    .TopicPost {
+    .TopicPortal .TopicPost {
         margin: 0 0 20px 0;
     }
 
