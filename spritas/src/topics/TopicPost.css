@@ -98,7 +98,7 @@
 
 .TopicPost-ts {
     margin: 5px 5px 10px 5px;
-    font-size: 0.9rem;
+    font-size: 0.9em;
     color: var(--info-grey);
     overflow: hidden;
     text-overflow: ellipsis;

@@ -18,6 +18,7 @@
 .AuditItem-ts {
     cursor: pointer;
     color: var(--info-grey);
+    font-size: 0.9em;
 
     transition: color 0.1s;
 }
