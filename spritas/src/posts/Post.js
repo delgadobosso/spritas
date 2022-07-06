@@ -177,7 +177,7 @@ export default class Post extends React.Component {
             })
             .then((resp) => {
                 if (resp.ok) alert('This post has been reported to the Admins.');
-                else alert('Error reporting post. Please try again.');
+                else alert('Error reporting post. Please try again or reach out directly to an Admin.');
             });
         } else if (answer === '') alert(`You must give a reason to report this post.`);
     }
