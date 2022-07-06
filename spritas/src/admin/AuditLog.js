@@ -37,10 +37,7 @@ export default class AuditLog extends React.Component {
             <table className='AuditLog'>
                 <thead>
                     <tr>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Content</th>
-                        <th>Type</th>
+                        <th>Action</th>
                         <th>Reason</th>
                         <th>Timestamp</th>
                     </tr>

@@ -25,6 +25,10 @@ input, textarea {
     background-color: var(--lightest-grey);
 }
 
+a {
+    color: var(--spritan-gold);
+}
+
 ::selection {
     background-color: var(--spritan-red);
     color: var(--spritan-gold);
