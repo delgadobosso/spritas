@@ -23,7 +23,6 @@
     width: 100%;
     padding: 0 10px;
     border-radius: 10px;
-    table-layout: fixed;
     word-break: break-word;
 }
 
@@ -32,8 +31,4 @@
     top: 0;
     background-color: var(--light-grey);
     padding: 10px;
-}
-
-.AuditLog-ts {
-    width: 250px;
 }

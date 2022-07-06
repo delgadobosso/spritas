@@ -17,10 +17,17 @@
 
 .AuditItem-ts {
     cursor: pointer;
+    color: var(--info-grey);
+
+    transition: color 0.1s;
 }
 
 @media (hover: hover) {
     .AuditItem:hover {
         background-color: var(--lightest-grey);
+    }
+
+    .AuditItem-ts:hover {
+        color: white;
     }
 }

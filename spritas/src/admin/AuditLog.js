@@ -55,7 +55,7 @@ export default class AuditLog extends React.Component {
         }
 
         const load = (this.state.more) ? (
-            <td className='PostContainer-load' onClick={this.audit} colSpan="3">
+            <td className='PostContainer-load' onClick={this.audit} colSpan="2">
                 <div className={'LoadingCover' + cover}></div>
                 {loadMsg}
             </td>
@@ -71,7 +71,6 @@ export default class AuditLog extends React.Component {
                         <tr>
                             <th className='AuditLog-th'>Action</th>
                             <th className='AuditLog-th'>Reason</th>
-                            <th className='AuditLog-th AuditLog-ts'>Timestamp</th>
                         </tr>
                     </thead>
                     <tbody>
