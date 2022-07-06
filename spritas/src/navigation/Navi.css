@@ -74,6 +74,7 @@
     text-align: center;
     white-space: nowrap;
     font-weight: bold;
+    text-decoration: none;
 
     transition: color 0.5s, background-color 0.5s;
     -moz-user-select: none;
