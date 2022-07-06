@@ -11,6 +11,10 @@
     padding: 10px;
 }
 
+.AuditItem span {
+    display: inline-block;
+}
+
 .AuditItem-ts {
     cursor: pointer;
 }
