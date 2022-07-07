@@ -11,6 +11,7 @@ export default class PostContainer extends React.Component {
         super(props);
         this.scrollTop = this.scrollTop.bind(this);
         this.loadReplies = this.loadReplies.bind(this);
+        this.loadReply = this.loadReply.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
         this.setCurrent = this.setCurrent.bind(this);
         this.reloadComments = this.reloadComments.bind(this);
@@ -30,7 +31,13 @@ export default class PostContainer extends React.Component {
     }
 
     componentDidMount() {
-        const id = (this.props.id) ? this.props.id : this.props.match.params.id;
+        var id = this.props.id;
+        var idReply = this.props.idReply;
+        if (this.props.match) {
+            if (this.props.match.params.id) id = this.props.match.params.id;
+            if (this.props.match.params.idReply) idReply = this.props.match.params.idReply;
+        }
+        console.log(idReply);
 
         fetch(`/post/${id}`)
             .then(res => res.json())
@@ -42,9 +49,8 @@ export default class PostContainer extends React.Component {
                         current: data.length,
                         opid: data[0].idUser
                     }, () => {
-                        const title = document.getElementById('PostName-' + id);
-                        if (title) scrollBounce(title);
-                        this.loadReplies(true);
+                        if (!idReply) this.loadReplies(true);
+                        else this.loadReply(idReply);
                     });
                     const title = (data[0].title) ? data[0].title : '';
                     document.title = he.decode(title);
@@ -114,6 +120,17 @@ export default class PostContainer extends React.Component {
         }
     }
 
+    loadReply(idReply) {
+        fetch(`/reply/${idReply}`)
+        .then(resp => resp.json())
+        .then(data => {
+            const theReply = (<Reply post={data[0]}
+            reply={true} opid={this.state.opid} user={this.props.user}
+            blockers={this.state.blockers} reload={this.reloadComments} />);
+            this.setState({ replies: [theReply] });
+        })
+    }
+
     extendReplies(first=false) {
         var rep = document.getElementById('Replies');
         if (rep && !first) {
@@ -155,12 +172,17 @@ export default class PostContainer extends React.Component {
 
     render() {
         const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
-        const ogId = (this.props.id) ? this.props.id : this.props.match.params.id;
+        var ogId = this.props.id;
+        var idReply = this.props.idReply;
+        if (this.props.match) {
+            if (this.props.match.params.id) ogId = this.props.match.params.id;
+            if (this.props.match.params.idReply) idReply = this.props.match.params.idReply;
+        }
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
         else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Commenting</p>;
-        else if (this.props.user && this.props.user.id !== this.state.opid) reply = <CreateReply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
+        else if (this.props.user && this.props.user.id !== this.state.opid && !idReply) reply = <CreateReply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Comments Shown</div> : null;
@@ -191,7 +213,7 @@ export default class PostContainer extends React.Component {
         const main = (this.state.main) ? <Post posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} ogId={ogId} /> : null;
 
         return (
-            <div className={"PostContainer"}>
+            <div className="PostContainer">
                 {main}
             </div>
         )

@@ -61,7 +61,7 @@ export default class App extends React.Component {
           }
         }, {signal: controller.signal});
       } else if (e.state && e.state.id) {
-        this.postClick(e.state.id, undefined, false);
+        this.postClick(e.state.id, e.state.idReply, false);
       }
     }
 
@@ -72,16 +72,18 @@ export default class App extends React.Component {
       .catch((error) => { console.error('Error:', error); });
   }
 
-  postClick(id, replyId = null, push = true) {
-    console.log(id, replyId);
+  postClick(id, idReply = null, push = true) {
     if (!this.state.post) {
-      var post = <PostHome id={id} naviHide={this.naviHide} user={this.state.user} />;
+      var post = <PostHome id={id} idReply={idReply} naviHide={this.naviHide} user={this.state.user} />;
       this.setState({ post: post }, () => {
         if (push) {
-          let stateObj = { id: id };
+          let stateObj = {
+            id: id,
+            idReply: idReply
+          };
           const currentPath = window.location.pathname;
           var link = `${currentPath}/p/${id}`;
-          if (replyId) link = `${link}/r/${replyId}`;
+          if (idReply) link = `${link}/r/${idReply}`;
           window.history.pushState(stateObj, "", link);
           window.history.scrollRestoration = 'manual';
         }
@@ -115,6 +117,8 @@ export default class App extends React.Component {
             <Route path='/create/post'
               render={props => <CreatePost user={this.state.user} {...props} />} />
             <Route path='/login' component={Login} />
+            <Route path='/p/:id/r/:idReply'
+              render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/p/:id'
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/u/:name'
