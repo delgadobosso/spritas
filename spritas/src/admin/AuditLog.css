@@ -37,6 +37,10 @@
     padding: 10px;
 }
 
+.AuditLog-load {
+    border-radius: 0;
+}
+
 @media (hover: hover) {
     .AuditLog-header:hover {
         background-color: var(--lightest-grey);

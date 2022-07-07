@@ -24,6 +24,7 @@ const port = process.env.PORT;
 const homeNew = require('./routers/posts/homeNew');
 
 const post = require('./routers/posts/post');
+const reply = require('./routers/posts/reply');
 const comments = require('./routers/posts/comments');
 const replies = require('./routers/posts/replies');
 
@@ -188,6 +189,13 @@ app.use('/p/:id', (req, res, next) => {
     req.pool = pool;
     next();
 }, post);
+
+// Get single reply
+app.use('/reply/:id', (req, res, next) => {
+    req.id = req.params.id;
+    req.pool = pool;
+    next();
+}, reply);
 
 // Get comments to posts
 app.use('/r/:id.:offset.:limit', (req, res, next) => {

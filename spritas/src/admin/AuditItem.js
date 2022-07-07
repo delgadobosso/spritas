@@ -8,7 +8,17 @@ export default class AuditItem extends React.Component {
         super(props);
         this.handleClick = this.handleClick.bind(this);
         this.state = {
-            toggleTime: false
+            toggleTime: false,
+            idPost: null
+        }
+    }
+
+    componentDidMount() {
+        const item = this.props.item;
+        if (item.type === "RR") {
+            fetch('/reply/' + item.idContent)
+            .then(resp => resp.json())
+            .then(data => this.setState({ idPost: data[0].idPost }));
         }
     }
 
@@ -16,7 +26,8 @@ export default class AuditItem extends React.Component {
         e.preventDefault();
 
         const item = this.props.item;
-        this.props.postClick(item.idContent);
+        if (!this.state.idPost) this.props.postClick(item.idContent);
+        else this.props.postClick(this.state.idPost);
     }
 
     render() {
@@ -46,11 +57,17 @@ export default class AuditItem extends React.Component {
                 break;
 
             case 'RR':
+                var postLink = (this.state.idPost) ? (
+                    <span>reported&nbsp;
+                        <a href={`/post/${this.state.idPost}`} onClick={this.handleClick}>{`reply#${item.idContent}`}</a>&nbsp;
+                    </span>
+                ) : (
+                    <span>reported&nbsp;{`reply#${item.idContent}`}&nbsp;</span>
+                );
                 result = (
                     <span>
                         <a href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
-                        <span>reported&nbsp;
-                        <a href={`/post/${item.idContent}`}>{`reply#${item.idContent}`}</a>&nbsp;</span>
+                        {postLink}
                         <span>by&nbsp;
                         <a href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a></span>
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
