@@ -117,14 +117,28 @@ app.get('/login', (req, res) => {
     else res.sendFile(reactApp);
 })
 
-app.get('/post/:id', (req, res) => {
-    pool.query(`SELECT idParent FROM posts WHERE id = ?`,
-    req.params.id, (error, result, fields) => {
-        if (error) return res.sendStatus(500);
+app.get('/p/:id', (req, res) => {
+    res.sendFile(reactApp);
+})
 
-        if (result[0].idParent == null) res.sendFile(reactApp);
-        else res.redirect('/');
-    })
+app.get('/p/:id/r/:id', (req, res) => {
+    res.sendFile(reactApp);
+})
+
+app.get('/:somewhere/p/:id', (req, res) => {
+    res.redirect('/p/' + req.params.id);
+})
+
+app.get('/:somewhere/p/:id/r/:id2', (req, res) => {
+    res.redirect('/p/' + req.params.id + '/r/' + req.params.id2);
+})
+
+app.get('/:somewhere/:someone/p/:id', (req, res) => {
+    res.redirect('/p/' + req.params.id);
+})
+
+app.get('/:somewhere/:someone/p/:id/r/:id2', (req, res) => {
+    res.redirect('/p/' + req.params.id + '/r/' + req.params.id2);
 })
 
 app.get('/create/post', (req, res) => {
@@ -184,7 +198,7 @@ app.get('/session/user', (req, res) => {
 })
 
 // Get post
-app.use('/p/:id', (req, res, next) => {
+app.use('/post/:id', (req, res, next) => {
     req.id = req.params.id;
     req.pool = pool;
     next();

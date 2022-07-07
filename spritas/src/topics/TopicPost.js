@@ -126,7 +126,7 @@ export default class TopicPost extends React.Component {
 
         return (
             <div className="TopicPost" title={title} style={{animationDelay: `${this.props.delay * 25}ms`}}>
-                <a className="TopicPost-link" href={'/post/' + post.id} onClick={this.handleClick}>
+                <a className="TopicPost-link" href={'/p/' + post.id} onClick={this.handleClick}>
                     {thumb}
                     <h3 className="TopicPost-title" id={"TopicPostName-" + post.id}>{title}</h3>
                     {subtitle}

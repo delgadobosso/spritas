@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
             
             else res.send(result);
         })
-    } else res.redirect('/post/' + req.id);
+    } else res.redirect('/p/' + req.id);
 })
 
 module.exports = router;

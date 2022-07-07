@@ -32,7 +32,7 @@ export default class PostContainer extends React.Component {
     componentDidMount() {
         const id = (this.props.id) ? this.props.id : this.props.match.params.id;
 
-        fetch(`/p/${id}`)
+        fetch(`/post/${id}`)
             .then(res => res.json())
             .then(data => {
                 if (data.length > 0) {

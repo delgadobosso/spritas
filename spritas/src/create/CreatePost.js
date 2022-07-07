@@ -298,7 +298,7 @@ export default class CreatePost extends React.Component {
                                 submitting: false
                             }, () => {
                                 window.removeEventListener('beforeunload', this.handleBeforeUnload);
-                                window.location.href = "/post/" + id;
+                                window.location.href = "/p/" + id;
                             });
                         }, 5000);
                     }

@@ -49,7 +49,7 @@ export default class AuditItem extends React.Component {
                         <a href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
                     </span>
                 ) : (
-                    <span>{"(USER MISSING)"}</span>
+                    <span>{"(MISSING USER ID)"}</span>
                 );
                 var userTo = (item.idTo) ? (
                     <span>
@@ -57,13 +57,13 @@ export default class AuditItem extends React.Component {
                         <a href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
                     </span>
                 ) : (
-                    <span>{"(USER MISSING)"}</span>
+                    <span>{"(MISSING USER ID)"}</span>
                 );
                 result = (
                     <span>
                         {userFrom}
                         <span>reported&nbsp;
-                        <a href={`/post/${item.idContent}`} onClick={this.handleClick}>{`post#${item.idContent}`}</a>&nbsp;</span>
+                        <a href={`/p/${item.idContent}`} onClick={this.handleClick}>{`post#${item.idContent}`}</a>&nbsp;</span>
                         {userTo}
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
                     </span>
@@ -76,7 +76,7 @@ export default class AuditItem extends React.Component {
                         <a href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
                     </span>
                 ) : (
-                    <span>{"(USER MISSING)"}</span>
+                    <span>{"(MISSING USER ID)"}</span>
                 );
                 var userTo = (item.idTo) ? (
                     <span>
@@ -84,11 +84,11 @@ export default class AuditItem extends React.Component {
                         <a href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
                     </span>
                 ) : (
-                    <span>{"(USER MISSING)"}</span>
+                    <span>{"(MISSING USER ID)"}</span>
                 );
                 var postLink = (this.state.idPost) ? (
                     <span>reported&nbsp;
-                        <a href={`/post/${this.state.idPost}`} onClick={this.handleClick}>{`reply#${item.idContent}`}</a>&nbsp;
+                        <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleClick}>{`reply#${item.idContent}`}</a>&nbsp;
                     </span>
                 ) : (
                     <span>reported&nbsp;{`reply#${item.idContent}`}&nbsp;</span>
@@ -109,14 +109,14 @@ export default class AuditItem extends React.Component {
                         <a href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
                     </span>
                 ) : (
-                    <span>{"(USER MISSING)"}</span>
+                    <span>{"(MISSING USER ID)"}</span>
                 );
                 var userTo = (item.idTo) ? (
                     <span>
                         <a href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
                     </span>
                 ) : (
-                    <span>{"(USER MISSING)"}</span>
+                    <span>{"(MISSING USER ID)"}</span>
                 );
                 result = (
                     <span>
