@@ -61,25 +61,28 @@ export default class App extends React.Component {
           }
         }, {signal: controller.signal});
       } else if (e.state && e.state.id) {
-        this.postClick(e.state.id, false);
+        this.postClick(e.state.id, undefined, false);
       }
     }
 
     // Get User Data
     fetch('/session/user')
-        .then(res => res.json())
-        .then(data => { this.setState({ user: data }); })
-        .catch((error) => { console.error('Error:', error); });
+      .then(res => res.json())
+      .then(data => { this.setState({ user: data }); })
+      .catch((error) => { console.error('Error:', error); });
   }
 
-  postClick(id, push = true) {
+  postClick(id, replyId = null, push = true) {
+    console.log(id, replyId);
     if (!this.state.post) {
       var post = <PostHome id={id} naviHide={this.naviHide} user={this.state.user} />;
       this.setState({ post: post }, () => {
         if (push) {
           let stateObj = { id: id };
-          const currentPath = (window.location.pathname !== "/") ? window.location.pathname : "";
-          window.history.pushState(stateObj, "", currentPath + "/p/" + id);
+          const currentPath = window.location.pathname;
+          var link = `${currentPath}/p/${id}`;
+          if (replyId) link = `${link}/r/${replyId}`;
+          window.history.pushState(stateObj, "", link);
           window.history.scrollRestoration = 'manual';
         }
         const posthome = document.getElementById("PostHome-" + this.state.post.props.id)

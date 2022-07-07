@@ -10,7 +10,7 @@ export default class AuditLog extends React.Component {
         this.state = {
             audit: [],
             offset: 0,
-            amount: 10,
+            amount: 20,
             more: false,
             loadingMore: false
         }

@@ -6,7 +6,8 @@ import relativeTime from '../functions/relativeTime';
 export default class AuditItem extends React.Component {
     constructor(props) {
         super(props);
-        this.handleClick = this.handleClick.bind(this);
+        this.handlePostClick = this.handlePostClick.bind(this);
+        this.handleReplyClick = this.handleReplyClick.bind(this);
         this.state = {
             toggleTime: false,
             idPost: null
@@ -22,12 +23,20 @@ export default class AuditItem extends React.Component {
         }
     }
 
-    handleClick(e) {
+    handlePostClick(e) {
         e.preventDefault();
 
         const item = this.props.item;
-        if (!this.state.idPost) this.props.postClick(item.idContent);
-        else this.props.postClick(this.state.idPost);
+        this.props.postClick(item.idContent);
+    }
+
+    handleReplyClick(e) {
+        e.preventDefault();
+
+        if (this.state.idPost) {
+            const item = this.props.item;
+            this.props.postClick(this.state.idPost, item.idContent);
+        }
     }
 
     render() {
@@ -63,7 +72,7 @@ export default class AuditItem extends React.Component {
                     <span>
                         {userFrom}
                         <span>reported&nbsp;
-                        <a href={`/p/${item.idContent}`} onClick={this.handleClick}>{`post#${item.idContent}`}</a>&nbsp;</span>
+                        <a href={`/p/${item.idContent}`} onClick={this.handlePostClick}>{`post#${item.idContent}`}</a>&nbsp;</span>
                         {userTo}
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
                     </span>
@@ -88,7 +97,7 @@ export default class AuditItem extends React.Component {
                 );
                 var postLink = (this.state.idPost) ? (
                     <span>reported&nbsp;
-                        <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleClick}>{`reply#${item.idContent}`}</a>&nbsp;
+                        <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleReplyClick}>{`reply#${item.idContent}`}</a>&nbsp;
                     </span>
                 ) : (
                     <span>reported&nbsp;{`reply#${item.idContent}`}&nbsp;</span>
