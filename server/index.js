@@ -95,6 +95,11 @@ app.use(session({
     secret: process.env.SESS_SECRET,
     store: sessionStore
 }))
+
+app.get('/', (req, res) => {
+    res.redirect('/home');
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../spritas/build')));
@@ -104,9 +109,9 @@ const { json } = require('express');
 imgur.setClientId(process.env.IMGUR_ID);
 imgur.setCredentials(process.env.IMGUR_USER, process.env.IMGUR_PW, process.env.IMGUR_ID);
 
-app.get('/', (req, res) => {
+app.get('/home', (req, res) => {
     res.sendFile(reactApp);
-});
+})
 
 app.get('/u/:name', (req, res) => {
     res.sendFile(reactApp);

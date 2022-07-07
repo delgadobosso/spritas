@@ -51,7 +51,7 @@ export default class Navi extends React.Component {
         var itemOpen = (this.state.open) ? " Navi-itemOpen" : "";
 
         var avatar;
-        var home = <a className={"Navi-item" + itemOpen} href="/">Home</a>;
+        var home = <a className={"Navi-item" + itemOpen} href="/home">Home</a>;
         var userItem;
         var admin;
         var createPost;

@@ -8,7 +8,7 @@ export default function Header() {
     // darker color: #003EB1
 
     return ( 
-        <a className="Header" href="/">
+        <a className="Header" href="/home">
             <div className="Header-videoContainer">
                 <video className="Header-video"
                 id="Header-video" src={video}

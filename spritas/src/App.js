@@ -2,7 +2,8 @@ import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect
 } from "react-router-dom";
 import './App.css';
 import Header from './header/Header'
@@ -28,7 +29,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    if (window.location.pathname === "/" || window.location.pathname.startsWith('/u/') || window.location.pathname.startsWith('/admin')) window.history.replaceState({}, "", window.location.pathname);
+    if (window.location.pathname === "/home" || window.location.pathname.startsWith('/u/') || window.location.pathname.startsWith('/admin')) window.history.replaceState({}, "", window.location.pathname);
     window.history.scrollRestoration = 'manual';
 
     // Navi Hiding
@@ -102,6 +103,9 @@ export default class App extends React.Component {
           <Navi user={this.state.user} hide={this.state.naviHide} />
           <Header />
           <Switch>
+            <Route exact path='/'>
+              <Redirect to='/home' />
+            </Route>
             <Route path='/admin'>
               <AdminPortal postClick={this.postClick} user={this.state.user} />
             </Route>
@@ -112,7 +116,7 @@ export default class App extends React.Component {
               render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/u/:name'
               render={props => <UserContainer postClick={this.postClick} user={this.state.user} {...props} />} />
-            <Route path='/'>
+            <Route path='/home'>
               <TopicContainer postClick={this.postClick} user={this.state.user} />
             </Route>
           </Switch>
