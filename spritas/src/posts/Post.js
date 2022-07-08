@@ -464,7 +464,7 @@ export default class Post extends React.Component {
         var deletePost;
         var report;
         if (this.props.user && this.props.user.id === currentPost.idUser && currentPost.status !== 'DELE' && this.props.user.type !== 'BAN') {
-            update = <div className='PostMain-optionItem' onClick={() => this.updateMode(true)}>Update Post</div>;
+            update = (!this.props.oneReply) ? <div className='PostMain-optionItem' onClick={() => this.updateMode(true)}>Update Post</div> : null;
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post</div>;
         } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.status !== 'DELE') {
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post As Admin</div>;

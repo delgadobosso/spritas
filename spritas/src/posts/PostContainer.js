@@ -26,7 +26,8 @@ export default class PostContainer extends React.Component {
             ever: false,
             opid: null,
             blockers: [],
-            loadingMore: false
+            loadingMore: false,
+            oneReply: false
         }
     }
 
@@ -37,6 +38,8 @@ export default class PostContainer extends React.Component {
             if (this.props.match.params.id) id = this.props.match.params.id;
             if (this.props.match.params.idReply) idReply = this.props.match.params.idReply;
         }
+
+        if (idReply) this.setState({ oneReply: true });
 
         fetch(`/post/${id}`)
             .then(res => res.json())
@@ -167,28 +170,37 @@ export default class PostContainer extends React.Component {
     }
 
     reloadComments() {
+        if (this.state.oneReply) {
+            var stateObj = { id: this.state.post.id };
+            const currentPath = window.location.pathname;
+            var link = currentPath.replace(/\/r\/.*/g, '');
+            window.history.replaceState(stateObj, "", link);
+            window.history.scrollRestoration = 'manual';
+        }
+
         this.setState({
             replies: [],
             offset: 0,
             more: false,
             ever: false,
-            loadingMore: false
+            loadingMore: false,
+            oneReply: false
         }, () => this.loadReplies(true));
     }
 
     render() {
         const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
         var ogId = this.props.id;
-        var idReply = this.props.idReply;
-        if (this.props.match) {
-            if (this.props.match.params.id) ogId = this.props.match.params.id;
-            if (this.props.match.params.idReply) idReply = this.props.match.params.idReply;
-        }
+        if (this.props.match && this.props.match.params.id) ogId = this.props.match.params.id;
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
         else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Commenting</p>;
-        else if (this.props.user && this.props.user.id !== this.state.opid && !idReply) reply = <CreateReply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
+        else if (this.props.user && this.props.user.id !== this.state.opid && !this.state.oneReply) reply = <CreateReply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
+
+        var showAll = (this.state.oneReply) ? (
+            <div className='PostContainer-load PostContainer-showAll' onClick={() => this.reloadComments()}>Show All Post Replies</div>
+        ) : null;
 
         const loaded = (this.state.ever) ?
         <div className="PostContainer-loaded">All Replies Shown</div> : null;
@@ -209,6 +221,7 @@ export default class PostContainer extends React.Component {
         const rest = (this.state.replies.length > 0 || reply) ? (
             <div className='PostContainer-rest'>
                 {reply}
+                {showAll}
                 <div className="PostContainer-replies" id="Replies">
                     {this.state.replies}
                 </div>
@@ -216,7 +229,7 @@ export default class PostContainer extends React.Component {
             </div>
         ) : null;
 
-        const main = (this.state.main) ? <Post posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} ogId={ogId} /> : null;
+        const main = (this.state.main) ? <Post posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} ogId={ogId} oneReply={this.state.oneReply} /> : null;
 
         return (
             <div className="PostContainer">
