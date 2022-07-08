@@ -93,7 +93,7 @@ export default class PostContainer extends React.Component {
                     .then(res => res.json())
                     .then(data => {
                         const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
-                            <Reply key={index + this.state.offset} post={reply}
+                            <Reply key={reply.id} post={reply}
                                 reply={true} opid={this.state.opid} user={this.props.user}
                                 blockers={this.state.blockers} delay={index} reload={this.reloadComments} />
                         );
@@ -104,18 +104,10 @@ export default class PostContainer extends React.Component {
                         }
                         this.setState(state => ({
                             replies: [...state.replies, ...moreReplies],
-                            loadingMore: false
+                            loadingMore: false,
+                            more: !(data.length < (this.state.amount + 1)),
+                            offset: state.offset + this.state.amount
                         }), () => { if (!first) this.extendReplies(); })
-                        if (data.length < (this.state.amount + 1)) {
-                            this.setState({
-                                more: false
-                            });
-                        } else {
-                            this.setState(state => ({
-                                offset: state.offset + this.state.amount,
-                                more: true
-                            }));
-                        }
                     })
                     .catch(error => this.setState({ loadingMore: false }));
             });

@@ -11,7 +11,7 @@ export default class Topic extends React.Component {
             posts: [],
             offset: 0,
             amount: 24,
-            more: true,
+            more: false,
             loadingMore: false
         };
     }
@@ -30,18 +30,8 @@ export default class Topic extends React.Component {
                     .then(data => {
                         if (data.length > 0) {
                             var newPosts = data.slice(0, this.state.amount).map((post, index) =>
-                                <TopicPost key={index + this.state.offset} post={post}
+                                <TopicPost key={post.id} post={post}
                                     postClick={this.props.postClick} delay={index} />);
-
-                            if (data.length < (this.state.amount + 1)) {
-                                this.setState(state => ({
-                                    more: !state.more
-                                }));
-                            } else {
-                                this.setState(state => ({
-                                    offset: state.offset + this.state.amount
-                                }))
-                            }
                             if (!first) {
                                 var sub = document.getElementById(`Topic-${this.props.feed}`);
                                 let maxHeight = sub.scrollHeight;
@@ -49,9 +39,11 @@ export default class Topic extends React.Component {
                             }
                             this.setState(state => ({
                                 posts: [...state.posts, newPosts],
-                                loadingMore: false
+                                loadingMore: false,
+                                more: !(data.length < (this.state.amount + 1)),
+                                offset: state.offset + this.state.amount
                             }), () => { if (!first) this.extendPosts(sub)});
-                        }
+                        } else this.setState({ loadingMore: false });
                     })
                     .catch(error => this.setState({ loadingMore: false }));
             });

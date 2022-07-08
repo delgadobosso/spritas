@@ -70,8 +70,8 @@ export default class Reply extends React.Component {
                 fetch(`/repliesreplies/${id}.${this.state.offset}.${this.state.amount}`)
                     .then(res => res.json())
                     .then(data => {
-                        const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) => 
-                            <Reply key={index + this.state.offset} post={reply}
+                        const moreReplies = data.slice(0, this.state.amount).reverse().map((reply) => 
+                            <Reply key={reply.id} post={reply}
                                 opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                         var rep = document.getElementById('Replies-' + this.props.post.id);
                         if (rep && !first) {
@@ -80,7 +80,9 @@ export default class Reply extends React.Component {
                         }
                         this.setState(state => ({
                             replies: [...moreReplies, ...state.replies],
-                            loadingMore: false
+                            loadingMore: false,
+                            more: !(data.length < (this.state.amount + 1)),
+                            offset: state.offset + this.state.amount
                         }), () => {
                             if (!first && !reload) this.extendReplies();
                             if (reload) this.correctExtend(data);
@@ -89,16 +91,6 @@ export default class Reply extends React.Component {
                                 if (rep) rep.scrollIntoView({ behavior: 'smooth' });
                             }
                         })
-                        if (data.length < (this.state.amount + 1)) {
-                            this.setState({
-                                more: false
-                            });
-                        } else {
-                            this.setState(state => ({
-                                offset: state.offset + this.state.amount,
-                                more: true
-                            }));
-                        }
                     })
                     .catch(error => this.setState({ loadingMore: false }));
             });
@@ -116,7 +108,7 @@ export default class Reply extends React.Component {
                 fetch(`/repliesprev/${id}.${idSub}.${this.state.offsetPrev}.${amount}`)
                     .then(res => res.json())
                     .then(data => {
-                        const moreReplies = data.slice(0, amount).reverse().map((reply, index) => 
+                        const moreReplies = data.slice(0, amount).reverse().map((reply) => 
                             <Reply key={reply.id} post={reply}
                                 opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                         var rep = document.getElementById('Replies-' + this.props.post.id);
@@ -126,7 +118,9 @@ export default class Reply extends React.Component {
                         }
                         this.setState(state => ({
                             replies: [...moreReplies, ...state.replies],
-                            loadingMore: false
+                            loadingMore: false,
+                            morePrev: !(data.length < (amount + 1)),
+                            offsetPrev: state.offsetPrev + amount
                         }), () => {
                             if (!first) this.extendReplies();
                             else {
@@ -135,16 +129,6 @@ export default class Reply extends React.Component {
                                 if (rep) rep.style.background = 'linear-gradient(275deg, var(--darkest-grey), var(--spritan-fade-gold))';
                             }
                         })
-                        if (data.length < (amount + 1)) {
-                            this.setState({
-                                morePrev: false
-                            });
-                        } else {
-                            this.setState(state => ({
-                                offsetPrev: state.offsetPrev + amount,
-                                morePrev: true
-                            }));
-                        }
                     })
                     .catch(error => this.setState({ loadingMore: false }));
             });
@@ -162,7 +146,7 @@ export default class Reply extends React.Component {
                 fetch(`/repliesnext/${id}.${idSub}.${this.state.offsetNext}.${amount}`)
                     .then(res => res.json())
                     .then(data => {
-                        const moreReplies = data.slice(0, amount).map((reply, index) => 
+                        const moreReplies = data.slice(0, amount).map((reply) => 
                             <Reply key={reply.id} post={reply}
                                 opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                         var rep = document.getElementById('Replies-' + this.props.post.id);
@@ -172,7 +156,9 @@ export default class Reply extends React.Component {
                         }
                         this.setState(state => ({
                             replies: [...state.replies, ...moreReplies],
-                            loadingMore: false
+                            loadingMore: false,
+                            moreNext: !(data.length < (amount + 1)),
+                            offsetNext: state.offsetNext + amount
                         }), () => {
                             if (!first) this.extendReplies(false);
                             else {
@@ -180,16 +166,6 @@ export default class Reply extends React.Component {
                                 rep.scrollIntoView({ behavior: 'smooth' });
                             }
                         })
-                        if (data.length < (amount + 1)) {
-                            this.setState({
-                                moreNext: false
-                            });
-                        } else {
-                            this.setState(state => ({
-                                offsetNext: state.offsetNext + amount,
-                                moreNext: true
-                            }));
-                        }
                     })
                     .catch(error => this.setState({ loadingMore: false }));
             });
