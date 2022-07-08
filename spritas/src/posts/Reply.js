@@ -225,13 +225,13 @@ export default class Reply extends React.Component {
             if (this.state.collapsed) {
                 let maxHeight = rep.scrollHeight;
                 rep.style.height = maxHeight + "px";
-                setTimeout(() => rep.style.height = "0px", 10);
+                setTimeout(() => rep.style.height = "30px", 10);
             } else {
                 let maxHeight = rep.scrollHeight;
                 rep.style.height = maxHeight + "px";
                 const controller = new AbortController();
                 rep.addEventListener('transitionend', (e) => {
-                    if (e.currentTarget === e.target && rep.style.height !== "0px") {
+                    if (e.currentTarget === e.target && rep.style.height !== "30px") {
                         rep.style.height = "auto";
                         controller.abort();
                     }
@@ -395,11 +395,13 @@ export default class Reply extends React.Component {
             </div>;
         }
 
+        var collapseCover = (this.state.collapsed) ? " Post-collapseCover" : "";
         const replies = (this.props.reply) ?
         <div>
             {load}
             {loadPrev}
             <div className="Post-replies" id={"Replies-" + post.id}>
+                <div className={'Post-repliesCover' + collapseCover}></div>
                 {this.state.replies}
             </div>
             {loadNext}
