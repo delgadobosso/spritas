@@ -134,7 +134,7 @@ export default class PostContainer extends React.Component {
                 blockers={this.state.blockers} reload={this.reloadComments} idSub={idSub} focus={focus} />);
                 this.setState({ replies: [theReply] }, () => {
                     const rep = document.getElementById(`rMain${idReply}`);
-                    if (rep && !idSub) rep.style.background = 'linear-gradient(90deg, var(--mid-grey), var(--spritan-fade-gold))';
+                    if (rep && !idSub) rep.style.background = 'linear-gradient(275deg, var(--mid-grey), var(--spritan-fade-gold))';
                 });
             }
         })
