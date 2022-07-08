@@ -68,9 +68,7 @@ export default class UserContainer extends React.Component {
                                     more: !(data.length < (this.state.amount + 1)),
                                     offset: state.offset + this.state.amount
                                 }), () => { if (!first) this.extendPosts(sub) });
-                            } else {
-                                this.setState({ loadingMore: false });
-                            }
+                            } else this.setState({ loadingMore: false });
                         })
                 }
             });
