@@ -84,6 +84,10 @@ export default class Reply extends React.Component {
                         }), () => {
                             if (!first && !reload) this.extendReplies();
                             if (reload) this.correctExtend(data);
+                            if (first && this.props.focus) {
+                                const rep = document.getElementById(`rMain${this.props.post.id}`);
+                                if (rep) rep.scrollIntoView({ behavior: 'smooth' });
+                            }
                         })
                         if (data.length < (this.state.amount + 1)) {
                             this.setState({
@@ -169,6 +173,10 @@ export default class Reply extends React.Component {
                             loadingMore: false
                         }), () => {
                             if (!first) this.extendReplies();
+                            else {
+                                const rep = document.getElementById(`rMain${idSub}`);
+                                rep.scrollIntoView({ behavior: 'smooth' });
+                            }
                         })
                         if (data.length < (this.state.amountNext + 1)) {
                             this.setState({

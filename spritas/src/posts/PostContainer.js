@@ -125,9 +125,10 @@ export default class PostContainer extends React.Component {
         .then(data => {
             if (data[0].idParent) this.loadReply(data[0].idParent, idReply);
             else {
+                var focus = (!idSub) ? true : false;
                 const theReply = (<Reply post={data[0]}
                 reply={true} opid={this.state.opid} user={this.props.user}
-                blockers={this.state.blockers} reload={this.reloadComments} idSub={idSub} />);
+                blockers={this.state.blockers} reload={this.reloadComments} idSub={idSub} focus={focus} />);
                 this.setState({ replies: [theReply] }, () => {
                     const rep = document.getElementById(`rMain${idReply}`);
                     if (rep && !idSub) rep.style.background = 'linear-gradient(90deg, var(--mid-grey), var(--lightest-grey))';
