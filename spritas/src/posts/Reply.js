@@ -172,7 +172,7 @@ export default class Reply extends React.Component {
                             replies: [...state.replies, ...moreReplies],
                             loadingMore: false
                         }), () => {
-                            if (!first) this.extendReplies();
+                            if (!first) this.extendReplies(false);
                             else {
                                 const rep = document.getElementById(`rMain${idSub}`);
                                 rep.scrollIntoView({ behavior: 'smooth' });
@@ -194,12 +194,12 @@ export default class Reply extends React.Component {
         }
     }
 
-    extendReplies() {
+    extendReplies(fromBottom = true) {
         var rep = document.getElementById('Replies-' + this.props.post.id);
         if (rep) {
             let maxHeight = rep.scrollHeight;
             rep.style.height = maxHeight + "px";
-            rep.scrollTop = maxHeight;
+            if (fromBottom) rep.scrollTop = maxHeight;
             if (this.state.collapsed) this.setState({ collapsed: false });
             const controller = new AbortController();
             rep.addEventListener('transitionend', (e) => {
