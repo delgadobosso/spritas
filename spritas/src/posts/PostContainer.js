@@ -121,7 +121,7 @@ export default class PostContainer extends React.Component {
             if (data[0].idParent) this.loadReply(data[0].idParent, idReply);
             else {
                 var focus = (!idSub) ? true : false;
-                const theReply = (<Reply post={data[0]}
+                const theReply = (<Reply key={data[0].id} post={data[0]}
                 reply={true} opid={this.state.opid} user={this.props.user}
                 blockers={this.state.blockers} reload={this.reloadComments} idSub={idSub} focus={focus} />);
                 this.setState({ replies: [theReply] }, () => {
