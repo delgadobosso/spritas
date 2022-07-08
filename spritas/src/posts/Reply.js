@@ -131,7 +131,7 @@ export default class Reply extends React.Component {
                             else {
                                 this.loadRepliesNext(true);
                                 const rep = document.getElementById(`rMain${this.props.idSub}`);
-                                if (rep) rep.style.background = 'linear-gradient(90deg, var(--darkest-grey), var(--mid-grey))';
+                                if (rep) rep.style.background = 'linear-gradient(90deg, var(--darkest-grey), var(--spritan-fade-gold))';
                             }
                         })
                         if (data.length < (this.state.amountPrev + 1)) {

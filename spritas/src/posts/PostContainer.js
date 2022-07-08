@@ -131,7 +131,7 @@ export default class PostContainer extends React.Component {
                 blockers={this.state.blockers} reload={this.reloadComments} idSub={idSub} focus={focus} />);
                 this.setState({ replies: [theReply] }, () => {
                     const rep = document.getElementById(`rMain${idReply}`);
-                    if (rep && !idSub) rep.style.background = 'linear-gradient(90deg, var(--mid-grey), var(--lightest-grey))';
+                    if (rep && !idSub) rep.style.background = 'linear-gradient(90deg, var(--mid-grey), var(--spritan-fade-gold))';
                 });
             }
         })
@@ -191,12 +191,12 @@ export default class PostContainer extends React.Component {
         else if (this.props.user && this.props.user.id !== this.state.opid && !idReply) reply = <CreateReply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
 
         const loaded = (this.state.ever) ?
-        <div className="PostContainer-loaded">All Comments Shown</div> : null;
+        <div className="PostContainer-loaded">All Replies Shown</div> : null;
 
-        var loadMsg = "Show More Comments";
+        var loadMsg = "Show More Replies";
         var cover = ""
         if (this.state.loadingMore) {
-            loadMsg = "Loading More Comments...";
+            loadMsg = "Loading More Replies...";
             cover = " LoadingCover-anim";
         }
         const load = (this.state.more) ? (
