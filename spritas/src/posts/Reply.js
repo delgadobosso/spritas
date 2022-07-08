@@ -38,6 +38,7 @@ export default class Reply extends React.Component {
 
         this.collapsable();
         if (this.props.reply) this.loadReplies(true);
+        console.log(this.props.idSub);
     }
 
     componentWillUnmount() {
@@ -58,7 +59,7 @@ export default class Reply extends React.Component {
                 loadingMore: true
             }, () => {
                 const id = this.props.post.id;
-                fetch(`/rr/${id}.${this.state.offset}.${this.state.amount}`)
+                fetch(`/repliesreplies/${id}.${this.state.offset}.${this.state.amount}`)
                     .then(res => res.json())
                     .then(data => {
                         const moreReplies = data.slice(0, this.state.amount).reverse().map((reply, index) => 
@@ -113,12 +114,12 @@ export default class Reply extends React.Component {
         var totalHeight = 0;
         var parentId;
         replies.slice(0, this.state.amount).forEach(reply => {
-            totalHeight += document.getElementById(`p${reply.id}`).offsetHeight;
+            totalHeight += document.getElementById(`r${reply.id}`).offsetHeight;
             parentId = reply.idParent;
         });
         
         var rep = document.getElementById('Replies-' + this.props.post.id);
-        var parent = document.getElementById(`p${parentId}`);
+        var parent = document.getElementById(`r${parentId}`);
         if (rep && totalHeight !== rep.clientHeight) {
             rep.style.height = totalHeight + "px";
             rep.scrollTop = totalHeight;
@@ -161,7 +162,6 @@ export default class Reply extends React.Component {
     }
 
     delete() {
-        console.log(document.getElementById('Replies-' + this.props.post.id), this.props.post.id);
         if (!this.state.deleting) {
             const post = this.props.post;
             var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.username}" to confirm:`, '');
@@ -220,7 +220,7 @@ export default class Reply extends React.Component {
     }
 
     collapsable() {
-        const post = document.getElementById(`pMain${this.props.post.id}`);
+        const post = document.getElementById(`rMain${this.props.post.id}`);
         if (post && post.scrollHeight > 300) {
             post.style.height = '300px';
             this.setState({
@@ -237,7 +237,7 @@ export default class Reply extends React.Component {
     }
 
     expand() {
-        const post = document.getElementById(`pMain${this.props.post.id}`);
+        const post = document.getElementById(`rMain${this.props.post.id}`);
         const durr = (post.scrollHeight > 1000) ? 1000 : 500;
 
         if (!this.state.expand) this.setState({
@@ -351,8 +351,8 @@ export default class Reply extends React.Component {
         </div>;
 
         return (
-            <div className={"Post" + op + opreply + youreply} id={"p" + post.id} style={{animationDelay: `${this.props.delay * 100}ms`}}>
-                <div className="Post-main" id={"pMain" + post.id}>
+            <div className={"Post" + op + opreply + youreply} id={"r" + post.id} style={{animationDelay: `${this.props.delay * 100}ms`}}>
+                <div className="Post-main" id={"rMain" + post.id}>
                     <div className='Post-info'>
                         <a className='Post-a' href={`/u/${post.username}`} title={"@" + post.username}>
                             <div className="Post-user">

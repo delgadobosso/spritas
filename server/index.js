@@ -217,7 +217,7 @@ app.use('/reply/:id', (req, res, next) => {
 }, reply);
 
 // Get comments to posts
-app.use('/r/:id.:offset.:limit', (req, res, next) => {
+app.use('/replies/:id.:offset.:limit', (req, res, next) => {
     req.id = req.params.id;
     req.offset = req.params.offset;
     req.limit = req.params.limit;
@@ -226,7 +226,7 @@ app.use('/r/:id.:offset.:limit', (req, res, next) => {
 }, comments);
 
 // Get replies to replies
-app.use('/rr/:id.:offset.:limit', (req, res, next) => {
+app.use('/repliesreplies/:id.:offset.:limit', (req, res, next) => {
     req.id = req.params.id;
     req.offset = req.params.offset;
     req.limit = req.params.limit;

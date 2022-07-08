@@ -37,7 +37,6 @@ export default class PostContainer extends React.Component {
             if (this.props.match.params.id) id = this.props.match.params.id;
             if (this.props.match.params.idReply) idReply = this.props.match.params.idReply;
         }
-        console.log(idReply);
 
         fetch(`/post/${id}`)
             .then(res => res.json())
@@ -87,7 +86,7 @@ export default class PostContainer extends React.Component {
                 const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
                 if (!this.state.ever && this.state.offset > 0) this.setState({ever: true});
 
-                fetch(`/r/${id}.${this.state.offset}.${this.state.amount}`)
+                fetch(`/replies/${id}.${this.state.offset}.${this.state.amount}`)
                     .then(res => res.json())
                     .then(data => {
                         const moreReplies = data.slice(0, this.state.amount).map((reply, index) =>
@@ -120,14 +119,20 @@ export default class PostContainer extends React.Component {
         }
     }
 
-    loadReply(idReply) {
+    loadReply(idReply, idSub = null) {
         fetch(`/reply/${idReply}`)
         .then(resp => resp.json())
         .then(data => {
-            const theReply = (<Reply post={data[0]}
-            reply={true} opid={this.state.opid} user={this.props.user}
-            blockers={this.state.blockers} reload={this.reloadComments} />);
-            this.setState({ replies: [theReply] });
+            if (data[0].idParent) this.loadReply(data[0].idParent, idReply);
+            else {
+                const theReply = (<Reply post={data[0]}
+                reply={true} opid={this.state.opid} user={this.props.user}
+                blockers={this.state.blockers} reload={this.reloadComments} idSub={idSub} />);
+                this.setState({ replies: [theReply] }, () => {
+                    const rep = document.getElementById(`rMain${idReply}`);
+                    if (rep && !idSub) rep.style.background = 'linear-gradient(90deg, var(--mid-grey), var(--lightest-grey)';
+                });
+            }
         })
     }
 
