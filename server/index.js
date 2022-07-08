@@ -27,6 +27,8 @@ const post = require('./routers/posts/post');
 const reply = require('./routers/posts/reply');
 const comments = require('./routers/posts/comments');
 const replies = require('./routers/posts/replies');
+const repliesPrev = require('./routers/posts/repliesPrev');
+const repliesNext = require('./routers/posts/repliesNext');
 
 const createPost = require('./routers/create/post');
 const createReplyPost = require('./routers/create/replyPost');
@@ -233,6 +235,26 @@ app.use('/repliesreplies/:id.:offset.:limit', (req, res, next) => {
     req.pool = pool;
     next();
 }, replies);
+
+// Get previous replies from specific reply
+app.use('/repliesprev/:id.:idSub.:offset.:limit', (req, res, next) => {
+    req.id = req.params.id;
+    req.idSub = req.params.idSub;
+    req.offset = req.params.offset;
+    req.limit = req.params.limit;
+    req.pool = pool;
+    next();
+}, repliesPrev);
+
+// Get next replies from specific reply
+app.use('/repliesnext/:id.:idSub.:offset.:limit', (req, res, next) => {
+    req.id = req.params.id;
+    req.idSub = req.params.idSub;
+    req.offset = req.params.offset;
+    req.limit = req.params.limit;
+    req.pool = pool;
+    next();
+}, repliesNext);
 
 // Create post
 app.use('/create/post',

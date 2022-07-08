@@ -10,6 +10,8 @@ export default class Reply extends React.Component {
         super(props);
         this.resizeHandle = this.resizeHandle.bind(this);
         this.loadReplies = this.loadReplies.bind(this);
+        this.loadRepliesPrev = this.loadRepliesPrev.bind(this);
+        this.loadRepliesNext = this.loadRepliesNext.bind(this);
         this.extendReplies = this.extendReplies.bind(this);
         this.correctExtend = this.correctExtend.bind(this);
         this.collapse = this.collapse.bind(this);
@@ -23,6 +25,12 @@ export default class Reply extends React.Component {
             offset: 0,
             amount: 4,
             more: false,
+            offsetPrev: 0,
+            amountPrev: 3,
+            morePrev: false,
+            offsetNext: 0,
+            amountNext: 3,
+            moreNext: false,
             collapsed: false,
             toggleTime: false,
             loadingMore: false,
@@ -37,8 +45,8 @@ export default class Reply extends React.Component {
         window.addEventListener('resize', this.resizeHandle);
 
         this.collapsable();
-        if (this.props.reply) this.loadReplies(true);
-        console.log(this.props.idSub);
+        if (this.props.reply && !this.props.idSub) this.loadReplies(true);
+        else if (this.props.idSub) this.loadRepliesPrev(true);
     }
 
     componentWillUnmount() {
@@ -85,6 +93,91 @@ export default class Reply extends React.Component {
                             this.setState(state => ({
                                 offset: state.offset + this.state.amount,
                                 more: true
+                            }));
+                        }
+                    })
+                    .catch(error => this.setState({ loadingMore: false }));
+            });
+        }
+    }
+
+    loadRepliesPrev(first=false) {
+        if (!this.state.loadingMore) {
+            this.setState({
+                loadingMore: true
+            }, () => {
+                const id = this.props.post.id;
+                const idSub = this.props.idSub;
+                fetch(`/repliesprev/${id}.${idSub}.${this.state.offsetPrev}.${this.state.amountPrev}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const moreReplies = data.slice(0, this.state.amountPrev).reverse().map((reply, index) => 
+                            <Reply key={index + this.state.offsetPrev} post={reply}
+                                opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
+                        var rep = document.getElementById('Replies-' + this.props.post.id);
+                        if (rep && !first) {
+                            let maxHeight = rep.scrollHeight;
+                            rep.style.height = maxHeight + "px";
+                        }
+                        this.setState(state => ({
+                            replies: [...moreReplies, ...state.replies],
+                            loadingMore: false
+                        }), () => {
+                            if (!first) this.extendReplies();
+                            else {
+                                this.loadRepliesNext(true);
+                                const rep = document.getElementById(`rMain${this.props.idSub}`);
+                                if (rep) rep.style.background = 'linear-gradient(90deg, var(--darkest-grey), var(--mid-grey))';
+                            }
+                        })
+                        if (data.length < (this.state.amountPrev + 1)) {
+                            this.setState({
+                                morePrev: false
+                            });
+                        } else {
+                            this.setState(state => ({
+                                offsetPrev: state.offsetPrev + this.state.amountPrev,
+                                morePrev: true
+                            }));
+                        }
+                    })
+                    .catch(error => this.setState({ loadingMore: false }));
+            });
+        }
+    }
+
+    loadRepliesNext(first=false) {
+        if (!this.state.loadingMore) {
+            this.setState({
+                loadingMore: true
+            }, () => {
+                const id = this.props.post.id;
+                const idSub = this.props.idSub;
+                fetch(`/repliesnext/${id}.${idSub}.${this.state.offsetNext}.${this.state.amountNext}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const moreReplies = data.slice(0, this.state.amountNext).reverse().map((reply, index) => 
+                            <Reply key={index + this.state.offsetNext} post={reply}
+                                opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
+                        var rep = document.getElementById('Replies-' + this.props.post.id);
+                        if (rep && !first) {
+                            let maxHeight = rep.scrollHeight;
+                            rep.style.height = maxHeight + "px";
+                        }
+                        this.setState(state => ({
+                            replies: [...state.replies, ...moreReplies],
+                            loadingMore: false
+                        }), () => {
+                            if (!first) this.extendReplies();
+                        })
+                        if (data.length < (this.state.amountNext + 1)) {
+                            this.setState({
+                                moreNext: false
+                            });
+                        } else {
+                            this.setState(state => ({
+                                offsetNext: state.offsetNext + this.state.amountNext,
+                                moreNext: true
                             }));
                         }
                     })
