@@ -122,7 +122,7 @@
     overflow: hidden;
 }
 
-.Post-load, .Post-collapse, .Post-gap {
+.Post-load, .Post-gap {
     position: relative;
     flex-grow: 1;
     flex-basis: 0;
@@ -144,7 +144,7 @@
     justify-content: flex-end;
 }
 
-.Post-delete {
+.Post-delete, .Post-collapse {
     position: relative;
     width: max-content;
     cursor: pointer;

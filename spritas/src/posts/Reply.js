@@ -406,13 +406,6 @@ export default class Reply extends React.Component {
             </div>;
         }
 
-        var collapse = null;
-        if (this.props.reply && this.state.replies.length > 0) {
-            collapse = (this.state.collapsed) ?
-            <div className="Post-collapse" onClick={this.collapse}>Show Replies</div> :
-            <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
-        }
-
         const youreply = (this.props.user && this.props.user.id === post.idUser) ? " Post-replyyou" : "";
         const opOrYou = (this.props.user && this.props.user.id === this.props.opid) ? "Post-optag" : "Post-youtag";
         const youtag = (youreply) ? <span className={opOrYou} title="You"> YOU</span> : null;
@@ -436,10 +429,18 @@ export default class Reply extends React.Component {
             <div className='Post-delete' title='Report Reply' onClick={() => this.report()}>Report</div>
         ) : null;
 
+        var collapse = null;
+        if (this.props.reply && this.state.replies.length > 0) {
+            collapse = (this.state.collapsed) ?
+            <div className="Post-collapse" onClick={this.collapse}>Show Replies</div> :
+            <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
+        }
+
         const actions = (
             <div className='Post-actions'>
                 {deleteReply}
                 {reportReply}
+                {collapse}
             </div>
         )
 
@@ -468,7 +469,6 @@ export default class Reply extends React.Component {
                     {collapsable}
                 </div>
                 <div className="Post-controls">
-                    {collapse}
                     {load}
                 </div>
                 {replies}
