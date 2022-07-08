@@ -115,28 +115,25 @@
     border-bottom: none;
 }
 
-.Post-controls {
-    display: flex;
-    width: 100%;
-    text-align: center;
-    overflow: hidden;
-}
-
-.Post-load, .Post-gap {
+.Post-load {
     position: relative;
-    flex-grow: 1;
-    flex-basis: 0;
-    padding: 5px 0;
+    text-align: center;
+    padding: 10px 0;
     background-color: var(--light-grey);
     color: white;
     font-size: 0.9em;
     line-height: 20px;
+    border-top: solid 5px var(--darkest-grey);
 
     transition: background-color 0.1s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+.Post-loadNext {
+    border-top: none;
+    border-bottom: solid 5px var(--darkest-grey);
 }
 
 .Post-actions {

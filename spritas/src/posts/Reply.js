@@ -312,7 +312,11 @@ export default class Reply extends React.Component {
         this.setState({
             replies: [],
             offset: 0,
+            offsetPrev: 0,
+            offsetNext: 0,
             more: false,
+            morePrev: false,
+            moreNext: false,
             collapsed: false
         }, () => {
             repliesElem.style.height = beforeHeight + "px";
@@ -407,7 +411,7 @@ export default class Reply extends React.Component {
         }
         var loadNext;
         if (this.props.reply && this.state.moreNext) {
-            loadNext = <div className="Post-load" onClick={() => this.loadRepliesNext()}>
+            loadNext = <div className="Post-load Post-loadNext" onClick={() => this.loadRepliesNext()}>
                 <div className={'LoadingCover' + cover}></div>
                 {loadMsgNext}
             </div>;
@@ -415,16 +419,12 @@ export default class Reply extends React.Component {
 
         const replies = (this.props.reply) ?
         <div>
-            <div className="Post-controls">
-                {load}
-                {loadPrev}
-            </div>
+            {load}
+            {loadPrev}
             <div className="Post-replies" id={"Replies-" + post.id}>
                 {this.state.replies}
             </div>
-            <div className="Post-controls">
-                {loadNext}
-            </div>
+            {loadNext}
             {reply}
         </div>
         : null;
