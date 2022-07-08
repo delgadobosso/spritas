@@ -116,7 +116,7 @@ export default class Reply extends React.Component {
                     .then(res => res.json())
                     .then(data => {
                         const moreReplies = data.slice(0, this.state.amountPrev).reverse().map((reply, index) => 
-                            <Reply key={index + this.state.offsetPrev} post={reply}
+                            <Reply key={reply.id} post={reply}
                                 opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                         var rep = document.getElementById('Replies-' + this.props.post.id);
                         if (rep && !first) {
@@ -160,8 +160,8 @@ export default class Reply extends React.Component {
                 fetch(`/repliesnext/${id}.${idSub}.${this.state.offsetNext}.${this.state.amountNext}`)
                     .then(res => res.json())
                     .then(data => {
-                        const moreReplies = data.slice(0, this.state.amountNext).reverse().map((reply, index) => 
-                            <Reply key={index + this.state.offsetNext} post={reply}
+                        const moreReplies = data.slice(0, this.state.amountNext).map((reply, index) => 
+                            <Reply key={reply.id} post={reply}
                                 opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                         var rep = document.getElementById('Replies-' + this.props.post.id);
                         if (rep && !first) {
@@ -383,28 +383,51 @@ export default class Reply extends React.Component {
         else if (this.props.blockers && this.props.blockers.includes(post.idUser)) reply = <p className="PostContainer-banBlock">{post.nickname} Has Blocked You From Replying</p>;
         else if (this.props.user) reply = <CreateReply id={post.id} user={this.props.user} reload={this.reloadReplies} target={'comment'} />;
 
-        const replies = (this.props.reply) ?
-        <div>
-            <div className="Post-replies" id={"Replies-" + post.id}>
-                {this.state.replies}
-            </div>
-            {reply}
-        </div>
-        : null;
-
         var loadMsg = "Show Older Replies";
+        var loadMsgNext = "Show Newer Replies";
         var cover = ""
         if (this.state.loadingMore) {
             loadMsg = "Loading More Replies...";
+            loadMsgNext = "Loading More Replies...";
             cover = " LoadingCover-anim";
         }
-        var load = null;
+        var load;
         if (this.props.reply && this.state.more) {
             load = <div className="Post-load" onClick={() => this.loadReplies()}>
                 <div className={'LoadingCover' + cover}></div>
                 {loadMsg}
             </div>;
         }
+        var loadPrev;
+        if (this.props.reply && this.state.morePrev) {
+            loadPrev = <div className="Post-load" onClick={() => this.loadRepliesPrev()}>
+                <div className={'LoadingCover' + cover}></div>
+                {loadMsg}
+            </div>;
+        }
+        var loadNext;
+        if (this.props.reply && this.state.moreNext) {
+            loadNext = <div className="Post-load" onClick={() => this.loadRepliesNext()}>
+                <div className={'LoadingCover' + cover}></div>
+                {loadMsgNext}
+            </div>;
+        }
+
+        const replies = (this.props.reply) ?
+        <div>
+            <div className="Post-controls">
+                {load}
+                {loadPrev}
+            </div>
+            <div className="Post-replies" id={"Replies-" + post.id}>
+                {this.state.replies}
+            </div>
+            <div className="Post-controls">
+                {loadNext}
+            </div>
+            {reply}
+        </div>
+        : null;
 
         const youreply = (this.props.user && this.props.user.id === post.idUser) ? " Post-replyyou" : "";
         const opOrYou = (this.props.user && this.props.user.id === this.props.opid) ? "Post-optag" : "Post-youtag";
@@ -467,9 +490,6 @@ export default class Reply extends React.Component {
                     <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
                     {actions}
                     {collapsable}
-                </div>
-                <div className="Post-controls">
-                    {load}
                 </div>
                 {replies}
             </div>
