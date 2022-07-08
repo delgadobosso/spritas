@@ -26,10 +26,10 @@ export default class Reply extends React.Component {
             amount: 4,
             more: false,
             offsetPrev: 0,
-            amountPrev: 3,
+            amountPrev: 4,
             morePrev: false,
             offsetNext: 0,
-            amountNext: 3,
+            amountNext: 4,
             moreNext: false,
             collapsed: false,
             toggleTime: false,
@@ -112,10 +112,11 @@ export default class Reply extends React.Component {
             }, () => {
                 const id = this.props.post.id;
                 const idSub = this.props.idSub;
-                fetch(`/repliesprev/${id}.${idSub}.${this.state.offsetPrev}.${this.state.amountPrev}`)
+                const amount = (first) ? 2 : this.state.amountPrev;
+                fetch(`/repliesprev/${id}.${idSub}.${this.state.offsetPrev}.${amount}`)
                     .then(res => res.json())
                     .then(data => {
-                        const moreReplies = data.slice(0, this.state.amountPrev).reverse().map((reply, index) => 
+                        const moreReplies = data.slice(0, amount).reverse().map((reply, index) => 
                             <Reply key={reply.id} post={reply}
                                 opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                         var rep = document.getElementById('Replies-' + this.props.post.id);
@@ -134,13 +135,13 @@ export default class Reply extends React.Component {
                                 if (rep) rep.style.background = 'linear-gradient(90deg, var(--darkest-grey), var(--spritan-fade-gold))';
                             }
                         })
-                        if (data.length < (this.state.amountPrev + 1)) {
+                        if (data.length < (amount + 1)) {
                             this.setState({
                                 morePrev: false
                             });
                         } else {
                             this.setState(state => ({
-                                offsetPrev: state.offsetPrev + this.state.amountPrev,
+                                offsetPrev: state.offsetPrev + amount,
                                 morePrev: true
                             }));
                         }
@@ -157,10 +158,11 @@ export default class Reply extends React.Component {
             }, () => {
                 const id = this.props.post.id;
                 const idSub = this.props.idSub;
-                fetch(`/repliesnext/${id}.${idSub}.${this.state.offsetNext}.${this.state.amountNext}`)
+                const amount = (first) ? 1 : this.state.amountNext;
+                fetch(`/repliesnext/${id}.${idSub}.${this.state.offsetNext}.${amount}`)
                     .then(res => res.json())
                     .then(data => {
-                        const moreReplies = data.slice(0, this.state.amountNext).map((reply, index) => 
+                        const moreReplies = data.slice(0, amount).map((reply, index) => 
                             <Reply key={reply.id} post={reply}
                                 opid={this.props.opid} user={this.props.user} reload={this.reloadReplies} /> );
                         var rep = document.getElementById('Replies-' + this.props.post.id);
@@ -178,13 +180,13 @@ export default class Reply extends React.Component {
                                 rep.scrollIntoView({ behavior: 'smooth' });
                             }
                         })
-                        if (data.length < (this.state.amountNext + 1)) {
+                        if (data.length < (amount + 1)) {
                             this.setState({
                                 moreNext: false
                             });
                         } else {
                             this.setState(state => ({
-                                offsetNext: state.offsetNext + this.state.amountNext,
+                                offsetNext: state.offsetNext + amount,
                                 moreNext: true
                             }));
                         }
