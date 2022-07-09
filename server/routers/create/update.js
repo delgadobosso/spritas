@@ -35,7 +35,7 @@ router.post('/', (req, res) => {
                         (error, result, fields) => {
                             if (error) return res.status(500).send(error);
 
-                            const resId = parent.id.toString();
+                            const resId = result.insertId.toString();
                             return res.status(200).send(resId);
                         })
                     } else if (req.file && req.file.buffer && (type === "IMG" || type === "VIDO")) {
@@ -55,7 +55,7 @@ router.post('/', (req, res) => {
                                         (error, result, fields) => {
                                             if (error) return res.status(500).send(error);
 
-                                            const resId = parent.id.toString();
+                                            const resId = result.insertId.toString();
                                             return res.status(200).send(resId);
                                         })
                                     } else return res.status(500).json({error: "Issue uploading to imgur."});
@@ -74,7 +74,7 @@ router.post('/', (req, res) => {
                         (error, result, fields) => {
                             if (error) return res.status(500).send(error);
 
-                            const resId = parent.id.toString();
+                            const resId = result.insertId.toString();
                             return res.status(200).send(resId);
                         })
                     }
