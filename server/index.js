@@ -310,6 +310,7 @@ app.use('/update/post',
 
 app.use('/delete/post',
     body('currentid').notEmpty().isInt(),
+    body('reason').trim().escape(),
     (req, res, next) => {
         req.validationResult = validationResult;
         req.pool = pool;

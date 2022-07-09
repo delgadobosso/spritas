@@ -51,11 +51,14 @@ export default class AuditItem extends React.Component {
         <span title={ts} >{relTime}</span> :
         <span title={relTime}>{ts}</span>;
 
+        var typeFrom = (item.userTypeFrom === "ADMN") ? " AuditItem-admn" : "";
+        var typeTo = (item.userTypeTo === "ADMN") ? " AuditItem-admn" : "";
+
         switch(item.type) {
             case 'RP':
                 var userFrom = (item.idFrom) ? (
                     <span>
-                        <a href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
+                        <a className={typeFrom} href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
                     </span>
                 ) : (
                     <span>{"(MISSING USER ID)"}</span>
@@ -63,7 +66,7 @@ export default class AuditItem extends React.Component {
                 var userTo = (item.idTo) ? (
                     <span>
                         by&nbsp;
-                        <a href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
+                        <a className={typeTo} href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
                     </span>
                 ) : (
                     <span>{"(MISSING USER ID)"}</span>
@@ -82,7 +85,7 @@ export default class AuditItem extends React.Component {
             case 'RR':
                 var userFrom = (item.idFrom) ? (
                     <span>
-                        <a href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
+                        <a className={typeFrom} href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
                     </span>
                 ) : (
                     <span>{"(MISSING USER ID)"}</span>
@@ -90,7 +93,7 @@ export default class AuditItem extends React.Component {
                 var userTo = (item.idTo) ? (
                     <span>
                         by&nbsp;
-                        <a href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
+                        <a className={typeTo} href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
                     </span>
                 ) : (
                     <span>{"(MISSING USER ID)"}</span>
@@ -115,14 +118,14 @@ export default class AuditItem extends React.Component {
             case 'RU':
                 var userFrom = (item.idFrom) ? (
                     <span>
-                        <a href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
+                        <a className={typeFrom} href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
                     </span>
                 ) : (
                     <span>{"(MISSING USER ID)"}</span>
                 );
                 var userTo = (item.idTo) ? (
                     <span>
-                        <a href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
+                        <a className={typeTo} href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
                     </span>
                 ) : (
                     <span>{"(MISSING USER ID)"}</span>
@@ -132,6 +135,37 @@ export default class AuditItem extends React.Component {
                         {userFrom}
                         <span>reported user&nbsp;</span>
                         {userTo}
+                        <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
+                    </span>
+                )
+                break;
+
+            case 'DP':
+                var userFrom = (item.idFrom) ? (
+                    <span>
+                        <a className={typeFrom} href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
+                    </span>
+                ) : (
+                    <span>{"(MISSING USER ID)"}</span>
+                );
+                var userTo = (item.idTo) ? (
+                    <span>
+                        <a className={typeTo} href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
+                    </span>
+                ) : (
+                    <span>{"(MISSING USER ID)"}</span>
+                );
+                var whomst = (item.idFrom === item.idTo) ? (
+                    <span>deleted their own post</span>
+                ) : (
+                    <span>deleted a post from&nbsp;
+                    <span>{userTo}</span>
+                    </span>
+                );
+                result = (
+                    <span>
+                        {userFrom}
+                        {whomst}
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
                     </span>
                 )

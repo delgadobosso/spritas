@@ -149,17 +149,21 @@ export default class Post extends React.Component {
     delete(post) {
         var answer = prompt(`Are you sure you want to delete this post?\nType "${post.title}" to confirm:`, '');
         if (answer === post.title) {
-            var myBody = new URLSearchParams();
-            myBody.append('currentid', post.id);
+            var reason = prompt(`Why are you deleting this post?`, '');
+            if (reason) {
+                var myBody = new URLSearchParams();
+                myBody.append('currentid', post.id);
+                myBody.append('reason', reason);
 
-            fetch('/delete/post', {
-                method: 'POST',
-                body: myBody
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/';
-                else console.error('Post deletion error');
-            });
+                fetch('/delete/post', {
+                    method: 'POST',
+                    body: myBody
+                })
+                .then((resp) => {
+                    if (resp.ok) window.location.href = '/';
+                    else console.error('Post deletion error');
+                });
+            } else if (reason === '') alert(`You must give a reason to delete this post.`);
         } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
     }
 

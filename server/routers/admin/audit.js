@@ -12,8 +12,8 @@ router.get('/', (req, res) => {
     else limit = 0;
     req.pool.query(`
     SELECT a.*,
-    u1.username AS usernameFrom, u1.nickname AS nicknameFrom,
-    u2.username AS usernameTo, u2.nickname AS nicknameTo
+    u1.username AS usernameFrom, u1.nickname AS nicknameFrom, u1.type AS userTypeFrom,
+    u2.username AS usernameTo, u2.nickname AS nicknameTo, u2.type AS userTypeTo
     FROM audit_log AS a
     LEFT JOIN users AS u1
     ON a.idFrom = u1.id
