@@ -92,7 +92,7 @@ export default class AuditItem extends React.Component {
                 result = (
                     <span>
                         {userFrom}
-                        <span>reported&nbsp;
+                        <span>REPORTED&nbsp;
                         <a href={`/p/${item.idContent}`} onClick={this.handlePostClick}>{`post#${item.idContent}`}</a>&nbsp;</span>
                         {userTo}
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
@@ -111,7 +111,7 @@ export default class AuditItem extends React.Component {
                     <span>{"(MISSING USER ID)"}</span>
                 );
                 var postLink = (this.state.idPost) ? (
-                    <span>reported&nbsp;
+                    <span>REPORTED&nbsp;
                         <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleReplyClick}>{`reply#${item.idContent}`}</a>&nbsp;
                     </span>
                 ) : (
@@ -132,7 +132,7 @@ export default class AuditItem extends React.Component {
                 result = (
                     <span>
                         {userFrom}
-                        <span>reported user&nbsp;</span>
+                        <span>REPORTED user&nbsp;</span>
                         {userTo}
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
                     </span>
@@ -142,9 +142,9 @@ export default class AuditItem extends React.Component {
             case 'DP':
                 barType = " AuditItem-orange";
                 var whomst = (item.idFrom === item.idTo) ? (
-                    <span>deleted their own post#{item.idContent}</span>
+                    <span>DELETED their own post#{item.idContent}</span>
                 ) : (
-                    <span>deleted post#{item.idContent} from&nbsp;
+                    <span>DELETED post#{item.idContent} from&nbsp;
                     <span>{userTo}</span>
                     </span>
                 );
@@ -165,9 +165,9 @@ export default class AuditItem extends React.Component {
                     `reply#${item.idContent}`
                 );
                 var whomst = (item.idFrom === item.idTo) ? (
-                    <span>deleted their own {postLink}</span>
+                    <span>DELETED their own {postLink}</span>
                 ) : (
-                    <span>deleted {postLink}&nbsp;
+                    <span>DELETED {postLink}&nbsp;
                     <span>by {userTo}</span>
                     </span>
                 );
@@ -185,7 +185,7 @@ export default class AuditItem extends React.Component {
                 result = (
                     <span>
                         {userFrom}
-                        <span>banned user&nbsp;</span>
+                        <span>BANNED user&nbsp;</span>
                         {userTo}
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
                     </span>
@@ -197,7 +197,7 @@ export default class AuditItem extends React.Component {
                 result = (
                     <span>
                         {userFrom}
-                        <span>unbanned user&nbsp;</span>
+                        <span>UNBANNED user&nbsp;</span>
                         {userTo}
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
                     </span>
