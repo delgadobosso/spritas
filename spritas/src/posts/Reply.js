@@ -356,7 +356,6 @@ export default class Reply extends React.Component {
         var ts = new Date(post.ts);
         var relTime = relativeTime(post.ts);
         ts = `${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        relTime = `${relTime}`;
 
         const time = (!this.state.toggleTime) ?
         <p className="Post-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :

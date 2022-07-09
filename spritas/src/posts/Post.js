@@ -283,7 +283,6 @@ export default class Post extends React.Component {
         var ts = new Date(currentPost.ts);
         var relTime = relativeTime(currentPost.ts);
         ts = `${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        relTime = `${relTime}`;
 
         const time = (!this.state.toggleTime) ?
         <p className="PostMain-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
@@ -303,8 +302,12 @@ export default class Post extends React.Component {
                     nClass = 'PostMain-node'
                 }
 
+                var currentTs = new Date(post.ts);
+                var currentRelTime = relativeTime(post.ts);
+                currentTs = `${('0' + currentTs.getHours()).slice(-2)}:${('0' + currentTs.getMinutes()).slice(-2)} on ${currentTs.toDateString()}`;
+
                 const subtitle = (post.subtitle) ? `"${he.decode(post.subtitle)}" ` : "";
-                const nodeTime = (!this.state.toggleTime) ? relTime : ts;
+                const nodeTime = (!this.state.toggleTime) ? currentRelTime : currentTs;
 
                 return (
                     <g key={index} className="PostMain-nodeHit"
