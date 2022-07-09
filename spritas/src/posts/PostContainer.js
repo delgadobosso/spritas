@@ -169,6 +169,13 @@ export default class PostContainer extends React.Component {
             loadingMore: false,
             oneReply: false
         }, () => {
+            var stateObj = { id: this.state.main[this.state.current - 1].id };
+            const currentPath = window.location.pathname;
+            var link = currentPath.replace(/\/p\/.*/g, '');
+            link = link + "/p/" + this.state.main[this.state.current - 1].id;
+            window.history.replaceState(stateObj, "", link);
+            window.history.scrollRestoration = 'manual';
+
             if (cb) cb(value);
             this.loadReplies(true);
         });
@@ -176,7 +183,7 @@ export default class PostContainer extends React.Component {
 
     reloadComments() {
         if (this.state.oneReply) {
-            var stateObj = { id: this.state.main[0].id };
+            var stateObj = { id: this.state.main[this.state.current - 1].id };
             const currentPath = window.location.pathname;
             var link = currentPath.replace(/\/r\/.*/g, '');
             window.history.replaceState(stateObj, "", link);
