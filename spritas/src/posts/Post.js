@@ -33,7 +33,8 @@ export default class Post extends React.Component {
             expand: false,
             resize: true,
             share: false,
-            shareUrl: null
+            shareUrl: null,
+            shareTimeout: null
         });
     }
 
@@ -114,7 +115,10 @@ export default class Post extends React.Component {
     }
 
     postTransition(fromHeight, newIndex) {
-        this.setState({ shareUrl: null });
+        this.setState({
+            share: false,
+            shareUrl: null
+        });
         this.collapsable();
         const posts = this.props.posts;
         const newPost = posts[newIndex - 1];
@@ -251,6 +255,7 @@ export default class Post extends React.Component {
             this.setState({
                 updateMode: true,
                 fromIndex: this.props.current - 1,
+                share: false,
                 shareUrl: null
             }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
         } else {
@@ -288,9 +293,12 @@ export default class Post extends React.Component {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(`${url}/p/${currentPost.id}`)
             .then(() => {
+                if (this.state.shareTimeout) clearTimeout(this.state.shareTimeout);
+                var toClear = setTimeout(() => this.setState({ share: false }), 3000);
                 this.setState({
-                    share: true
-                }, () => setTimeout(() => this.setState({ share: false }), 3000));
+                    share: true,
+                    shareTimeout: toClear
+                });
             }, (reason) => console.error(reason));
         } else this.setState({ shareUrl: `${url}/p/${currentPost.id}` });
     }
