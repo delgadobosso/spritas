@@ -180,6 +180,30 @@ export default class AuditItem extends React.Component {
                 )
                 break;
 
+            case 'BU':
+                barType = " AuditItem-red";
+                result = (
+                    <span>
+                        {userFrom}
+                        <span>banned user&nbsp;</span>
+                        {userTo}
+                        <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
+                    </span>
+                )
+                break;
+
+            case 'UU':
+                barType = " AuditItem-green";
+                result = (
+                    <span>
+                        {userFrom}
+                        <span>unbanned user&nbsp;</span>
+                        {userTo}
+                        <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
+                    </span>
+                )
+                break;
+
             default:
                 break;
         }

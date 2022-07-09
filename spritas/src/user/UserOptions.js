@@ -90,13 +90,20 @@ function banUser(props) {
     if (props.thisId && props.thisUser) {
         var answer = prompt(`Are you sure you want to ban ${props.thisUser.nickname} (@${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
-            fetch('/ban/user/' + props.thisId, {
-                method: "POST"
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
-                else alert('User ban error');
-            });
+            var reason = prompt(`Why are you banning ${props.thisUser.nickname} (@${props.thisUser.username})?`, '');
+            if (reason) {
+                var myBody = new URLSearchParams();
+                myBody.append('reason', reason);
+
+                fetch('/ban/user/' + props.thisId, {
+                    method: "POST",
+                    body: myBody
+                })
+                .then((resp) => {
+                    if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
+                    else alert('User ban error');
+                });
+            } else if (reason === "") alert(`You must give a reason to ban this user.`);
         } else if (answer !== null) alert(`Value incorrect. User not banned.`);
     }
 }
@@ -105,13 +112,20 @@ function unbanUser(props) {
     if (props.thisId && props.thisUser) {
         var answer = prompt(`Are you sure you want to unban ${props.thisUser.nickname} (@${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
-            fetch('/unban/user/' + props.thisId, {
-                method: "POST"
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
-                else alert('User ban error');
-            });
+            var reason = prompt(`Why are you banning ${props.thisUser.nickname} (@${props.thisUser.username})?`, '');
+                if (reason) {
+                    var myBody = new URLSearchParams();
+                    myBody.append('reason', reason);
+
+                    fetch('/unban/user/' + props.thisId, {
+                        method: "POST",
+                        body: myBody
+                    })
+                    .then((resp) => {
+                        if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
+                        else alert('User ban error');
+                    });
+            } else if (reason === "") alert(`You must give a reason to unban this user.`);
         } else if (answer !== null) alert(`Value incorrect. User will stay banned.`);
     }
 }

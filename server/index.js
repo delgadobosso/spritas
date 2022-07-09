@@ -359,6 +359,7 @@ app.get('/media/avatars/:avatar', express.static(path.join(__dirname, '/media/av
 })
 
 app.use('/ban/user/:id',
+    body('reason').trim().escape(),
     (req, res, next) => {
         req.id = req.params.id;
         req.pool = pool;

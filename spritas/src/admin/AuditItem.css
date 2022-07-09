@@ -15,6 +15,9 @@
 .AuditItem-red {
     border-left: solid 5px red;
 }
+.AuditItem-green {
+    border-left: solid 5px green;
+}
 
 .AuditItem-td {
     padding: 10px;

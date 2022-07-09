@@ -19,7 +19,11 @@ router.post('/', (req, res) => {
                             req.sessionStore.set(userSession.session_id, session);
                         })
                     });
-                    return res.sendStatus(200);
+                    req.pool.query(`INSERT INTO audit_log (idFrom,idTo,type,reason) VALUES (?,?,'UU',?)`, [req.session.user.id, req.id, req.body.reason], (error, result, fields) => {
+                        if (error) return res.status(500).send(error);
+
+                        return res.sendStatus(200);
+                    });
                 })
             }
         })
