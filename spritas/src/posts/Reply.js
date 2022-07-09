@@ -245,22 +245,26 @@ export default class Reply extends React.Component {
             const post = this.props.post;
             var answer = prompt(`Are you sure you want to delete this reply?\nType the username "${post.username}" to confirm:`, '');
             if (answer === post.username) {
-                this.setState({ deleting: true }, () => {
-                    var myBody = new URLSearchParams();
-                    myBody.append('id', post.id);
-                    
-                    fetch('/delete/reply', {
-                        method: 'POST',
-                        body: myBody
+                var reason = prompt(`Why are you deleting this reply?`, '');
+                if (reason) {
+                    this.setState({ deleting: true }, () => {
+                        var myBody = new URLSearchParams();
+                        myBody.append('id', post.id);
+                        myBody.append('reason', reason);
+                        
+                        fetch('/delete/reply', {
+                            method: 'POST',
+                            body: myBody
+                        })
+                        .then((resp) => {
+                            this.setState({ deleting: false }, () => {
+                                if (resp.ok) this.props.reload();
+                                else alert('Post deletion error');
+                            });
+                        })
+                        .catch(error => this.setState({ deleting: false }));
                     })
-                    .then((resp) => {
-                        this.setState({ deleting: false }, () => {
-                            if (resp.ok) this.props.reload();
-                            else alert('Post deletion error');
-                        });
-                    })
-                    .catch(error => this.setState({ deleting: false }));
-                })
+                } else if (reason === '') alert(`You must give a reason to delete this reply.`);
             } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
         }
     }

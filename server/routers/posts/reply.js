@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
     req.pool.query(`SELECT replies.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
     FROM replies
     LEFT JOIN users ON replies.idUser = users.id
-    WHERE (replies.id = ? AND (replies.status != "DELE" OR replies.status IS NULL))`,
+    WHERE replies.id = ?`,
     id, (error, result, fields) => {
         if (error) return res.status(500).send(error);
 

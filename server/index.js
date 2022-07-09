@@ -320,6 +320,7 @@ app.use('/delete/post',
 
 app.use('/delete/reply',
     body('id').notEmpty().isInt(),
+    body('reason').trim().escape(),
     (req, res, next) => {
         req.validationResult = validationResult;
         req.pool = pool;

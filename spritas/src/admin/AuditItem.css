@@ -6,6 +6,15 @@
 .AuditItem:nth-child(odd) {
     background-color: var(--mid-grey);
 }
+.AuditItem-yellow {
+    border-left: solid 5px yellow;
+}
+.AuditItem-orange {
+    border-left: solid 5px orange;
+}
+.AuditItem-red {
+    border-left: solid 5px red;
+}
 
 .AuditItem-td {
     padding: 10px;
