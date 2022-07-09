@@ -9,6 +9,7 @@ import he from 'he';
 export default class PostContainer extends React.Component {
     constructor(props) {
         super(props);
+        this.loadPost = this.loadPost.bind(this);
         this.scrollTop = this.scrollTop.bind(this);
         this.loadReplies = this.loadReplies.bind(this);
         this.loadReply = this.loadReply.bind(this);
@@ -35,29 +36,13 @@ export default class PostContainer extends React.Component {
         var id = this.props.id;
         var idReply = this.props.idReply;
         if (this.props.match) {
-            if (this.props.match.params.id) id = this.props.match.params.id;
-            if (this.props.match.params.idReply) idReply = this.props.match.params.idReply;
+            if (this.props.match.params.id) id = parseInt(this.props.match.params.id);
+            if (this.props.match.params.idReply) idReply = parseInt(this.props.match.params.idReply);
         }
 
         if (idReply) this.setState({ oneReply: true });
 
-        fetch(`/post/${id}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.length > 0) {
-                    this.setState({
-                        main: data,
-                        post: data[0],
-                        current: data.length,
-                        opid: data[0].idUser
-                    }, () => {
-                        if (!idReply) this.loadReplies(true);
-                        else this.loadReply(idReply);
-                    });
-                    const title = (data[0].title) ? data[0].title : '';
-                    document.title = he.decode(title);
-                }
-            })
+        this.loadPost(id, idReply);
 
         fetch('/user/blockers')
             .then(resp => resp.json())
@@ -68,6 +53,33 @@ export default class PostContainer extends React.Component {
                 this.setState({ blockers: list });
               }
             });
+    }
+
+    loadPost(id, idReply = null, goTo = null) {
+        fetch(`/post/${id}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.length > 0) {
+                if (data[0].idParent) this.loadPost(data[0].idParent, idReply, id);
+                else {
+                    var current = 1;
+                    const nonDeleted = [];
+                    data.map((post) => { if (post.status !== "DELE") nonDeleted.push(post); });
+                    if (goTo) nonDeleted.map((post, index) => { if (post.id === goTo) current = index + 1; });
+                    if (nonDeleted.length <= 0) window.location.href = '/';
+                    this.setState({
+                        main: nonDeleted,
+                        current: current,
+                        opid: data[0].idUser
+                    }, () => {
+                        if (!idReply) this.loadReplies(true);
+                        else this.loadReply(idReply);
+                    });
+                    const title = (data[0].title) ? data[0].title : '';
+                    document.title = he.decode(title);
+                }
+            }
+        })
     }
 
     scrollTop() {
@@ -154,7 +166,8 @@ export default class PostContainer extends React.Component {
             offset: 0,
             more: false,
             ever: false,
-            loadingMore: false
+            loadingMore: false,
+            oneReply: false
         }, () => {
             if (cb) cb(value);
             this.loadReplies(true);
@@ -163,7 +176,7 @@ export default class PostContainer extends React.Component {
 
     reloadComments() {
         if (this.state.oneReply) {
-            var stateObj = { id: this.state.post.id };
+            var stateObj = { id: this.state.main[0].id };
             const currentPath = window.location.pathname;
             var link = currentPath.replace(/\/r\/.*/g, '');
             window.history.replaceState(stateObj, "", link);
@@ -182,12 +195,10 @@ export default class PostContainer extends React.Component {
 
     render() {
         const id = (this.state.main) ? this.state.main[this.state.current - 1].id : null;
-        var ogId = this.props.id;
-        if (this.props.match && this.props.match.params.id) ogId = this.props.match.params.id;
 
         var reply;
         if (this.props.user && this.props.user.type === "BAN") reply = <p className="PostContainer-banBlock">You Are Banned</p>;
-        else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.post.nickname} Has Blocked You From Commenting</p>;
+        else if (this.state.blockers.includes(this.state.opid)) reply = <p className="PostContainer-banBlock">{this.state.main[0].nickname} Has Blocked You From Commenting</p>;
         else if (this.props.user && this.props.user.id !== this.state.opid && !this.state.oneReply) reply = <CreateReply id={id} main={true} user={this.props.user} reload={this.reloadComments} target={'post'} />
 
         var showAll = (this.state.oneReply) ? (
@@ -221,7 +232,7 @@ export default class PostContainer extends React.Component {
             </div>
         ) : null;
 
-        const main = (this.state.main) ? <Post posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} ogId={ogId} oneReply={this.state.oneReply} /> : null;
+        const main = (this.state.main) ? <Post posts={this.state.main} user={this.props.user} naviHide={this.props.naviHide} current={this.state.current} setCurrent={this.setCurrent} rest={rest} extendReplies={this.extendReplies} scrollTop={this.scrollTop} oneReply={this.state.oneReply} /> : null;
 
         return (
             <div className="PostContainer">

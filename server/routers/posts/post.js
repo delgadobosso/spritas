@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
         req.pool.query(`SELECT posts.*, users.username AS username, users.nickname AS nickname, users.avatar AS avatar, users.type AS userType
             FROM posts
             LEFT JOIN users ON posts.idUser = users.id
-            WHERE (posts.id = ? AND (posts.status != "DELE" OR posts.status IS NULL))
+            WHERE (posts.id = ?)
             OR (posts.status = "UPDT" AND posts.idParent = ?)
             ORDER BY posts.id = ? DESC, posts.ts`,
         [id, id, id], (error, result, fields) => {

@@ -309,7 +309,6 @@ app.use('/update/post',
     }, createUpdate);
 
 app.use('/delete/post',
-    body('ogid').notEmpty().isInt(),
     body('currentid').notEmpty().isInt(),
     (req, res, next) => {
         req.validationResult = validationResult;

@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
         else limit = 0;
         req.pool.query(`
         SELECT 
-            p1.id,
+            IFNULL(t1.id, p1.id) AS id,
             p1.idParent,
             p1.idUser,
             p1.title,

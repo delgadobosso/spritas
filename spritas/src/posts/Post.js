@@ -150,7 +150,6 @@ export default class Post extends React.Component {
         var answer = prompt(`Are you sure you want to delete this post?\nType "${post.title}" to confirm:`, '');
         if (answer === post.title) {
             var myBody = new URLSearchParams();
-            myBody.append('ogid', this.props.posts[0].id);
             myBody.append('currentid', post.id);
 
             fetch('/delete/post', {
@@ -513,7 +512,7 @@ export default class Post extends React.Component {
             </div>
         ) : (
             <div>
-                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} height={this.state.height} ogId={this.props.ogId} />
+                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} height={this.state.height} ogId={this.props.posts[0].id} />
             </div>
         );
 
