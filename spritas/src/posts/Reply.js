@@ -20,6 +20,7 @@ export default class Reply extends React.Component {
         this.reloadReplies = this.reloadReplies.bind(this);
         this.collapsable = this.collapsable.bind(this);
         this.expand = this.expand.bind(this);
+        this.share = this.share.bind(this);
         this.state = ({
             replies: [],
             offset: 0,
@@ -37,7 +38,8 @@ export default class Reply extends React.Component {
             collapsable: false,
             expand: false,
             resize: true,
-            deleting: false
+            deleting: false,
+            share: false
          });
     }
 
@@ -350,6 +352,19 @@ export default class Reply extends React.Component {
         });
     }
 
+    share() {
+        const post = this.props.post;
+        var url = (window.location.port) ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}` :
+        `${window.location.protocol}//${window.location.hostname}`;
+        navigator.clipboard.writeText(`${url}/p/${post.idPost}/r/${post.id}`)
+        .then(() => {
+            this.setState({
+                share: true
+            }, () => setTimeout(() => this.setState({ share: false }), 3000));
+        }, (reason) => console.error(reason));
+        
+    }
+
     render() {
         const post = this.props.post;
 
@@ -438,15 +453,20 @@ export default class Reply extends React.Component {
         var collapse = null;
         if (this.props.reply && this.state.replies.length > 0) {
             collapse = (this.state.collapsed) ?
-            <div className="Post-collapse" onClick={this.collapse}>Show Replies</div> :
-            <div className="Post-collapse" onClick={this.collapse}>Hide Replies</div>
+            <div className="Post-action" onClick={this.collapse}>Show Replies</div> :
+            <div className="Post-action" onClick={this.collapse}>Hide Replies</div>
         }
+
+        var shareMsg = (this.state.share) ? "Copied" : "Share";
+        var copied = (this.state.share) ? " Post-copied" : "";
+        var share = <div className={'Post-action' + copied} onClick={ !this.state.share ? this.share : undefined }>{shareMsg}</div>;
 
         const actions = (
             <div className='Post-actions'>
                 {deleteReply}
                 {reportReply}
                 {collapse}
+                {share}
             </div>
         )
 

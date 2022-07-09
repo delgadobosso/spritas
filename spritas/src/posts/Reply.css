@@ -157,10 +157,9 @@
     justify-content: flex-end;
 }
 
-.Post-delete, .Post-collapse {
+.Post-delete, .Post-action {
     position: relative;
     width: max-content;
-    cursor: pointer;
     color: white;
     background-color: var(--light-grey);
     border-radius: 10px;
@@ -176,13 +175,18 @@
     user-select: none;
 }
 
+.Post-copied {
+    background-color: green;
+}
+
 @media (hover: hover) {
-    .Post-collapse:hover, .Post-load:hover {
+    .Post-action:hover:not(.Post-copied), .Post-load:hover {
         cursor: pointer;
         background-color: var(--lightest-grey);
     }
 
     .Post-delete:hover {
+        cursor: pointer;
         color: white;
         background-color: var(--spritan-red);
     }
