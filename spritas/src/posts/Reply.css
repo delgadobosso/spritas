@@ -184,7 +184,6 @@
     background-color: var(--light-grey);
     padding: 5px 10px;
     margin: 0 0 10px 0;
-    font-size: 0.9em;
     overflow: auto;
     scrollbar-width: thin;
     align-self: flex-end;

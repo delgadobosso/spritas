@@ -40,7 +40,7 @@ export default class Reply extends React.Component {
             resize: true,
             deleting: false,
             share: false,
-            shareUrl: false
+            shareUrl: null
          });
     }
 
@@ -441,7 +441,7 @@ export default class Reply extends React.Component {
         const deleted = (post.status === 'DELE') ? ' Post-bodyDel' : '';
 
         var deleting = (this.state.deleting) ? " LoadingCover-anim" : "";
-        var deleteMsg = (this.props.user.type === "ADMN" && this.props.user.id !== post.idUser) ? "Delete As Admin" : "Delete";
+        var deleteMsg = (this.props.user && this.props.user.type === "ADMN" && this.props.user.id !== post.idUser) ? "Delete As Admin" : "Delete";
         const deleteReply = (post.status !== 'DELE' && this.props.user &&
         (this.props.user.id === post.idUser || this.props.user.type === 'ADMN') && this.props.user.type !== "BAN") ? (
             <div className='Post-delete' onClick={this.delete} title='Delete Reply'>

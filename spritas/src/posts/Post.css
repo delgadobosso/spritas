@@ -48,6 +48,26 @@
     -ms-user-select: none;
     user-select: none;
 }
+.PostMain-copied {
+    color: black;
+    background-color: var(--spritan-gold);
+}
+.Post-shareUrl {
+    display: block;
+    position: relative;
+    color: white;
+    background-color: var(--light-grey);
+    padding: 5px 10px;
+    margin: 0 0 10px 0;
+    font-size: 0.9em;
+    overflow: auto;
+    scrollbar-width: thin;
+    align-self: flex-end;
+    white-space: nowrap;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
 
 .PostMain-title {
     margin: 0;
@@ -498,12 +518,12 @@
         color: var(--spritan-red);
     }
 
-    .PostMain-optionItem:hover {
+    .PostMain-optionItem:hover:not(.PostMain-copied) {
         cursor: pointer;
         background-color: var(--lightest-grey);
     }
 
     .PostMain-optionItemRed:hover {
-        background-color: var(--spritan-red);
+        background-color: var(--spritan-red) !important;
     }
 }

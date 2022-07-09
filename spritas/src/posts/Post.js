@@ -23,6 +23,7 @@ export default class Post extends React.Component {
         this.collapsable = this.collapsable.bind(this);
         this.expand = this.expand.bind(this);
         this.updateMode = this.updateMode.bind(this);
+        this.share = this.share.bind(this);
         this.state = ({
             modal: false,
             toggleTime: false,
@@ -30,7 +31,9 @@ export default class Post extends React.Component {
             fromIndex: this.props.current - 1,
             collapsable: false,
             expand: false,
-            resize: true
+            resize: true,
+            share: false,
+            shareUrl: null
         });
     }
 
@@ -111,6 +114,7 @@ export default class Post extends React.Component {
     }
 
     postTransition(fromHeight, newIndex) {
+        this.setState({ shareUrl: null });
         this.collapsable();
         const posts = this.props.posts;
         const newPost = posts[newIndex - 1];
@@ -246,7 +250,8 @@ export default class Post extends React.Component {
             if (currentHeight) this.setState({ height: currentHeight });
             this.setState({
                 updateMode: true,
-                fromIndex: this.props.current - 1
+                fromIndex: this.props.current - 1,
+                shareUrl: null
             }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
         } else {
             this.setState({
@@ -273,6 +278,21 @@ export default class Post extends React.Component {
                 this.props.extendReplies(true);
             });
         }
+    }
+
+    share() {
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+        var url = (window.location.port) ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}` :
+        `${window.location.protocol}//${window.location.hostname}`;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(`${url}/p/${currentPost.id}`)
+            .then(() => {
+                this.setState({
+                    share: true
+                }, () => setTimeout(() => this.setState({ share: false }), 3000));
+            }, (reason) => console.error(reason));
+        } else this.setState({ shareUrl: `${url}/p/${currentPost.id}` });
     }
 
     render() {
@@ -477,10 +497,18 @@ export default class Post extends React.Component {
         } else if (this.props.user && this.props.user.type !== 'BAN') {
             report = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.report(currentPost)}>Report Post</div>;
         }
+        var shareMsg = (this.state.share) ? "Copied" : "Share Post";
+        var copied = (this.state.share) ? " PostMain-copied" : "";
+        var share = <div className={'PostMain-optionItem' + copied} onClick={ !this.state.share ? this.share : undefined }>{shareMsg}</div>
+        if (this.state.shareUrl) share = <div className='PostMain-optionItem' onClick={() => this.setState({ shareUrl: null })}>Hide Link</div>;
 
-        const options = (update || deletePost || report) ? (
+        var shareUrl = (this.state.shareUrl) ? <span className='Post-shareUrl'>{this.state.shareUrl}</span> : null;
+
+        const options = (update || deletePost || report || share) ? (
             <div className='PostMain-option'>
                 {update}
+                {share}
+                {shareUrl}
                 {deletePost}
                 {report}
             </div>
