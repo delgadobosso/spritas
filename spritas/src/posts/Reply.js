@@ -39,7 +39,8 @@ export default class Reply extends React.Component {
             expand: false,
             resize: true,
             deleting: false,
-            share: false
+            share: false,
+            shareUrl: false
          });
     }
 
@@ -356,13 +357,15 @@ export default class Reply extends React.Component {
         const post = this.props.post;
         var url = (window.location.port) ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}` :
         `${window.location.protocol}//${window.location.hostname}`;
-        navigator.clipboard.writeText(`${url}/p/${post.idPost}/r/${post.id}`)
-        .then(() => {
-            this.setState({
-                share: true
-            }, () => setTimeout(() => this.setState({ share: false }), 3000));
-        }, (reason) => console.error(reason));
-        
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(`${url}/p/${post.idPost}/r/${post.id}`)
+            .then(() => {
+                this.setState({
+                    share: true
+                }, () => setTimeout(() => this.setState({ share: false }), 3000));
+            }, (reason) => console.error(reason));
+        } else this.setState({ shareUrl: `${url}/p/${post.idPost}/r/${post.id}` });
     }
 
     render() {
@@ -460,6 +463,9 @@ export default class Reply extends React.Component {
         var shareMsg = (this.state.share) ? "Copied" : "Share";
         var copied = (this.state.share) ? " Post-copied" : "";
         var share = <div className={'Post-action' + copied} onClick={ !this.state.share ? this.share : undefined }>{shareMsg}</div>;
+        if (this.state.shareUrl) share = <div className='Post-action' onClick={() => this.setState({ shareUrl: null })}>Hide Link</div>;
+
+        var shareUrl = (this.state.shareUrl) ? <span className='Post-shareUrl'>{this.state.shareUrl}</span> : null;
 
         const actions = (
             <div className='Post-actions'>
@@ -492,6 +498,7 @@ export default class Reply extends React.Component {
                     </div>
                     <p className={"Post-body" + deleted}>{he.decode(post.body)}</p>
                     {actions}
+                    {shareUrl}
                     {collapsable}
                 </div>
                 {replies}
