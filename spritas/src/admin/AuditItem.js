@@ -83,7 +83,7 @@ export default class AuditItem extends React.Component {
                 );
                 var userTo = (item.idTo) ? (
                     <span>
-                        by&nbsp;
+                        from&nbsp;
                         <a className={typeTo} href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
                     </span>
                 ) : (
@@ -104,7 +104,7 @@ export default class AuditItem extends React.Component {
                 barType = " AuditItem-yellow";
                 userTo = (item.idTo) ? (
                     <span>
-                        by&nbsp;
+                        from&nbsp;
                         <a className={typeTo} href={`/u/${item.usernameTo}`}>{`${item.nicknameTo} (@${item.usernameTo})`}</a>
                     </span>
                 ) : (
@@ -115,7 +115,7 @@ export default class AuditItem extends React.Component {
                         <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleReplyClick}>{`reply#${item.idContent}`}</a>&nbsp;
                     </span>
                 ) : (
-                    <span>reported&nbsp;{`reply#${item.idContent}`}&nbsp;</span>
+                    <span>REPORTED&nbsp;{`reply#${item.idContent}`}&nbsp;</span>
                 );
                 result = (
                     <span>
