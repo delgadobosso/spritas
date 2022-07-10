@@ -32,6 +32,7 @@ export default class Post extends React.Component {
             collapsable: false,
             expand: false,
             resize: true,
+            deleting: false,
             share: false,
             shareUrl: null,
             shareTimeout: null
@@ -155,24 +156,31 @@ export default class Post extends React.Component {
     }
 
     delete(post) {
-        var answer = prompt(`Are you sure you want to delete this post?\nType "${post.title}" to confirm:`, '');
-        if (answer === post.title) {
-            var reason = prompt(`Why are you deleting this post?`, '');
-            if (reason) {
-                var myBody = new URLSearchParams();
-                myBody.append('currentid', post.id);
-                myBody.append('reason', reason);
+        if (!this.state.deleting) {
+            var answer = prompt(`Are you sure you want to delete this post?\nType "${post.title}" to confirm:`, '');
+            if (answer === post.title) {
+                var reason = prompt(`Why are you deleting this post?`, '');
+                if (reason) {
+                    this.setState({ deleting: true }, () => {
+                        var myBody = new URLSearchParams();
+                        myBody.append('currentid', post.id);
+                        myBody.append('reason', reason);
 
-                fetch('/delete/post', {
-                    method: 'POST',
-                    body: myBody
-                })
-                .then((resp) => {
-                    if (resp.ok) window.location.href = '/';
-                    else console.error('Post deletion error');
-                });
-            } else if (reason === '') alert(`You must give a reason to delete this post.`);
-        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+                        fetch('/delete/post', {
+                            method: 'POST',
+                            body: myBody
+                        })
+                        .then((resp) => {
+                            this.setState({ deleting: false }, () => {
+                                if (resp.ok) window.location.href = '/';
+                                else console.error('Post deletion error');
+                            });
+                        })
+                        .catch(error => this.setState({ deleting: false }));
+                    });
+                } else if (reason === '') alert(`You must give a reason to delete this post.`);
+            } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+        }
     }
 
     report(post) {
@@ -475,8 +483,11 @@ export default class Post extends React.Component {
                 break;
         }
 
+        const cover = (this.state.deleting) ? " LoadingCover-anim" : "";
+
         var media = (
             <div id={`PostMain-mediaContainer${currentPost.id}`} className={'PostMain-mediaContainer' + mediaClass}>
+                <div className={'LoadingCover' + cover}></div>
                 {video}
                 {image}
             </div>
@@ -514,6 +525,7 @@ export default class Post extends React.Component {
 
         const options = (update || deletePost || report || share) ? (
             <div className='PostMain-option'>
+                <div className={'LoadingCover' + cover}></div>
                 {update}
                 {share}
                 {shareUrl}
@@ -530,6 +542,7 @@ export default class Post extends React.Component {
                     <div id={`PostMain-cards${currentPost.id}`} className={"PostMain-cards" + cardsClass}>
                         <div className="PostMain-postOption">
                             <div id={`PostMain-post${currentPost.id}`} className='PostMain-post'>
+                                <div className={'LoadingCover' + cover}></div>
                                 <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
                                 <div className='PostMain-info'>
                                     <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}
