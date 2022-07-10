@@ -48,6 +48,7 @@ const userBan = require('./routers/user/ban');
 const userUnban = require('./routers/user/unban');
 
 const adminAudit = require('./routers/admin/audit');
+const adminAction = require('./routers/admin/action');
 
 const reportPost = require('./routers/posts/reportPost');
 const reportUser = require('./routers/user/reportUser');
@@ -414,6 +415,11 @@ app.use('/admin/audit/:offset.:limit',
         req.pool = pool;
         next();
     }, adminAudit);
+
+app.use('/admin/action', (req, res, next) => {
+    req.pool = pool;
+    next();
+}, adminAction);
 
 app.use('/report/post',
     body('id').notEmpty().isInt(),

@@ -8,9 +8,12 @@ export default class AuditItem extends React.Component {
         super(props);
         this.handlePostClick = this.handlePostClick.bind(this);
         this.handleReplyClick = this.handleReplyClick.bind(this);
+        this.handleAction = this.handleAction.bind(this);
         this.state = {
             toggleTime: false,
-            idPost: null
+            idPost: null,
+            actioned: this.props.item.actioned,
+            actioning: false
         }
     }
 
@@ -36,6 +39,38 @@ export default class AuditItem extends React.Component {
         if (this.state.idPost) {
             const item = this.props.item;
             this.props.postClick(this.state.idPost, item.idContent);
+        }
+    }
+
+    handleAction() {
+        var confirm = (this.state.actioned) ? window.confirm('Revert this item to unactioned?') : window.confirm('Has this item been actioned?');
+        if (confirm) {
+            if (!this.state.actioning) {
+                this.setState({ actioning: true }, () => {
+                    const item = this.props.item;
+
+                    var myBody = new URLSearchParams();
+                    myBody.append('id', item.id);
+                    var actioned = !this.state.actioned ? 1 : 0;
+                    myBody.append('actioned', actioned);
+
+                    fetch('/admin/action', {
+                        method: 'POST',
+                        body: myBody
+                    })
+                    .then(resp => { if (resp.ok) return resp.text(); })
+                    .then(data => {
+                        if (data === 'changed' || data === 'same') {
+                            this.setState(state => ({
+                                actioning: false,
+                                actioned: !state.actioned
+                            }));
+                        }
+                        if (data === 'same') alert('Someone has already changed this value.');
+                    })
+                    .catch(() => this.setState({ actioning: false }));
+                });
+            }
         }
     }
 
@@ -204,10 +239,19 @@ export default class AuditItem extends React.Component {
                 break;
         }
 
+        var actioned;
+        var actionClass = "";
+        if (item.type === 'RP' || item.type === 'RR' || item.type === 'RU') {
+            actionClass = " AuditItem-actioned";
+            actioned = <input type='checkbox' checked={this.state.actioned}></input>;
+            if (this.state.actioned) barType = " AuditItem-green";
+        }
+
         return (
             <tr className='AuditItem'>
                 <td className={'AuditItem-td AuditItem-action' + barType}>{result}</td>
                 <td className='AuditItem-td'>{he.decode(item.reason)}</td>
+                <td className={'AuditItem-td' + actionClass} onClick={ (item.type === 'RP' || item.type === 'RR' || item.type === 'RU') ? this.handleAction : undefined }>{actioned}</td>
             </tr>
         )
     }

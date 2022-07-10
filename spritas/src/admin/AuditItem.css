@@ -24,12 +24,18 @@
     vertical-align: top;
 }
 
+.AuditItem-actioned {
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+}
+
 .AuditItem span {
     display: inline-block;
 }
 
 .AuditItem-admn {
-    color: var(--spritan-red);
+    color: red;
 }
 
 .AuditItem-ts {
