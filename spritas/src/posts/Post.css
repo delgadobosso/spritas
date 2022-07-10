@@ -43,7 +43,7 @@
     text-align: center;
     line-height: 20px;
 
-    transition: background-color 0.1s;
+    transition: background-color 0.1s, color 0.1s;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;

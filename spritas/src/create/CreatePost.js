@@ -46,10 +46,10 @@ export default class CreatePost extends React.Component {
         const file = (fileDrop) ? fileDrop : e.target.files[0];
 
         // Check file size
-        if (file.size > 20971520) {
+        if (file && file.size > 20971520) {
             e.target.value = '';
             alert('The file you selected is too large. It must be 20 MB or less.');
-        } else {
+        } else if (file) {
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = ((e) => {
