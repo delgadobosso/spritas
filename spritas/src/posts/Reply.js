@@ -441,8 +441,12 @@ export default class Reply extends React.Component {
 
         var deleting = (this.state.deleting) ? " LoadingCover-anim" : "";
         var deleteMsg = (this.props.user && this.props.user.type === "ADMN" && this.props.user.id !== post.idUser) ? "Delete As Admin" : "Delete";
+        var deleteMsg;
+        if (this.props.user && this.props.user.type === "ADMN") deleteMsg = "Delete As Admin";
+        if (this.props.user && this.props.user.id === this.props.opid) deleteMsg = "Delete As OP";
+        if (this.props.user && this.props.user.id === post.idUser) deleteMsg = "Delete";
         const deleteReply = (post.status !== 'DELE' && this.props.user &&
-        (this.props.user.id === post.idUser || this.props.user.type === 'ADMN') && this.props.user.type !== "BAN") ? (
+        (this.props.user.id === post.idUser || this.props.user.type === 'ADMN' || this.props.user.id === this.props.opid) && this.props.user.type !== "BAN") ? (
             <div className='Post-delete' onClick={this.delete} title='Delete Reply'>
                 <div className={'LoadingCover' + deleting}></div>
                 {deleteMsg}
