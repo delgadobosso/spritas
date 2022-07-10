@@ -73,7 +73,7 @@ export default class AuditItem extends React.Component {
 
         switch(item.type) {
             case 'RP':
-                barType = " AuditItem-yellow";
+                barType = " AuditItem-orange";
                 var userFrom = (item.idFrom) ? (
                     <span>
                         <a className={typeFrom} href={`/u/${item.usernameFrom}`}>{`${item.nicknameFrom} (@${item.usernameFrom})`}</a>&nbsp;
@@ -128,7 +128,7 @@ export default class AuditItem extends React.Component {
                 break;
 
             case 'RU':
-                barType = " AuditItem-yellow";
+                barType = " AuditItem-red";
                 result = (
                     <span>
                         {userFrom}
@@ -140,7 +140,6 @@ export default class AuditItem extends React.Component {
                 break;
 
             case 'DP':
-                barType = " AuditItem-orange";
                 var whomst = (item.idFrom === item.idTo) ? (
                     <span>DELETED their own post#{item.idContent}</span>
                 ) : (
@@ -158,7 +157,6 @@ export default class AuditItem extends React.Component {
                 break;
 
             case 'DR':
-                barType = " AuditItem-orange";
                 var postLink = (this.state.idPost) ? (
                     <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleReplyClick}>{`reply#${item.idContent}`}</a>
                 ) : (
@@ -181,7 +179,6 @@ export default class AuditItem extends React.Component {
                 break;
 
             case 'BU':
-                barType = " AuditItem-red";
                 result = (
                     <span>
                         {userFrom}
@@ -193,7 +190,6 @@ export default class AuditItem extends React.Component {
                 break;
 
             case 'UU':
-                barType = " AuditItem-green";
                 result = (
                     <span>
                         {userFrom}
