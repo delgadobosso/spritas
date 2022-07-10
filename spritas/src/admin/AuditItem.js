@@ -43,7 +43,7 @@ export default class AuditItem extends React.Component {
     }
 
     handleAction() {
-        var confirm = (this.state.actioned) ? window.confirm('Revert this item to unactioned?') : window.confirm('Has this item been actioned?');
+        var confirm = (this.state.actioned) ? window.confirm('Revert this item to unresolved?') : window.confirm('Has this item been resolved?');
         if (confirm) {
             if (!this.state.actioning) {
                 this.setState({ actioning: true }, () => {

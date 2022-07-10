@@ -77,7 +77,7 @@ export default class AuditLog extends React.Component {
                         <tr>
                             <th className='AuditLog-th'>Item</th>
                             <th className='AuditLog-th'>Reason</th>
-                            <th className='AuditLog-th'>Actioned?</th>
+                            <th className='AuditLog-th'>Resolved?</th>
                         </tr>
                     </thead>
                     <tbody>
