@@ -204,7 +204,6 @@ export default class Reply extends React.Component {
         var parent = document.getElementById(`r${parentId}`);
         if (rep && totalHeight !== rep.clientHeight) {
             rep.style.height = totalHeight + "px";
-            rep.scrollTop = totalHeight;
             if (parent) parent.scrollIntoView({ behavior: "smooth" });
             if (this.state.collapsed) this.setState({ collapsed: false });
             const controller = new AbortController();
