@@ -37,12 +37,27 @@
     padding: 10px;
 }
 
+.AuditLog-filter {
+    cursor: pointer;
+
+    transition: background-color 0.1s;
+}
+
+.AuditLog-filtered {
+    font-style: italic;
+    background-color: var(--spritan-red);
+}
+
 .AuditLog-load {
     border-radius: 0;
 }
 
 @media (hover: hover) {
     .AuditLog-header:hover {
+        background-color: var(--lightest-grey);
+    }
+
+    .AuditLog-filter:hover {
         background-color: var(--lightest-grey);
     }
 }

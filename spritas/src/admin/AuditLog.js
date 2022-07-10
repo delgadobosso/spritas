@@ -6,13 +6,15 @@ export default class AuditLog extends React.Component {
     constructor(props) {
         super(props);
         this.audit = this.audit.bind(this);
+        this.unresolved = this.unresolved.bind(this);
         this.scrollTo = this.scrollTo.bind(this);
         this.state = {
             audit: [],
             offset: 0,
             amount: 20,
             more: false,
-            loadingMore: false
+            loadingMore: false,
+            unresolvedOnly: false
         }
     }
 
@@ -20,12 +22,12 @@ export default class AuditLog extends React.Component {
         this.audit();
     }
 
-    audit() {
+    audit(filter = "audit") {
         if (!this.state.loadingMore) {
             this.setState({
                 loadingMore: true
             }, () => {
-                fetch(`/admin/audit/${this.state.offset}.${this.state.amount}`)
+                fetch(`/admin/${filter}/${this.state.offset}.${this.state.amount}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.length > 0) {
@@ -47,6 +49,30 @@ export default class AuditLog extends React.Component {
         }
     }
 
+    unresolved() {
+        if (this.state.unresolvedOnly) {
+            var confirm = window.confirm('Show all audit items?');
+            if (confirm) {
+                this.setState({
+                    unresolvedOnly: false,
+                    audit: [],
+                    offset: 0,
+                    more: false
+                }, () => this.audit('audit'));
+            }
+        } else {
+            var confirm = window.confirm('Filter for unresolved items only?');
+            if (confirm) {
+                this.setState({
+                    unresolvedOnly: true,
+                    audit: [],
+                    offset: 0,
+                    more: false
+                }, () => this.audit('unresolved'));
+            }
+        }
+    }
+
     scrollTo() {
         var con = document.getElementById('AuditLog');
         con.scrollIntoView({ behavior: "smooth" });
@@ -60,8 +86,17 @@ export default class AuditLog extends React.Component {
             cover = " LoadingCover-anim";
         }
 
+        var resolvedHead = 'Resolved?';
+        var filter = 'audit';
+        var filtered = '';
+        if (this.state.unresolvedOnly) {
+            filter = 'unresolved';
+            resolvedHead = 'Unresolved Only';
+            filtered = ' AuditLog-filtered';
+        }
+
         const load = (this.state.more) ? (
-            <td className='PostContainer-load AuditLog-load' onClick={this.audit} colSpan="3">
+            <td className='PostContainer-load AuditLog-load' onClick={() => this.audit(filter)} colSpan="3">
                 <div className={'LoadingCover' + cover}></div>
                 {loadMsg}
             </td>
@@ -77,7 +112,7 @@ export default class AuditLog extends React.Component {
                         <tr>
                             <th className='AuditLog-th'>Item</th>
                             <th className='AuditLog-th'>Reason</th>
-                            <th className='AuditLog-th'>Resolved?</th>
+                            <th className={'AuditLog-th AuditLog-filter' + filtered} onClick={this.unresolved}>{resolvedHead}</th>
                         </tr>
                     </thead>
                     <tbody>

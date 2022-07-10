@@ -48,6 +48,7 @@ const userBan = require('./routers/user/ban');
 const userUnban = require('./routers/user/unban');
 
 const adminAudit = require('./routers/admin/audit');
+const adminUnresolved = require('./routers/admin/unresolved');
 const adminAction = require('./routers/admin/action');
 
 const reportPost = require('./routers/posts/reportPost');
@@ -408,13 +409,19 @@ app.get('/user/blockers', (req, res) => {
     } else res.redirect('/');
 })
 
-app.use('/admin/audit/:offset.:limit', 
-    (req, res, next) => {
-        req.offset = req.params.offset;
-        req.limit = req.params.limit;
-        req.pool = pool;
-        next();
-    }, adminAudit);
+app.use('/admin/audit/:offset.:limit', (req, res, next) => {
+    req.offset = req.params.offset;
+    req.limit = req.params.limit;
+    req.pool = pool;
+    next();
+}, adminAudit);
+
+app.use('/admin/unresolved/:offset.:limit', (req, res, next) => {
+    req.offset = req.params.offset;
+    req.limit = req.params.limit;
+    req.pool = pool;
+    next();
+}, adminUnresolved);
 
 app.use('/admin/action', (req, res, next) => {
     req.pool = pool;
