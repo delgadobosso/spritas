@@ -50,6 +50,7 @@ const userUnban = require('./routers/user/unban');
 const adminAudit = require('./routers/admin/audit');
 const adminUnresolved = require('./routers/admin/unresolved');
 const adminAction = require('./routers/admin/action');
+const adminContent = require('./routers/admin/content');
 
 const reportPost = require('./routers/posts/reportPost');
 const reportUser = require('./routers/user/reportUser');
@@ -422,6 +423,14 @@ app.use('/admin/unresolved/:offset.:limit', (req, res, next) => {
     req.pool = pool;
     next();
 }, adminUnresolved);
+
+app.use('/admin/content/:content.:offset.:limit', (req, res, next) => {
+    req.content = req.params.content;
+    req.offset = req.params.offset;
+    req.limit = req.params.limit;
+    req.pool = pool;
+    next();
+}, adminContent);
 
 app.use('/admin/action', (req, res, next) => {
     req.pool = pool;
