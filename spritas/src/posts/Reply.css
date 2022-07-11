@@ -38,6 +38,8 @@
 
 .Post-a {
     max-width: 100%;
+    text-decoration: none;
+    color: white;
 }
 
 .Post-user {
@@ -96,10 +98,26 @@
 }
 
 .Post-replies {
+    position: relative;
     height: auto;
     overflow: hidden;
 
     transition: height 0.5s;
+}
+.Post-repliesCover {
+    position: absolute;
+    width: 100%;
+    height: 0px;
+    bottom: 0;
+    opacity: 0;
+    background: linear-gradient(rgba(0,0,0,0), var(--darkest-grey));
+    z-index: 1;
+
+    transition: opacity 0.5s, height 0.5s;
+}
+.Post-collapseCover {
+    opacity: 1;
+    height: 30px;
 }
 
 .Post-replies .Post {
@@ -113,22 +131,15 @@
     border-bottom: none;
 }
 
-.Post-controls {
-    display: flex;
-    width: 100%;
-    text-align: center;
-    overflow: hidden;
-}
-
-.Post-load, .Post-collapse, .Post-gap {
+.Post-load {
     position: relative;
-    flex-grow: 1;
-    flex-basis: 0;
-    padding: 5px 0;
+    text-align: center;
+    padding: 10px 0;
     background-color: var(--light-grey);
     color: white;
     font-size: 0.9em;
     line-height: 20px;
+    border-top: solid 5px var(--darkest-grey);
 
     transition: background-color 0.1s;
     -moz-user-select: none;
@@ -136,16 +147,19 @@
     -ms-user-select: none;
     user-select: none;
 }
+.Post-loadNext {
+    border-top: none;
+    border-bottom: solid 5px var(--darkest-grey);
+}
 
 .Post-actions {
     display: flex;
     justify-content: flex-end;
 }
 
-.Post-delete {
+.Post-delete, .Post-action {
     position: relative;
     width: max-content;
-    cursor: pointer;
     color: white;
     background-color: var(--light-grey);
     border-radius: 10px;
@@ -160,14 +174,32 @@
     -ms-user-select: none;
     user-select: none;
 }
+.Post-copied {
+    color: black;
+    background-color: var(--spritan-gold);
+}
+.Post-shareUrl {
+    position: relative;
+    color: white;
+    background-color: var(--light-grey);
+    padding: 5px 10px;
+    margin: 0 0 10px 0;
+    overflow: auto;
+    scrollbar-width: thin;
+    align-self: flex-end;
+    white-space: nowrap;
+    max-width: 100%;
+    box-sizing: border-box;
+}
 
 @media (hover: hover) {
-    .Post-collapse:hover, .Post-load:hover {
+    .Post-action:hover:not(.Post-copied), .Post-load:hover {
         cursor: pointer;
         background-color: var(--lightest-grey);
     }
 
     .Post-delete:hover {
+        cursor: pointer;
         color: white;
         background-color: var(--spritan-red);
     }

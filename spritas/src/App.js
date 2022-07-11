@@ -2,18 +2,19 @@ import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect
 } from "react-router-dom";
 import './App.css';
 import Header from './header/Header'
 import Login from './login/Login';
 import Navi from './navigation/Navi';
 import PostContainer from './posts/PostContainer';
-import CreateTopic from './create/CreateTopic';
 import CreatePost from './create/CreatePost';
 import PostHome from "./posts/PostHome";
 import UserContainer from './user/UserContainer';
 import TopicContainer from './topics/TopicContainer';
+import AdminPortal from "./admin/AdminPortal";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -28,7 +29,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    if (window.location.pathname === "/" || window.location.pathname.startsWith('/u/')) window.history.replaceState({}, "", window.location.pathname);
+    if (window.location.pathname === "/home" || window.location.pathname.startsWith('/u/') || window.location.pathname.startsWith('/admin')) window.history.replaceState({}, "", window.location.pathname);
     window.history.scrollRestoration = 'manual';
 
     // Navi Hiding
@@ -60,24 +61,30 @@ export default class App extends React.Component {
           }
         }, {signal: controller.signal});
       } else if (e.state && e.state.id) {
-        this.postClick(e.state.id, false);
+        this.postClick(e.state.id, e.state.idReply, false);
       }
     }
 
     // Get User Data
     fetch('/session/user')
-        .then(res => res.json())
-        .then(data => { this.setState({ user: data }); })
-        .catch((error) => { console.error('Error:', error); });
+      .then(res => res.json())
+      .then(data => { this.setState({ user: data }); })
+      .catch((error) => { console.error('Error:', error); });
   }
 
-  postClick(id, push = true) {
+  postClick(id, idReply = null, push = true) {
     if (!this.state.post) {
-      var post = <PostHome id={id} naviHide={this.naviHide} user={this.state.user} />;
+      var post = <PostHome id={id} idReply={idReply} naviHide={this.naviHide} user={this.state.user} />;
       this.setState({ post: post }, () => {
         if (push) {
-          let stateObj = { id: id };
-          window.history.pushState(stateObj, "", "/p/" + id);
+          let stateObj = {
+            id: id,
+            idReply: idReply
+          };
+          const currentPath = window.location.pathname;
+          var link = `${currentPath}/p/${id}`;
+          if (idReply) link = `${link}/r/${idReply}`;
+          window.history.pushState(stateObj, "", link);
           window.history.scrollRestoration = 'manual';
         }
         const posthome = document.getElementById("PostHome-" + this.state.post.props.id)
@@ -101,16 +108,22 @@ export default class App extends React.Component {
           <Navi user={this.state.user} hide={this.state.naviHide} />
           <Header />
           <Switch>
-            <Route path='/login' component={Login} />
-            <Route path='/create/topic/:id?' component={CreateTopic} />
+            <Route exact path='/'>
+              <Redirect to='/home' />
+            </Route>
+            <Route path='/admin'>
+              <AdminPortal postClick={this.postClick} user={this.state.user} />
+            </Route>
             <Route path='/create/post'
               render={props => <CreatePost user={this.state.user} {...props} />} />
+            <Route path='/login' component={Login} />
+            <Route path='/p/:id/r/:idReply'
+              render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
+            <Route path='/p/:id'
+              render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
             <Route path='/u/:name'
               render={props => <UserContainer postClick={this.postClick} user={this.state.user} {...props} />} />
-            <Route path='/post/:id'
-              render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
-            <Route path='/'>
-              {/* <Featured user={this.state.user} /> */}
+            <Route path='/home'>
               <TopicContainer postClick={this.postClick} user={this.state.user} />
             </Route>
           </Switch>

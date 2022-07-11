@@ -17,7 +17,7 @@ export default function UserOptions(props) {
         } else if (props.user.id !== parseInt(props.thisId)) {
             // And you're not admin
             if (props.user.type !== 'ADMN') {
-                report = <div className='UserOptions-option'>Report User</div>;
+                report = <div className='UserOptions-option' onClick={() => reportUser(props)}>Report User</div>;
             // You ARE admin
             } else {
                 ban = (props.thisUser && props.thisUser.type !== "BAN") ?
@@ -88,37 +88,51 @@ function editTimeCheck(props) {
 
 function banUser(props) {
     if (props.thisId && props.thisUser) {
-        var answer = prompt(`Are you sure you want to ban ${props.thisUser.nickname} (${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
+        var answer = prompt(`Are you sure you want to ban ${props.thisUser.nickname} (@${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
-            fetch('/ban/user/' + props.thisId, {
-                method: "POST"
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
-                else alert('User ban error');
-            });
+            var reason = prompt(`Why are you banning ${props.thisUser.nickname} (@${props.thisUser.username})?`, '');
+            if (reason) {
+                var myBody = new URLSearchParams();
+                myBody.append('reason', reason);
+
+                fetch('/ban/user/' + props.thisId, {
+                    method: "POST",
+                    body: myBody
+                })
+                .then((resp) => {
+                    if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
+                    else alert('User ban error');
+                });
+            } else if (reason === "") alert(`You must give a reason to ban this user.`);
         } else if (answer !== null) alert(`Value incorrect. User not banned.`);
     }
 }
 
 function unbanUser(props) {
     if (props.thisId && props.thisUser) {
-        var answer = prompt(`Are you sure you want to unban ${props.thisUser.nickname} (${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
+        var answer = prompt(`Are you sure you want to unban ${props.thisUser.nickname} (@${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
-            fetch('/unban/user/' + props.thisId, {
-                method: "POST"
-            })
-            .then((resp) => {
-                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
-                else alert('User ban error');
-            });
+            var reason = prompt(`Why are you banning ${props.thisUser.nickname} (@${props.thisUser.username})?`, '');
+                if (reason) {
+                    var myBody = new URLSearchParams();
+                    myBody.append('reason', reason);
+
+                    fetch('/unban/user/' + props.thisId, {
+                        method: "POST",
+                        body: myBody
+                    })
+                    .then((resp) => {
+                        if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
+                        else alert('User ban error');
+                    });
+            } else if (reason === "") alert(`You must give a reason to unban this user.`);
         } else if (answer !== null) alert(`Value incorrect. User will stay banned.`);
     }
 }
 
 function blockUser(props) {
     if (props.thisId && props.thisUser) {
-        var answer = prompt(`Are you sure you want to block ${props.thisUser.nickname} (${props.thisUser.username})? They won't be able to reply to your posts.\nType "${props.thisUser.username}" to confirm:`, '');
+        var answer = prompt(`Are you sure you want to block ${props.thisUser.nickname} (@${props.thisUser.username})? They won't be able to reply to your posts.\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
             fetch('/block/user/' + props.thisId, {
                 method: "POST"
@@ -133,7 +147,7 @@ function blockUser(props) {
 
 function unblockUser(props) {
     if (props.thisId && props.thisUser) {
-        var answer = prompt(`Are you sure you want to unblock ${props.thisUser.nickname} (${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
+        var answer = prompt(`Are you sure you want to unblock ${props.thisUser.nickname} (@${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
             fetch('/unblock/user/' + props.thisId, {
                 method: "POST"
@@ -143,5 +157,25 @@ function unblockUser(props) {
                 else alert('User unblock error');
             });
         } else if (answer !== null) alert(`Value incorrect. User still blocked.`);
+    }
+}
+
+function reportUser(props) {
+    if (props.thisId && props.thisUser) {
+        var answer = prompt(`Why are you reporting ${props.thisUser.nickname} (@${props.thisUser.username})?`, '');
+        if (answer) {
+            var myBody = new URLSearchParams();
+            myBody.append('id', props.thisUser.id);
+            myBody.append('reason', answer);
+
+            fetch('/report/user', {
+                method: 'POST',
+                body: myBody
+            })
+            .then(resp => {
+                if (resp.ok) alert('This user has been reported to the Admins.');
+                else alert('Error reporting post. Please try again or reach out directly to an Admin.');
+            })
+        } else if (answer === '') alert(`You must give a reason to report this user.`);
     }
 }

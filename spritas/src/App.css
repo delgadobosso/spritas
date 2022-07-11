@@ -9,6 +9,7 @@
 
     --spritan-red: #ab0f26;
     --spritan-gold: #ffe289;
+    --spritan-fade-gold: #ffe28a40;
 }
 
 body {
@@ -23,6 +24,10 @@ h1, h2, h3, p, label {
 input, textarea {
     color: white;
     background-color: var(--lightest-grey);
+}
+
+a {
+    color: var(--spritan-gold);
 }
 
 ::selection {

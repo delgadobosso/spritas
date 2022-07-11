@@ -41,6 +41,9 @@
     -ms-user-select: none;
     user-select: none;
 }
+.PostContainer-showAll {
+    margin-bottom: 20px;
+}
 @media (hover: hover) {
     .PostContainer-load:hover {
         cursor: pointer;
@@ -62,5 +65,8 @@
     .PostContainer-load, .PostContainer-loaded {
         width: initial;
         margin: 0 10px;
+    }
+    .PostContainer-showAll {
+        margin-bottom: 20px;
     }
 }

@@ -89,7 +89,7 @@ export default class CreateReply extends React.Component {
         var placeholder = "Reply";
         if (this.props.main) {
             expand = null;
-            placeholder = "Comment";
+            placeholder = "Reply to Post";
         }
 
         var submitText = (this.state.submitting) ? "Sending..." : "Send";

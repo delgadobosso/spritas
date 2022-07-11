@@ -1,6 +1,5 @@
 .TopicPost {
     width: 300px;
-    margin: 0 0 20px 20px;
     background-color: var(--darkest-grey);
     border-radius: 10px;
     overflow: hidden;
@@ -10,12 +9,16 @@
     animation-duration: 0.5s;
     animation-fill-mode: forwards;
 }
+.TopicPortal .TopicPost {
+    margin: 0 0 20px 20px;
+}
 
 .TopicPost-link {
     display: block;
     background-color: var(--light-grey);
     border-radius: 10px;
     overflow: hidden;
+    text-decoration: none;
 
     transition: background-color 0.1s;
 }
@@ -49,6 +52,7 @@
     display: block;
     max-width: 100%;
     margin: 6px 3px 0 3px;
+    text-decoration: none;
 }
 
 .TopicPost-user {
@@ -94,7 +98,7 @@
 
 .TopicPost-ts {
     margin: 5px 5px 10px 5px;
-    font-size: 0.9rem;
+    font-size: 0.9em;
     color: var(--info-grey);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -131,7 +135,7 @@
 }
 
 @media screen and (max-width: 716px) {
-    .TopicPost {
+    .TopicPortal .TopicPost {
         margin: 0 0 20px 0;
     }
 

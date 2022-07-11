@@ -51,14 +51,16 @@ export default class Navi extends React.Component {
         var itemOpen = (this.state.open) ? " Navi-itemOpen" : "";
 
         var avatar;
-        var home = <a className={"Navi-item" + itemOpen} href="/">Home</a>;
+        var home = <a className={"Navi-item" + itemOpen} href="/home">Home</a>;
         var userItem;
+        var admin;
         var createPost;
         var logout;
         if (user) {
             avatar = (user.avatar) ? `/media/avatars/${user.avatar}` : pfp;
             userItem = <a className={"Navi-item" + itemOpen} href={"/u/" + user.username}>{user.nickname} (@{user.username})</a>;
-            createPost = <a className={"Navi-item" + itemOpen} href="/create/post">Create Post</a>;
+            if (user.type === "ADMN") admin = <a className={"Navi-item" + itemOpen} href="/admin">Admin Portal</a>
+            createPost = (user.type !== "BAN") ? <a className={"Navi-item" + itemOpen} href="/create/post">Create Post</a> : null;
             logout = <a className={"Navi-item" + itemOpen} href="/logout">Logout</a>;
         } else {
             avatar = pfp;
@@ -78,6 +80,7 @@ export default class Navi extends React.Component {
                     </div>
                     {home}
                     {userItem}
+                    {admin}
                     {createPost}
                     {logout}
                 </div>

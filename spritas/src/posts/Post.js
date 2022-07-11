@@ -19,9 +19,11 @@ export default class Post extends React.Component {
         this.postTransition = this.postTransition.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.delete = this.delete.bind(this);
+        this.report = this.report.bind(this);
         this.collapsable = this.collapsable.bind(this);
         this.expand = this.expand.bind(this);
         this.updateMode = this.updateMode.bind(this);
+        this.share = this.share.bind(this);
         this.state = ({
             modal: false,
             toggleTime: false,
@@ -29,7 +31,11 @@ export default class Post extends React.Component {
             fromIndex: this.props.current - 1,
             collapsable: false,
             expand: false,
-            resize: true
+            resize: true,
+            deleting: false,
+            share: false,
+            shareUrl: null,
+            shareTimeout: null
         });
     }
 
@@ -110,6 +116,10 @@ export default class Post extends React.Component {
     }
 
     postTransition(fromHeight, newIndex) {
+        this.setState({
+            share: false,
+            shareUrl: null
+        });
         this.collapsable();
         const posts = this.props.posts;
         const newPost = posts[newIndex - 1];
@@ -146,29 +156,59 @@ export default class Post extends React.Component {
     }
 
     delete(post) {
-        var answer = prompt(`Are you sure you want to delete this post?\nType "${post.title}" to confirm:`, '');
-        if (answer === post.title) {
-            var myBody = new URLSearchParams();
-            myBody.append('ogid', this.props.posts[0].id);
-            myBody.append('currentid', post.id);
+        if (!this.state.deleting) {
+            var answer = prompt(`Are you sure you want to delete this post?\nType "${post.title}" to confirm:`, '');
+            if (answer === post.title) {
+                var reason = prompt(`Why are you deleting this post?`, '');
+                if (reason) {
+                    this.setState({ deleting: true }, () => {
+                        var myBody = new URLSearchParams();
+                        myBody.append('currentid', post.id);
+                        myBody.append('reason', reason);
 
-            fetch('/delete/post', {
+                        fetch('/delete/post', {
+                            method: 'POST',
+                            body: myBody
+                        })
+                        .then((resp) => {
+                            this.setState({ deleting: false }, () => {
+                                if (resp.ok) window.location.href = '/';
+                                else console.error('Post deletion error');
+                            });
+                        })
+                        .catch(error => this.setState({ deleting: false }));
+                    });
+                } else if (reason === '') alert(`You must give a reason to delete this post.`);
+            } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+        }
+    }
+
+    report(post) {
+        var answer = prompt(`Why are you reporting this post?`, '');
+        if (answer) {
+            var myBody = new URLSearchParams();
+            myBody.append('id', post.id);
+            myBody.append('reason', answer);
+
+            fetch('/report/post', {
                 method: 'POST',
                 body: myBody
             })
             .then((resp) => {
-                if (resp.ok) window.location.href = '/';
-                else console.error('Post deletion error');
+                if (resp.ok) alert('This post has been reported to the Admins.');
+                else alert('Error reporting post. Please try again or reach out directly to an Admin.');
             });
-        } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+        } else if (answer === '') alert(`You must give a reason to report this post.`);
     }
 
     collapsable(newIndex) {
         const posts = this.props.posts;
         const currentPost = (newIndex) ? posts[newIndex - 1] : posts[this.props.current - 1];
         const post = document.getElementById(`PostMain-post${currentPost.id}`);
-        post.getAnimations().map(animation => animation.cancel());
-        post.style.height = 'initial';
+        if (post) {
+            post.getAnimations().map(animation => animation.cancel());
+            post.style.height = 'initial';
+        }
         if (post && post.scrollHeight > 675) {
             post.style.height = '675px';
             this.setState({
@@ -222,7 +262,9 @@ export default class Post extends React.Component {
             if (currentHeight) this.setState({ height: currentHeight });
             this.setState({
                 updateMode: true,
-                fromIndex: this.props.current - 1
+                fromIndex: this.props.current - 1,
+                share: false,
+                shareUrl: null
             }, () => setTimeout(() => this.props.setCurrent(this.props.posts.length), 10));
         } else {
             this.setState({
@@ -251,6 +293,24 @@ export default class Post extends React.Component {
         }
     }
 
+    share() {
+        const posts = this.props.posts;
+        const currentPost = posts[this.props.current - 1];
+        var url = (window.location.port) ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}` :
+        `${window.location.protocol}//${window.location.hostname}`;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(`${url}/p/${currentPost.id}`)
+            .then(() => {
+                if (this.state.shareTimeout) clearTimeout(this.state.shareTimeout);
+                var toClear = setTimeout(() => this.setState({ share: false }), 3000);
+                this.setState({
+                    share: true,
+                    shareTimeout: toClear
+                });
+            }, (reason) => console.error(reason));
+        } else this.setState({ shareUrl: `${url}/p/${currentPost.id}` });
+    }
+
     render() {
         const posts = this.props.posts;
         const length = posts.length;
@@ -259,7 +319,6 @@ export default class Post extends React.Component {
         var ts = new Date(currentPost.ts);
         var relTime = relativeTime(currentPost.ts);
         ts = `${('0' + ts.getHours()).slice(-2)}:${('0' + ts.getMinutes()).slice(-2)} on ${ts.toDateString()}`;
-        relTime = `${relTime}`;
 
         const time = (!this.state.toggleTime) ?
         <p className="PostMain-ts" title={ts} onClick={() => this.setState({ toggleTime: true})}>{relTime}</p> :
@@ -279,8 +338,12 @@ export default class Post extends React.Component {
                     nClass = 'PostMain-node'
                 }
 
+                var currentTs = new Date(post.ts);
+                var currentRelTime = relativeTime(post.ts);
+                currentTs = `${('0' + currentTs.getHours()).slice(-2)}:${('0' + currentTs.getMinutes()).slice(-2)} on ${currentTs.toDateString()}`;
+
                 const subtitle = (post.subtitle) ? `"${he.decode(post.subtitle)}" ` : "";
-                const nodeTime = (!this.state.toggleTime) ? relTime : ts;
+                const nodeTime = (!this.state.toggleTime) ? currentRelTime : currentTs;
 
                 return (
                     <g key={index} className="PostMain-nodeHit"
@@ -420,8 +483,11 @@ export default class Post extends React.Component {
                 break;
         }
 
+        const cover = (this.state.deleting) ? " LoadingCover-anim" : "";
+
         var media = (
             <div id={`PostMain-mediaContainer${currentPost.id}`} className={'PostMain-mediaContainer' + mediaClass}>
+                <div className={'LoadingCover' + cover}></div>
                 {video}
                 {image}
             </div>
@@ -443,17 +509,26 @@ export default class Post extends React.Component {
         var deletePost;
         var report;
         if (this.props.user && this.props.user.id === currentPost.idUser && currentPost.status !== 'DELE' && this.props.user.type !== 'BAN') {
-            update = <div className='PostMain-optionItem' onClick={() => this.updateMode(true)}>Update Post</div>;
+            update = (!this.props.oneReply) ? <div className='PostMain-optionItem' onClick={() => this.updateMode(true)}>Update Post</div> : null;
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post</div>;
         } else if (this.props.user && this.props.user.type === 'ADMN' && currentPost.status !== 'DELE') {
             deletePost = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.delete(currentPost)}>Delete Post As Admin</div>;
         } else if (this.props.user && this.props.user.type !== 'BAN') {
-            report = <div className='PostMain-optionItem PostMain-optionItemRed'>Report Post</div>;
+            report = <div className='PostMain-optionItem PostMain-optionItemRed' onClick={() => this.report(currentPost)}>Report Post</div>;
         }
+        var shareMsg = (this.state.share) ? "Copied" : "Share Post";
+        var copied = (this.state.share) ? " PostMain-copied" : "";
+        var share = <div className={'PostMain-optionItem' + copied} onClick={ !this.state.share ? this.share : undefined }>{shareMsg}</div>
+        if (this.state.shareUrl) share = <div className='PostMain-optionItem' onClick={() => this.setState({ shareUrl: null })}>Hide Link</div>;
 
-        const options = (update || deletePost || report) ? (
+        var shareUrl = (this.state.shareUrl) ? <span className='Post-shareUrl'>{this.state.shareUrl}</span> : null;
+
+        const options = (update || deletePost || report || share) ? (
             <div className='PostMain-option'>
+                <div className={'LoadingCover' + cover}></div>
                 {update}
+                {share}
+                {shareUrl}
                 {deletePost}
                 {report}
             </div>
@@ -467,6 +542,7 @@ export default class Post extends React.Component {
                     <div id={`PostMain-cards${currentPost.id}`} className={"PostMain-cards" + cardsClass}>
                         <div className="PostMain-postOption">
                             <div id={`PostMain-post${currentPost.id}`} className='PostMain-post'>
+                                <div className={'LoadingCover' + cover}></div>
                                 <h2 className='PostMain-title'>{he.decode(currentPost.title)}</h2>
                                 <div className='PostMain-info'>
                                     <a href={`/u/${currentPost.username}`} title={'@' + currentPost.username}
@@ -492,7 +568,7 @@ export default class Post extends React.Component {
             </div>
         ) : (
             <div>
-                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} height={this.state.height} />
+                <CreatePost user={this.props.user} ogPost={posts[0]} fromPost={posts[this.state.fromIndex]} currentPost={currentPost} controls={controls} updateMode={this.updateMode} height={this.state.height} ogId={this.props.posts[0].id} />
             </div>
         );
 
