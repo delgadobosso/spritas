@@ -239,6 +239,9 @@ export default class AuditItem extends React.Component {
                 break;
         }
 
+        var bodyClass = "";
+        if (item.body) bodyClass = " AuditItem-body";
+
         var actioned;
         var actionClass = "";
         if (item.type === 'RP' || item.type === 'RR' || item.type === 'RU') {
@@ -250,7 +253,7 @@ export default class AuditItem extends React.Component {
         return (
             <tr className='AuditItem'>
                 <td className={'AuditItem-td AuditItem-action' + barType}>{result}</td>
-                <td className='AuditItem-td'>{he.decode(item.reason)}</td>
+                <td className={'AuditItem-td' + bodyClass} onClick={ item.body ? () => alert('Deleted Body:\n\n"' + item.body + '"') : undefined }>{he.decode(item.reason)}</td>
                 <td className={'AuditItem-td' + actionClass} onClick={ (item.type === 'RP' || item.type === 'RR' || item.type === 'RU') ? this.handleAction : undefined }>{actioned}</td>
             </tr>
         )

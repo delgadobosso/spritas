@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
                 if (deletehash) {
                     req.imgur.deleteImage(deletehash)
                         .then(() => {
-                            req.pool.query(`INSERT INTO audit_log (idFrom,idTo,idContent,type,reason) VALUES (?,?,?,'DP',?)`, [req.session.user.id, post.idUser, post.id, req.body.reason], (error, result, fields) => {
+                            req.pool.query(`INSERT INTO audit_log (idFrom,idTo,idContent,type,reason,body) VALUES (?,?,?,'DP',?,?)`, [req.session.user.id, post.idUser, post.id, req.body.reason, post.body], (error, result, fields) => {
                                 if (error) return res.status(500).send(error);
 
                                 return res.sendStatus(200);
@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
                             return res.sendStatus(200);
                         });
                 } else {
-                    req.pool.query(`INSERT INTO audit_log (idFrom,idTo,idContent,type,reason) VALUES (?,?,?,'DP',?)`, [req.session.user.id, post.idUser, post.id, req.body.reason], (error, result, fields) => {
+                    req.pool.query(`INSERT INTO audit_log (idFrom,idTo,idContent,type,reason,body) VALUES (?,?,?,'DP',?,?)`, [req.session.user.id, post.idUser, post.id, req.body.reason, post.body], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
                         return res.sendStatus(200);

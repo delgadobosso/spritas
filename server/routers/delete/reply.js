@@ -25,7 +25,7 @@ router.post('/', (req, res) => {
                 WHERE id = ?`, [byWho, req.body.id], (error, result, fields) => {
                     if (error) return res.status(500).send(error);
                     
-                    req.pool.query(`INSERT INTO audit_log (idFrom,idTo,idContent,type,reason) VALUES (?,?,?,'DR',?)`, [req.session.user.id, reply.idUser, reply.id, req.body.reason], (error, result, fields) => {
+                    req.pool.query(`INSERT INTO audit_log (idFrom,idTo,idContent,type,reason,body) VALUES (?,?,?,'DR',?,?)`, [req.session.user.id, reply.idUser, reply.id, req.body.reason, reply.body], (error, result, fields) => {
                         if (error) return res.status(500).send(error);
 
                         return res.sendStatus(200);
