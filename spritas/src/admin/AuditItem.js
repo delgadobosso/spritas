@@ -128,7 +128,7 @@ export default class AuditItem extends React.Component {
                     <span>
                         {userFrom}
                         <span>REPORTED&nbsp;
-                        <a href={`/p/${item.idContent}`} onClick={this.handlePostClick}>{`post#${item.idContent}`}</a>&nbsp;</span>
+                        <a href={`/p/${item.idContent}`} onClick={this.handlePostClick}>{`post${item.idContent}`}</a>&nbsp;</span>
                         {userTo}
                         <br /><br /><span className='AuditItem-ts' onClick={() => this.setState(state => ({ toggleTime: !state.toggleTime }))}>{time}</span>
                     </span>
@@ -147,10 +147,10 @@ export default class AuditItem extends React.Component {
                 );
                 var postLink = (this.state.idPost) ? (
                     <span>REPORTED&nbsp;
-                        <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleReplyClick}>{`reply#${item.idContent}`}</a>&nbsp;
+                        <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleReplyClick}>{`reply${item.idContent}`}</a>&nbsp;
                     </span>
                 ) : (
-                    <span>REPORTED&nbsp;{`reply#${item.idContent}`}&nbsp;</span>
+                    <span>REPORTED&nbsp;{`reply${item.idContent}`}&nbsp;</span>
                 );
                 result = (
                     <span>
@@ -176,9 +176,9 @@ export default class AuditItem extends React.Component {
 
             case 'DP':
                 var whomst = (item.idFrom === item.idTo) ? (
-                    <span>DELETED their own post#{item.idContent}</span>
+                    <span>DELETED their own post{item.idContent}</span>
                 ) : (
-                    <span>DELETED post#{item.idContent} from&nbsp;
+                    <span>DELETED post{item.idContent} from&nbsp;
                     <span>{userTo}</span>
                     </span>
                 );
@@ -193,9 +193,9 @@ export default class AuditItem extends React.Component {
 
             case 'DR':
                 var postLink = (this.state.idPost) ? (
-                    <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleReplyClick}>{`reply#${item.idContent}`}</a>
+                    <a href={`/p/${this.state.idPost}/r/${item.idContent}`} onClick={this.handleReplyClick}>{`reply${item.idContent}`}</a>
                 ) : (
-                    `reply#${item.idContent}`
+                    `reply${item.idContent}`
                 );
                 var whomst = (item.idFrom === item.idTo) ? (
                     <span>DELETED their own {postLink}</span>
@@ -239,6 +239,9 @@ export default class AuditItem extends React.Component {
                 break;
         }
 
+        var bodyClass = "";
+        if (item.body) bodyClass = " AuditItem-body";
+
         var actioned;
         var actionClass = "";
         if (item.type === 'RP' || item.type === 'RR' || item.type === 'RU') {
@@ -250,7 +253,7 @@ export default class AuditItem extends React.Component {
         return (
             <tr className='AuditItem'>
                 <td className={'AuditItem-td AuditItem-action' + barType}>{result}</td>
-                <td className='AuditItem-td'>{he.decode(item.reason)}</td>
+                <td className={'AuditItem-td' + bodyClass} onClick={ item.body ? () => alert('Deleted Subtitle & Body:\n\n"' + item.body + '"') : undefined }>{he.decode(item.reason)}</td>
                 <td className={'AuditItem-td' + actionClass} onClick={ (item.type === 'RP' || item.type === 'RR' || item.type === 'RU') ? this.handleAction : undefined }>{actioned}</td>
             </tr>
         )

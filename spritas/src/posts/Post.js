@@ -534,6 +534,8 @@ export default class Post extends React.Component {
             </div>
         ) : null;
 
+        const deleted = (currentPost.status === 'DELE') ? ' Post-bodyDel' : '';
+
         var currentMode = (!this.state.updateMode) ? (
             <div>
                 {modal}
@@ -557,7 +559,7 @@ export default class Post extends React.Component {
                                 </div>
                                 {controls}
                                 {subtitle}
-                                <div id={`PostMain-body${currentPost.id}`} className='PostMain-body'>{he.decode(currentPost.body)}</div>
+                                <div id={`PostMain-body${currentPost.id}`} className={'PostMain-body' + deleted}>{he.decode(currentPost.body)}</div>
                                 {collapsable}
                             </div>
                             {options}

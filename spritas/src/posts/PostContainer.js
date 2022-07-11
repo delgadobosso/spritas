@@ -60,7 +60,14 @@ export default class PostContainer extends React.Component {
         .then(res => res.json())
         .then(data => {
             if (data.length > 0) {
-                if (data[0].idParent) this.loadPost(data[0].idParent, idReply, id);
+                if (data[0].status === "DELE" && idReply) {
+                    this.setState({
+                        main: data,
+                        current: 1,
+                        opid: data[0].idUser
+                    }, () => this.loadReply(idReply));
+                }
+                else if (data[0].idParent) this.loadPost(data[0].idParent, idReply, id);
                 else {
                     var current = 1;
                     const nonDeleted = [];

@@ -24,6 +24,10 @@
     vertical-align: top;
 }
 
+.AuditItem-body {
+    transition: background-color 0.1s;
+}
+
 .AuditItem-actioned {
     cursor: pointer;
     text-align: center;
@@ -55,6 +59,12 @@
 @media (hover: hover) {
     .AuditItem:hover {
         background-color: var(--lightest-grey);
+    }
+
+    .AuditItem-body:hover {
+        cursor: pointer;
+        color: black;
+        background-color: var(--spritan-gold);
     }
 
     .AuditItem-ts:hover {

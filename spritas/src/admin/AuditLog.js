@@ -6,6 +6,7 @@ export default class AuditLog extends React.Component {
     constructor(props) {
         super(props);
         this.audit = this.audit.bind(this);
+        this.contentFilter = this.contentFilter.bind(this);
         this.unresolved = this.unresolved.bind(this);
         this.scrollTo = this.scrollTo.bind(this);
         this.state = {
@@ -14,6 +15,7 @@ export default class AuditLog extends React.Component {
             amount: 20,
             more: false,
             loadingMore: false,
+            contentFilter: null,
             unresolvedOnly: false
         }
     }
@@ -22,12 +24,13 @@ export default class AuditLog extends React.Component {
         this.audit();
     }
 
-    audit(filter = "audit") {
+    audit(filter = "audit", content = null) {
         if (!this.state.loadingMore) {
             this.setState({
                 loadingMore: true
             }, () => {
-                fetch(`/admin/${filter}/${this.state.offset}.${this.state.amount}`)
+                var contentParam = (content) ? content + "." : "";
+                fetch(`/admin/${filter}/${contentParam}${this.state.offset}.${this.state.amount}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.length > 0) {
@@ -42,11 +45,32 @@ export default class AuditLog extends React.Component {
                             audit: [...state.audit, newItems],
                             loadingMore: false
                         }));
-                    }
+                    } else this.setState({ loadingMore: false });
                 })
                 .catch(error => this.setState({ loadingMore: false }));
             });
         }
+    }
+
+    contentFilter() {
+        if (!this.state.contentFilter) {
+            const filter = prompt('Filter for post# or reply#?', '');
+            if (filter) {
+                this.setState({
+                    contentFilter: filter,
+                    unresolvedOnly: false,
+                    audit: [],
+                    offset: 0,
+                    more: false
+                }, () => this.audit('content', filter));
+            }
+            else if (filter === '') alert('No value entered.');
+        } else this.setState({
+            contentFilter: null,
+            audit: [],
+            offset: 0,
+            more: false
+        }, () => this.audit('audit'));
     }
 
     unresolved() {
@@ -65,6 +89,7 @@ export default class AuditLog extends React.Component {
             if (confirm) {
                 this.setState({
                     unresolvedOnly: true,
+                    contentFilter: null,
                     audit: [],
                     offset: 0,
                     more: false
@@ -93,6 +118,8 @@ export default class AuditLog extends React.Component {
             filter = 'unresolved';
             resolvedHead = 'Unresolved Only';
             filtered = ' AuditLog-filtered';
+        } else if (this.state.contentFilter) {
+            filter = 'content';
         }
 
         const load = (this.state.more) ? (
@@ -110,7 +137,7 @@ export default class AuditLog extends React.Component {
                 <table className='AuditLog-table'>
                     <thead>
                         <tr>
-                            <th className='AuditLog-th'>Item</th>
+                            <th className='AuditLog-th AuditLog-filter' onClick={this.contentFilter}>Item{ this.state.contentFilter ? `: ${this.state.contentFilter}` : "" }</th>
                             <th className='AuditLog-th'>Reason</th>
                             <th className={'AuditLog-th AuditLog-filter' + filtered} onClick={this.unresolved}>{resolvedHead}</th>
                         </tr>
