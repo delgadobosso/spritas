@@ -68,14 +68,16 @@ export default class App extends React.Component {
 
     // Get User Data
     fetch('/session/user')
-      .then(res => res.json())
+      .then(res => {
+        var contentType = res.headers.get("content-type");
+        if (contentType) return res.json();
+        else return;
+      })
       .then(data => {
-        if (data) {
-          this.setState({
-            user: data,
-            sessionChecked: true
-          });
-        } else this.setState({ sessionChecked: true });
+        this.setState({
+          user: data,
+          sessionChecked: true
+        });
       })
       .catch((error) => { console.error('Error:', error); });
   }
