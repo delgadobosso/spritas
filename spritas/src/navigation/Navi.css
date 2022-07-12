@@ -61,6 +61,8 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
+
+    animation: fadeIn 0.5s;
 }
 
 .Navi-item {

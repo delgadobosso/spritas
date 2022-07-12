@@ -23,6 +23,7 @@ export default class App extends React.Component {
     this.naviHide = this.naviHide.bind(this);
     this.state = {
       user: null,
+      sessionChecked: false,
       post: null,
       naviHide: false
     };
@@ -68,7 +69,14 @@ export default class App extends React.Component {
     // Get User Data
     fetch('/session/user')
       .then(res => res.json())
-      .then(data => { this.setState({ user: data }); })
+      .then(data => {
+        if (data) {
+          this.setState({
+            user: data,
+            sessionChecked: true
+          });
+        } else this.setState({ sessionChecked: true });
+      })
       .catch((error) => { console.error('Error:', error); });
   }
 
@@ -105,7 +113,7 @@ export default class App extends React.Component {
     return (
       <div className="App">
         <Router>
-          <Navi user={this.state.user} hide={this.state.naviHide} />
+          <Navi user={this.state.user} sessionChecked={this.state.sessionChecked} hide={this.state.naviHide} />
           <Header />
           <Switch>
             <Route exact path='/'>
