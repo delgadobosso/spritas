@@ -75,26 +75,20 @@ export default class AuditLog extends React.Component {
 
     unresolved() {
         if (this.state.unresolvedOnly) {
-            var confirm = window.confirm('Show all audit items?');
-            if (confirm) {
-                this.setState({
-                    unresolvedOnly: false,
-                    audit: [],
-                    offset: 0,
-                    more: false
-                }, () => this.audit('audit'));
-            }
+            this.setState({
+                unresolvedOnly: false,
+                audit: [],
+                offset: 0,
+                more: false
+            }, () => this.audit('audit'));
         } else {
-            var confirm = window.confirm('Filter for unresolved items only?');
-            if (confirm) {
-                this.setState({
-                    unresolvedOnly: true,
-                    contentFilter: null,
-                    audit: [],
-                    offset: 0,
-                    more: false
-                }, () => this.audit('unresolved'));
-            }
+            this.setState({
+                unresolvedOnly: true,
+                contentFilter: null,
+                audit: [],
+                offset: 0,
+                more: false
+            }, () => this.audit('unresolved'));
         }
     }
 
