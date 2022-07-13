@@ -9,8 +9,10 @@ export default function Login() {
                 <h1 className="Login-title">Login</h1>
                 <div className="Login-item">
                     <label className="sr-only" htmlFor="username">Username</label>
-                    <span className="Login-at">@ </span>
-                    <input type="text" name="username" id="username" required placeholder="username"></input>
+                    <div className="Login-username">
+                        <span className="Login-at">@ </span>
+                        <input type="text" name="username" id="username" required placeholder="username"></input>
+                    </div>
                 </div>
                 <div className="Login-item">
                     <label className="sr-only" htmlFor="pass">Password</label>
@@ -25,9 +27,10 @@ export default function Login() {
                 <h1 className="Login-title">Register</h1>
                 <div className="Login-item">
                     <label className="sr-only" htmlFor="username">Username</label>
-                    <span className="Login-at">@ </span>
-                    <input type="text" name="username" id="username"
-                    minlength="2" required placeholder="username"></input>
+                    <div className="Login-username">
+                        <span className="Login-at">@ </span>
+                        <input type="text" name="username" id="username" required placeholder="username"></input>
+                    </div>
                 </div>
                 <div className="Login-item">
                     <label className="sr-only" htmlFor="nickname">Display Name</label>

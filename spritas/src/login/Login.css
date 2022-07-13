@@ -1,7 +1,7 @@
 .Login-forms input {
     border: 0;
     font-size: 18px;
-    padding: 5px;
+    padding: 10px 5px;
     margin-bottom: 10px;
     border-radius: 5px;
 }
@@ -38,7 +38,16 @@
     user-select: none;
 }
 
+.Login-username {
+    position: relative;
+    width: fit-content;
+    margin: auto;
+}
+
 .Login-at {
+    position: absolute;
+    left: -22px;
+    top: 9px;
     font-size: 18px;
     color: white;
 
@@ -53,6 +62,7 @@
     margin-top: 15px;
     padding: 10px !important;
     border-radius: 10px !important;
+    background-color: var(--mid-grey);
 
     transition: background-color, color;
     transition-duration: 0.1s;
