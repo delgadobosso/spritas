@@ -77,6 +77,32 @@ a {
     to { opacity: 1; }
 }
 
+.Tooltip {
+    position: absolute;
+    width: 300px;
+    bottom: 0%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    background-color: var(--mid-grey);
+    transform: translateX(-50%);
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+
+    transition: bottom, opacity;
+    transition-duration: 0.25s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.Tooltip-on {
+    bottom: 100%;
+    opacity: 1;
+}
+
 
 .App {
     overflow-x: clip;

@@ -29,8 +29,9 @@ export default function Login() {
                     <label className="sr-only" htmlFor="username">Username</label>
                     <div className="Login-username">
                         <span className="Login-at">@ </span>
-                        <input type="text" name="username" id="username" required placeholder="username"></input>
+                        <input type="text" name="username" id="username" required placeholder="username" onFocus={() => tooltipAdd('tip-username')} onBlur={() => tooltipRemove('tip-username')}></input>
                     </div>
+                    <span id="tip-username" className="Tooltip">Unique, lowercase, (a-z, 0-9)</span>
                 </div>
                 <div className="Login-item">
                     <label className="sr-only" htmlFor="nickname">Display Name</label>
@@ -60,4 +61,14 @@ export default function Login() {
             </form>
         </div>
     );
+}
+
+function tooltipAdd(tip) {
+    const tooltip = document.getElementById(tip);
+    if (tooltip) tooltip.classList.add('Tooltip-on');
+}
+
+function tooltipRemove(tip) {
+    const tooltip = document.getElementById(tip);
+    if (tooltip) tooltip.classList.remove('Tooltip-on');
 }

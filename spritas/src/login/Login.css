@@ -38,6 +38,10 @@
     user-select: none;
 }
 
+.Login-item {
+    position: relative;
+}
+
 .Login-username {
     position: relative;
     width: fit-content;
