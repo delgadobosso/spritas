@@ -1,7 +1,7 @@
 import './Login.css';
 
 export default function Login() {
-    document.title = "Login / Register - The Spritas";
+    document.title = "Login / Register";
 
     return(
         <div className="Login-forms">

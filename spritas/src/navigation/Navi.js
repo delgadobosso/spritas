@@ -64,7 +64,7 @@ export default class Navi extends React.Component {
             logout = <a className={"Navi-item" + itemOpen} href="/logout">Logout</a>;
         } else {
             avatarLink = pfp;
-            userItem = <a className={"Navi-item" + itemOpen} href="/login">Login</a>;
+            userItem = <a className={"Navi-item" + itemOpen} href="/login">Login / Register</a>;
         }
 
         var avatar = (this.props.sessionChecked) ? <img className="Navi-img" src={avatarLink} alt="Navigation" /> : null;
