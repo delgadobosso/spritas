@@ -102,6 +102,7 @@ export default class CreateReply extends React.Component {
                 {expand}
                 <div className={"Reply-form" + open}>
                     <img className="Reply-img" src={avatar} alt="You" />
+                    <label className="sr-only" htmlFor={`reply${id}`}>Reply</label>
                     <textarea className="Reply-text" name="reply" id={`reply${id}`} rows="6" required placeholder={placeholder} onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
                     <input className="Reply-submit" type="submit" value={submitText} onClick={this.submit} />
                 </div>

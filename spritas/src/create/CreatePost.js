@@ -313,6 +313,7 @@ export default class CreatePost extends React.Component {
     render() {
         // Update Specific Stuff
         var title = <input className='PostMain-title CreatePost-title' type="text" name="title" id="title" placeholder='Title* (Required, length 1-64)' required minLength="1" maxLength="64" onFocus={e => e.target.setCustomValidity('')} />;
+        var titleLabel = (!this.props.ogPost) ? <label className="sr-only" htmlFor='title'>Title</label> : null;
         var cancel;
         var updateText = "";
         var mediaAllText = "";
@@ -438,6 +439,7 @@ export default class CreatePost extends React.Component {
                         <div className='PostMain-postOption'>
                             <div id='CreatePost-post' className='PostMain-post CreatePost-post'>
                                 <div className={'LoadingCover' + cover}></div>
+                                {titleLabel}
                                 {title}
                                 <div className='PostMain-info'>
                                     <a href={`/u/${username}`} title={'@' + username} className="PostMain-a" tabIndex="-1">
@@ -449,7 +451,9 @@ export default class CreatePost extends React.Component {
                                     </a>
                                 </div>
                                 {this.props.controls}
+                                <label className="sr-only" htmlFor='subtitle'>Subtitle</label>
                                 <input className='PostMain-subtitle CreatePost-subtitle' type="text" name="subtitle" id="subtitle" maxLength="32" placeholder='Subtitle (Optional, length 1-32)' />
+                                <label className="sr-only" htmlFor='body'>Body</label>
                                 <textarea className='PostMain-body CreatePost-body' name="body" id="body" rows="6" cols="100" placeholder='Body* (Required, length 1-10000)' required minLength="1" onChange={this.bodyCheck} onFocus={e => e.target.setCustomValidity('')} />
                             </div>
                         </div>
