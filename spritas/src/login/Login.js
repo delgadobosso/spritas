@@ -44,18 +44,20 @@ export default class Login extends React.Component {
             if (username.value !== "") {
                 var myBody = new URLSearchParams();
                 myBody.append('username', username.value);
-
-                fetch('/login/usercheck', {
-                    method: 'POST',
-                    body: myBody
+        
+                this.setState({ checking: true }, () => {
+                    fetch('/login/usercheck', {
+                        method: 'POST',
+                        body: myBody
+                    })
+                    .then(resp => resp.text())
+                    .then(data => {
+                        if (data === "taken") this.setState({ avail: "taken" }, () => username.focus());
+                        else if (data === "free") this.setState({ avail: "free" });
+                        this.setState({ checking: false });
+                    })
+                    .catch(error => this.setState({ checking: false }));
                 })
-                .then(resp => resp.text())
-                .then(data => {
-                    if (data === "taken") this.setState({ avail: "taken" }, () => username.focus());
-                    else if (data === "free") this.setState({ avail: "free" });
-                    this.setState({ checking: false });
-                })
-                .catch(error => this.setState({ checking: false }));
             } else this.setState({ avail: "" });
         }
     }
@@ -117,15 +119,7 @@ export default class Login extends React.Component {
                             <input className={takenClass} type="text" name="username" id="register-username" required maxLength="16" autoCapitalize='off' placeholder="Username" onChange={e => {
                                 this.handleUsername(e);
                                 clearTimeout(usercheck);
-                                if (e.target.value === "") this.setState({
-                                    checking: false,
-                                    avail: ""
-                                });
-                                else if (this.state.checking) {
-                                    usercheck = setTimeout(() => this.usernameCheck(), 1500);
-                                } else this.setState({ checking: true }, () => {
-                                    usercheck = setTimeout(() => this.usernameCheck(), 1500);
-                                });
+                                usercheck = setTimeout(() => this.usernameCheck(), 1500);
                             }} onFocus={() => this.tooltipAdd('tip-username')} onBlur={() => this.tooltipRemove('tip-username')}></input>
                         </div>
                         <span id="tip-username" className="Tooltip">
