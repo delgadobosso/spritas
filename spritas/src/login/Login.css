@@ -6,12 +6,8 @@
     margin-bottom: 10px;
     border-radius: 5px;
     border: solid 5px var(--lightest-grey);
-}
-.Login-register input:focus:required:valid {
-    border: solid 5px var(--spritan-gold);
-}
-.Login-register input:focus:required:invalid {
-    border: solid 5px var(--spritan-red);
+
+    transition: border 0.25s;
 }
 
 .Login-forms {
@@ -54,6 +50,13 @@
     position: relative;
     width: fit-content;
     margin: auto;
+}
+
+.Login-usernameFree {
+    border: solid 5px var(--spritan-gold) !important;
+}
+.Login-usernameTaken {
+    border: solid 5px var(--spritan-red) !important;
 }
 
 .Login-at {
