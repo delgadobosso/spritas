@@ -44,20 +44,18 @@ export default class Login extends React.Component {
             if (username.value !== "") {
                 var myBody = new URLSearchParams();
                 myBody.append('username', username.value);
-        
-                this.setState({ checking: true }, () => {
-                    fetch('/login/usercheck', {
-                        method: 'POST',
-                        body: myBody
-                    })
-                    .then(resp => resp.text())
-                    .then(data => {
-                        if (data === "taken") this.setState({ avail: "taken" });
-                        else if (data === "free") this.setState({ avail: "free" });
-                        this.setState({ checking: false });
-                    })
-                    .catch(error => this.setState({ checking: false }));
+
+                fetch('/login/usercheck', {
+                    method: 'POST',
+                    body: myBody
                 })
+                .then(resp => resp.text())
+                .then(data => {
+                    if (data === "taken") this.setState({ avail: "taken" }, () => username.focus());
+                    else if (data === "free") this.setState({ avail: "free" });
+                    this.setState({ checking: false });
+                })
+                .catch(error => this.setState({ checking: false }));
             } else this.setState({ avail: "" });
         }
     }
@@ -119,7 +117,15 @@ export default class Login extends React.Component {
                             <input className={takenClass} type="text" name="username" id="register-username" required maxLength="16" autoCapitalize='off' placeholder="Username" onChange={e => {
                                 this.handleUsername(e);
                                 clearTimeout(usercheck);
-                                usercheck = setTimeout(() => this.usernameCheck(), 500);
+                                if (e.target.value === "") this.setState({
+                                    checking: false,
+                                    avail: ""
+                                });
+                                else if (this.state.checking) {
+                                    usercheck = setTimeout(() => this.usernameCheck(), 1500);
+                                } else this.setState({ checking: true }, () => {
+                                    usercheck = setTimeout(() => this.usernameCheck(), 1500);
+                                });
                             }} onFocus={() => this.tooltipAdd('tip-username')} onBlur={() => this.tooltipRemove('tip-username')}></input>
                         </div>
                         <span id="tip-username" className="Tooltip">
@@ -143,7 +149,7 @@ export default class Login extends React.Component {
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="email">Email</label>
                         <input type="email" name="email" id="email" required placeholder="Email" onFocus={() => this.tooltipAdd('tip-email')} onBlur={() => this.tooltipRemove('tip-email')}></input>
-                        <span id="tip-email" className="Tooltip">A Valid Email.<br></br>Will Need To Confirm.</span>
+                        <span id="tip-email" className="Tooltip">A Valid Email.<br></br>Will Need To Verify.</span>
 
                         <label className="sr-only" htmlFor="email-confirm">Confirm Email</label>
                         <input type="email" name="email-confirm" id="email-confirm" required placeholder="Confirm Email"></input>

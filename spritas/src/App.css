@@ -91,6 +91,7 @@ a {
     opacity: 0;
     z-index: 1;
     pointer-events: none;
+    overflow: hidden;
 
     transition: bottom, opacity;
     transition-duration: 0.25s;
