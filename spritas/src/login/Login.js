@@ -98,7 +98,7 @@ export default class Login extends React.Component {
                         <label className="sr-only" htmlFor="username">Username</label>
                         <div className="Login-username">
                             <span className="Login-at">@ </span>
-                            <input type="text" name="username" id="login-username" required placeholder="username" onChange={e => this.handleUsername(e)}></input>
+                            <input type="text" name="username" id="login-username" required autoCapitalize='off' placeholder="Username" onChange={e => this.handleUsername(e)}></input>
                         </div>
                     </div>
                     <div className="Login-item">
@@ -116,7 +116,7 @@ export default class Login extends React.Component {
                         <label className="sr-only" htmlFor="username">Username</label>
                         <div className="Login-username">
                             <span className="Login-at">@ </span>
-                            <input className={takenClass} type="text" name="username" id="register-username" required maxLength="16" autoCapitalize='off' placeholder="username" onChange={e => {
+                            <input className={takenClass} type="text" name="username" id="register-username" required maxLength="16" autoCapitalize='off' placeholder="Username" onChange={e => {
                                 this.handleUsername(e);
                                 clearTimeout(usercheck);
                                 usercheck = setTimeout(() => this.usernameCheck(), 500);
@@ -124,18 +124,18 @@ export default class Login extends React.Component {
                         </div>
                         <span id="tip-username" className="Tooltip">
                             <div className={'LoadingCover' + cover}></div>
-                            Unique, 16 Characters Max<br></br>(a-z, A-Z, 0-9, "_")<br></br>{taken}
+                            Unique, 16 Characters Max.<br></br>(a-z, A-Z, 0-9, "_")<br></br>{taken}
                         </span>
                     </div>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="nickname">Display Name</label>
                         <input type="text" name="nickname" id="nickname" maxLength="32" required autoCapitalize='off' placeholder="Display Name" onChange={e => this.handleNickname(e)} onFocus={() => this.tooltipAdd('tip-displayname')} onBlur={() => this.tooltipRemove('tip-displayname')}></input>
-                        <span id="tip-displayname" className="Tooltip">Name that will be seen everywhere<br></br>32 Characters Max</span>
+                        <span id="tip-displayname" className="Tooltip">Name Seen Everywhere.<br></br>Can Change Later.<br></br>32 Characters Max.</span>
                     </div>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="pass">Password</label>
                         <input type="password" name="pass" id="register-pass" minlength="8" required placeholder="Password" onFocus={() => this.tooltipAdd('tip-password')} onBlur={() => this.tooltipRemove('tip-password')}></input>
-                        <span id="tip-password" className="Tooltip">8 Characters Minimum</span>
+                        <span id="tip-password" className="Tooltip">8 Characters Minimum.<br></br>Longer Password Better.</span>
 
                         <label className="sr-only" htmlFor="pass-confirm">Confirm Password</label>
                         <input type="password" name="pass-confirm" id="pass-confirm" required placeholder="Confirm Password"></input>
@@ -143,7 +143,7 @@ export default class Login extends React.Component {
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="email">Email</label>
                         <input type="email" name="email" id="email" required placeholder="Email" onFocus={() => this.tooltipAdd('tip-email')} onBlur={() => this.tooltipRemove('tip-email')}></input>
-                        <span id="tip-email" className="Tooltip">A valid email</span>
+                        <span id="tip-email" className="Tooltip">A Valid Email.<br></br>Will Need To Confirm.</span>
 
                         <label className="sr-only" htmlFor="email-confirm">Confirm Email</label>
                         <input type="email" name="email-confirm" id="email-confirm" required placeholder="Confirm Email"></input>

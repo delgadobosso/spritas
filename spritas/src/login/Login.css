@@ -80,8 +80,8 @@
     border: none !important;
     background-color: var(--mid-grey);
 
-    transition: background-color, color;
-    transition-duration: 0.1s;
+    transition: background-color, color !important;
+    transition-duration: 0.1s !important;
 }
 
 @media screen and (max-width: 1260px) {
