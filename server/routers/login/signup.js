@@ -5,9 +5,12 @@ router.post('/', (req, res) => {
     const errors = req.validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
+    var username = req.body.username.replace(/[^\w]+/g, '');
+    var nickname = req.body.nickname.replace(/[\s]{2,}/g, " ");
+
     req.bcrypt.hash(req.body.pass, req.saltRounds, function(err, hash) {
         req.pool.query(`INSERT INTO users (email,username,nickname,pass,type) VALUES(?,?,?,?,"USER")`,
-        [req.body.email, req.body.username, req.body.nickname, hash],
+        [req.body.email, username, nickname, hash],
         (error, result, fields) => {
             if (error) {
                 if (error.errno == 1062) {

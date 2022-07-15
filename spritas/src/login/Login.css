@@ -1,9 +1,17 @@
 .Login-forms input {
+    width: 300px;
     border: 0;
     font-size: 18px;
     padding: 10px 5px;
     margin-bottom: 10px;
     border-radius: 5px;
+    border: solid 5px var(--lightest-grey);
+}
+.Login-register input:focus:required:valid {
+    border: solid 5px var(--spritan-gold);
+}
+.Login-register input:focus:required:invalid {
+    border: solid 5px var(--spritan-red);
 }
 
 .Login-forms {
@@ -51,7 +59,7 @@
 .Login-at {
     position: absolute;
     left: -22px;
-    top: 9px;
+    top: 14px;
     font-size: 18px;
     color: white;
 
@@ -62,10 +70,11 @@
 }
 
 .Login-submit {
-    width: 150px;
+    width: 150px !important;
     margin-top: 15px;
     padding: 10px !important;
     border-radius: 10px !important;
+    border: none !important;
     background-color: var(--mid-grey);
 
     transition: background-color, color;

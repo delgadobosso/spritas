@@ -171,8 +171,8 @@ app.use('/home/new/:offset.:limit', (req, res, next) => {
 }, homeNew);
 
 app.use('/login/signup',
-    body('username').trim().isLength({ min: 2 }).escape(),
-    body('nickname').trim().isLength({ min: 2 }).escape(),
+    body('username').trim().isLength({ max: 16 }).matches(/^[\w]+$/).escape(),
+    body('nickname').trim().isLength({ max: 32 }).escape(),
     body('pass').isLength({ min: 8 }),
     body('email').isEmail(),
     (req, res, next) => {
