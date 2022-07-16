@@ -227,6 +227,7 @@ export default class Login extends React.Component {
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="email">Email</label>
                         <input className={emailTakenClass} type="email" name="email" id="email" required placeholder="Email" onChange={e => {
+                            e.target.setCustomValidity('');
                             if (e.target.value === "") {
                                 clearTimeout(this.state.emailCheckId);
                                 clearTimeout(emailcheck);
