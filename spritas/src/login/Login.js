@@ -9,6 +9,7 @@ export default class Login extends React.Component {
         this.tooltipRemove = this.tooltipRemove.bind(this);
         this.handleUsername = this.handleUsername.bind(this);
         this.handleNickname = this.handleNickname.bind(this);
+        this.handlePassword = this.handlePassword.bind(this);
         this.usernameCheck = this.usernameCheck.bind(this);
         this.state = {
             userAvail: "",
@@ -46,6 +47,13 @@ export default class Login extends React.Component {
 
     handlePassword(e) {
         var input = e.target.value;
+        if (e.target.checkValidity()) {
+            e.target.classList.remove('Login-inputInvalid');
+            e.target.classList.add('Login-inputValid');
+        } else {
+            e.target.classList.remove('Login-inputValid');
+            e.target.classList.add('Login-inputInvalid');
+        }
     }
     
     usernameCheck() {
@@ -62,8 +70,8 @@ export default class Login extends React.Component {
                     })
                     .then(resp => resp.text())
                     .then(data => {
-                        if (data === "taken") this.setState({ userAvail: "taken" });
-                        else if (data === "free") this.setState({ userAvail: "free" });
+                        if (data === "taken") this.setState({ userAvail: "taken" }, () => username.setCustomValidity('Username taken'));
+                        else if (data === "free") this.setState({ userAvail: "free" }, () => username.setCustomValidity(''));
                         this.setState({ userChecking: false });
                     })
                     .catch(error => this.setState({ userChecking: false }));
@@ -86,8 +94,8 @@ export default class Login extends React.Component {
                     })
                     .then(resp => resp.text())
                     .then(data => {
-                        if (data === "taken") this.setState({ emailAvail: "taken" });
-                        else if (data === "free") this.setState({ emailAvail: "free" });
+                        if (data === "taken") this.setState({ emailAvail: "taken" }, () => email.setCustomValidity('Email Already In Use'));
+                        else if (data === "free") this.setState({ emailAvail: "free" }, () => email.setCustomValidity(''));
                         else if (data === "noemail") this.setState({ emailAvail: "noemail" });
                         this.setState({ emailChecking: false });
                     })
@@ -132,7 +140,7 @@ export default class Login extends React.Component {
         if (!this.state.emailChecking) {
             switch(this.state.emailAvail) {
                 case "taken":
-                    emailTaken = "Email Already Inuse.";
+                    emailTaken = "Email Already In Use.";
                     emailTakenClass = "Login-inputInvalid";
                     break;
 
@@ -158,7 +166,7 @@ export default class Login extends React.Component {
                         <label className="sr-only" htmlFor="username">Username</label>
                         <div className="Login-username">
                             <span className="Login-at">@ </span>
-                            <input type="text" name="username" id="login-username" required autoCapitalize='off' placeholder="Username" onChange={e => this.handleUsername(e)}></input>
+                            <input type="text" name="username" id="login-username" required autoCapitalize='off' placeholder="Username" onChange={this.handleUsername}></input>
                         </div>
                     </div>
                     <div className="Login-item">
@@ -210,7 +218,7 @@ export default class Login extends React.Component {
                     </div>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="pass">Password</label>
-                        <input type="password" name="pass" id="register-pass" minlength="8" required placeholder="Password" onFocus={() => this.tooltipAdd('tip-password')} onBlur={() => this.tooltipRemove('tip-password')}></input>
+                        <input type="password" name="pass" id="register-pass" minlength="8" required placeholder="Password" onChange={this.handlePassword} onFocus={() => this.tooltipAdd('tip-password')} onBlur={() => this.tooltipRemove('tip-password')}></input>
                         <span id="tip-password" className="Tooltip">8 Characters Minimum.<br></br>Longer Password Better.</span>
 
                         <label className="sr-only" htmlFor="pass-confirm">Confirm Password</label>

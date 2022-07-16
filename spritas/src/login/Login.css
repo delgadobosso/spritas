@@ -7,7 +7,8 @@
     border-radius: 5px;
     border: solid 5px var(--lightest-grey);
 
-    transition: border 0.25s;
+    transition: border, background-color;
+    transition-duration: 0.25s;
 }
 
 .Login-forms {
@@ -54,6 +55,7 @@
 
 .Login-inputValid {
     border: solid 5px var(--spritan-gold) !important;
+    background-color: var(--darkest-grey);
 }
 .Login-inputInvalid {
     border: solid 5px var(--spritan-red) !important;
