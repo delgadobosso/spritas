@@ -52,10 +52,10 @@
     margin: auto;
 }
 
-.Login-usernameFree {
+.Login-inputValid {
     border: solid 5px var(--spritan-gold) !important;
 }
-.Login-usernameTaken {
+.Login-inputInvalid {
     border: solid 5px var(--spritan-red) !important;
 }
 

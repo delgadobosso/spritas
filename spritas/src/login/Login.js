@@ -40,6 +40,8 @@ export default class Login extends React.Component {
         var input = e.target.value;
         // Only allow one whitespace, not multiple back to back
         e.target.value = input.trimStart().slice(0, 32).replace(/[\s]{2,}/g, " ");
+        if (e.target.value !== "") e.target.classList.add('Login-inputValid');
+        else e.target.classList.remove('Login-inputValid');
     }
     
     usernameCheck() {
@@ -105,13 +107,13 @@ export default class Login extends React.Component {
         if (!this.state.userChecking) {
             switch(this.state.userAvail) {
                 case "taken":
-                    userTaken = "Username Taken";
-                    userTakenClass = "Login-usernameTaken";
+                    userTaken = "Username Taken.";
+                    userTakenClass = "Login-inputInvalid";
                     break;
 
                 case "free":
-                    userTaken = "Username Available";
-                    userTakenClass = "Login-usernameFree";
+                    userTaken = "Username Available.";
+                    userTakenClass = "Login-inputValid";
                     break;
             }
         } else {
@@ -126,18 +128,18 @@ export default class Login extends React.Component {
         if (!this.state.emailChecking) {
             switch(this.state.emailAvail) {
                 case "taken":
-                    emailTaken = "Username Taken";
-                    emailTakenClass = "Login-usernameTaken";
+                    emailTaken = "Username Taken.";
+                    emailTakenClass = "Login-inputInvalid";
                     break;
 
                 case "free":
-                    emailTaken = "Username Available";
-                    emailTakenClass = "Login-usernameFree";
+                    emailTaken = "Username Available.";
+                    emailTakenClass = "Login-inputValid";
                     break;
 
                 case "noemail":
-                    emailTaken = "Not A Valid Mail";
-                    emailTakenClass = "Login-usernameTaken";
+                    emailTaken = "Not A Valid Mail.";
+                    emailTakenClass = "Login-inputInvalid";
             }
         } else {
             emailTaken = "Checking Availability...";
