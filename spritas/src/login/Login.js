@@ -12,7 +12,8 @@ export default class Login extends React.Component {
         this.usernameCheck = this.usernameCheck.bind(this);
         this.state = {
             avail: "",
-            checking: false
+            checking: false,
+            checkId: null
         }
     }
     
@@ -118,10 +119,24 @@ export default class Login extends React.Component {
                             <span className="Login-at">@ </span>
                             <input className={takenClass} type="text" name="username" id="register-username" required maxLength="16" autoCapitalize='off' placeholder="Username" onChange={e => {
                                 this.handleUsername(e);
-                                if (this.state.checking) {
+                                if (e.target.value === "") {
+                                    clearTimeout(this.state.checkId);
                                     clearTimeout(usercheck);
-                                    usercheck = setTimeout(() => this.usernameCheck(), 1500);
-                                } else this.setState({ checking: true });
+                                    this.setState({
+                                        checking: false,
+                                        avail: ""
+                                    });
+                                } else if (this.state.checking) {
+                                    clearTimeout(this.state.checkId);
+                                    clearTimeout(usercheck);
+                                    usercheck = setTimeout(() => this.usernameCheck(), 2000);
+                                } else {
+                                    usercheck = setTimeout(() => this.usernameCheck(), 2000);
+                                    this.setState({
+                                        checking: true,
+                                        checkId: usercheck
+                                    });
+                                }
                             }} onFocus={() => this.tooltipAdd('tip-username')} onBlur={() => this.tooltipRemove('tip-username')}></input>
                         </div>
                         <span id="tip-username" className="Tooltip">
