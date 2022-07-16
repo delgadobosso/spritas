@@ -43,6 +43,10 @@ export default class Login extends React.Component {
         if (e.target.value !== "") e.target.classList.add('Login-inputValid');
         else e.target.classList.remove('Login-inputValid');
     }
+
+    handlePassword(e) {
+        var input = e.target.value;
+    }
     
     usernameCheck() {
         var username = document.getElementById('register-username');
@@ -58,7 +62,7 @@ export default class Login extends React.Component {
                     })
                     .then(resp => resp.text())
                     .then(data => {
-                        if (data === "taken") this.setState({ userAvail: "taken" }, () => username.focus());
+                        if (data === "taken") this.setState({ userAvail: "taken" });
                         else if (data === "free") this.setState({ userAvail: "free" });
                         this.setState({ userChecking: false });
                     })
@@ -82,7 +86,7 @@ export default class Login extends React.Component {
                     })
                     .then(resp => resp.text())
                     .then(data => {
-                        if (data === "taken") this.setState({ emailAvail: "taken" }, () => email.focus());
+                        if (data === "taken") this.setState({ emailAvail: "taken" });
                         else if (data === "free") this.setState({ emailAvail: "free" });
                         else if (data === "noemail") this.setState({ emailAvail: "noemail" });
                         this.setState({ emailChecking: false });
@@ -128,12 +132,12 @@ export default class Login extends React.Component {
         if (!this.state.emailChecking) {
             switch(this.state.emailAvail) {
                 case "taken":
-                    emailTaken = "Username Taken.";
+                    emailTaken = "Email Already Inuse.";
                     emailTakenClass = "Login-inputInvalid";
                     break;
 
                 case "free":
-                    emailTaken = "Username Available.";
+                    emailTaken = "Email Available To Use.";
                     emailTakenClass = "Login-inputValid";
                     break;
 
@@ -222,16 +226,23 @@ export default class Login extends React.Component {
                                     emailChecking: false,
                                     emailAvail: ""
                                 });
-                            } else if (this.state.emailChecking) {
+                            } else if (e.target.checkValidity() && this.state.emailChecking) {
                                 clearTimeout(this.state.emailCheckId);
                                 clearTimeout(emailcheck);
                                 emailcheck = setTimeout(() => this.emailCheck(), 2000);
-                            } else {
+                            } else if (e.target.checkValidity()) {
                                 emailcheck = setTimeout(() => this.emailCheck(), 2000);
                                 this.setState({
                                     emailChecking: true,
                                     emailCheckId: emailcheck
                                 });
+                            } else {
+                                clearTimeout(this.state.emailCheckId);
+                                clearTimeout(emailcheck);
+                                this.setState({
+                                    emailChecking: false,
+                                    emailAvail: "noemail"
+                                })
                             }
                         }} onFocus={() => this.tooltipAdd('tip-email')} onBlur={() => this.tooltipRemove('tip-email')}></input>
                         <span id="tip-email" className="Tooltip">
