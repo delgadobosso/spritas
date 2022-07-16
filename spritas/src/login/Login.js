@@ -115,7 +115,10 @@ export default class Login extends React.Component {
     inputCompare(e, other) {
         const compareTo = document.getElementById(other);
         if (compareTo) {
-            if (e.target.value === "") {
+            if (!compareTo.checkValidity()) {
+                e.target.value = "";
+                compareTo.focus();
+            } else if (e.target.value === "") {
                 e.target.setCustomValidity('');
                 e.target.classList.remove('Login-inputValid');
                 e.target.classList.remove('Login-inputInvalid');
@@ -286,7 +289,7 @@ export default class Login extends React.Component {
                         </span>
 
                         <label className="sr-only" htmlFor="email-confirm">Confirm Email</label>
-                        <input type="email" name="email-confirm" id="email-confirm" required placeholder="Confirm Email"></input>
+                        <input type="email" name="email-confirm" id="email-confirm" required placeholder="Confirm Email" onChange={e => this.inputCompare(e, 'email')}></input>
                     </div>
                     <div className="Login-item">
                         <input className="Login-submit" type="submit" value="Register" onSubmit={this.submit}></input>
