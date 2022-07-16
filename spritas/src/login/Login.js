@@ -118,8 +118,10 @@ export default class Login extends React.Component {
                             <span className="Login-at">@ </span>
                             <input className={takenClass} type="text" name="username" id="register-username" required maxLength="16" autoCapitalize='off' placeholder="Username" onChange={e => {
                                 this.handleUsername(e);
-                                clearTimeout(usercheck);
-                                usercheck = setTimeout(() => this.usernameCheck(), 1500);
+                                if (this.state.checking) {
+                                    clearTimeout(usercheck);
+                                    usercheck = setTimeout(() => this.usernameCheck(), 1500);
+                                } else this.setState({ checking: true });
                             }} onFocus={() => this.tooltipAdd('tip-username')} onBlur={() => this.tooltipRemove('tip-username')}></input>
                         </div>
                         <span id="tip-username" className="Tooltip">
