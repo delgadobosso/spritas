@@ -11,6 +11,7 @@ export default class Login extends React.Component {
         this.handleNickname = this.handleNickname.bind(this);
         this.handlePassword = this.handlePassword.bind(this);
         this.usernameCheck = this.usernameCheck.bind(this);
+        this.inputCompare = this.inputCompare.bind(this);
         this.state = {
             userAvail: "",
             userChecking: false,
@@ -46,7 +47,13 @@ export default class Login extends React.Component {
     }
 
     handlePassword(e) {
-        var input = e.target.value;
+        const passConfirm = document.getElementById('pass-confirm');
+        if (passConfirm) {
+            passConfirm.value = "";
+            passConfirm.setCustomValidity('');
+            passConfirm.classList.remove('Login-inputValid');
+            passConfirm.classList.remove('Login-inputInvalid');
+        }
         if (e.target.checkValidity()) {
             e.target.classList.remove('Login-inputInvalid');
             e.target.classList.add('Login-inputValid');
@@ -102,6 +109,25 @@ export default class Login extends React.Component {
                     .catch(error => this.setState({ emailChecking: false }));
                 })
             } else this.setState({ emailAvail: "" });
+        }
+    }
+
+    inputCompare(e, other) {
+        const compareTo = document.getElementById(other);
+        if (compareTo) {
+            if (e.target.value === "") {
+                e.target.setCustomValidity('');
+                e.target.classList.remove('Login-inputValid');
+                e.target.classList.remove('Login-inputInvalid');
+            } else if (e.target.value !== compareTo.value) {
+                e.target.setCustomValidity('Fields Must Match');
+                e.target.classList.remove('Login-inputValid');
+                e.target.classList.add('Login-inputInvalid');
+            } else {
+                e.target.setCustomValidity('');
+                e.target.classList.remove('Login-inputInvalid');
+                e.target.classList.add('Login-inputValid');
+            }
         }
     }
 
@@ -222,7 +248,7 @@ export default class Login extends React.Component {
                         <span id="tip-password" className="Tooltip">8 Characters Minimum.<br></br>Longer Password Better.</span>
 
                         <label className="sr-only" htmlFor="pass-confirm">Confirm Password</label>
-                        <input type="password" name="pass-confirm" id="pass-confirm" required placeholder="Confirm Password"></input>
+                        <input type="password" name="pass-confirm" id="pass-confirm" required placeholder="Confirm Password" onChange={e => this.inputCompare(e, 'register-pass')}></input>
                     </div>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="email">Email</label>
