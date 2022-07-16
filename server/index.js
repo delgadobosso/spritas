@@ -38,6 +38,7 @@ const createUpdate = require('./routers/create/update');
 const loginSignup = require('./routers/login/signup');
 const loginSignin = require('./routers/login/signin');
 const loginUsercheck = require('./routers/login/usercheck');
+const loginEmailcheck = require('./routers/login/emailcheck');
 
 const deletePost = require('./routers/delete/post');
 const deleteReply = require('./routers/delete/reply');
@@ -200,6 +201,14 @@ app.use('/login/usercheck',
         req.pool = pool;
         next();
     }, loginUsercheck);
+
+app.use('/login/emailcheck',
+    body('email').trim().isEmail(),
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.pool = pool;
+        next();
+    }, loginEmailcheck);
 
 app.get('/logout', (req, res) => {
     if (req.session.user) {
