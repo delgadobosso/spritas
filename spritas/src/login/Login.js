@@ -10,6 +10,7 @@ export default class Login extends React.Component {
         this.handleUsername = this.handleUsername.bind(this);
         this.handleNickname = this.handleNickname.bind(this);
         this.handlePassword = this.handlePassword.bind(this);
+        this.handleEmail = this.handleEmail.bind(this);
         this.usernameCheck = this.usernameCheck.bind(this);
         this.inputCompare = this.inputCompare.bind(this);
         this.state = {
@@ -60,6 +61,16 @@ export default class Login extends React.Component {
         } else {
             e.target.classList.remove('Login-inputValid');
             e.target.classList.add('Login-inputInvalid');
+        }
+    }
+
+    handleEmail() {
+        const emailConfirm = document.getElementById('email-confirm');
+        if (emailConfirm) {
+            emailConfirm.value = "";
+            emailConfirm.setCustomValidity('');
+            emailConfirm.classList.remove('Login-inputValid');
+            emailConfirm.classList.remove('Login-inputInvalid');
         }
     }
     
@@ -256,6 +267,7 @@ export default class Login extends React.Component {
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="email">Email</label>
                         <input className={emailTakenClass} type="email" name="email" id="email" required placeholder="Email" onChange={e => {
+                            this.handleEmail();
                             e.target.setCustomValidity('');
                             if (e.target.value === "") {
                                 clearTimeout(this.state.emailCheckId);
