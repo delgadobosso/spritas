@@ -19,7 +19,8 @@ export default class Login extends React.Component {
             userCheckId: null,
             emailAvail: "",
             emailChecking: false,
-            emailCheckId: null
+            emailCheckId: null,
+            registering: false
         }
     }
     
@@ -146,7 +147,35 @@ export default class Login extends React.Component {
     }
 
     submit(e) {
-        // e.preventDefault();
+        e.preventDefault();
+        if (this.state.userAvail === "free" && this.state.emailAvail === "free" && !this.state.registering) {
+            this.setState({
+                registering: true
+            }, () => {
+                var myBody = new URLSearchParams();
+                const username = document.getElementById('register-username');
+                const nickname = document.getElementById('nickname');
+                const pass = document.getElementById('register-pass');
+                const email = document.getElementById('email');
+                myBody.append('username', username.value);
+                myBody.append('nickname', nickname.value);
+                myBody.append('pass', pass.value);
+                myBody.append('email', email.value);
+
+                fetch('/login/signup', {
+                    method: "POST",
+                    body: myBody
+                })
+                .then(resp => {
+                    if (resp.ok) return resp.text();
+                    else this.setState({ registering: false });
+                })
+                .then(data => {
+                    console.log(data);
+                    this.setState({ registering: false });
+                })
+            })
+        }
     }
 
     render() {
@@ -218,7 +247,7 @@ export default class Login extends React.Component {
                     </div>
                 </form>
 
-                <form action="/login/signup" className="Login-form Login-register" method="POST" autocomplete="off">
+                <form onSubmit={this.submit} className="Login-form Login-register" method="POST" autocomplete="off">
                     <h1 className="Login-title">Register</h1>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="username">Username</label>
@@ -304,7 +333,7 @@ export default class Login extends React.Component {
                         <input type="email" name="email-confirm" id="email-confirm" required placeholder="Confirm Email" onChange={e => this.inputCompare(e, 'email')}></input>
                     </div>
                     <div className="Login-item">
-                        <input className="Login-submit" type="submit" value="Register" onSubmit={this.submit}></input>
+                        <input className="Login-submit" type="submit" value="Register"></input>
                     </div>
                 </form>
             </div>

@@ -103,6 +103,20 @@ app.use(session({
     store: sessionStore
 }))
 
+const nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PW
+    }
+});
+
+transporter.verify((error, success) => {
+    if (error) console.log(error);
+    else console.log("Nodemailer authentication verified");
+})
+
 app.get('/', (req, res) => {
     res.redirect('/home');
 });
@@ -182,8 +196,16 @@ app.use('/login/signup',
         req.bcrypt = bcrypt;
         req.saltRounds = saltRounds;
         req.pool = pool;
+        req.transporter = transporter;
         next();
     }, loginSignup);
+
+app.use('/verify/:username/:hash', (req, res, next) => {
+    req.username = req.body.username;
+    req.hash = req.body.hash;
+    req.pool = pool;
+    next();
+})
 
 app.use('/login/signin',
     body('username').trim().isLength({ min: 2 }).escape(),
