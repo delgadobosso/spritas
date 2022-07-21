@@ -39,6 +39,7 @@ const loginSignup = require('./routers/login/signup');
 const loginSignin = require('./routers/login/signin');
 const loginUsercheck = require('./routers/login/usercheck');
 const loginEmailcheck = require('./routers/login/emailcheck');
+const loginVerify = require('./routers/login/verify');
 
 const deletePost = require('./routers/delete/post');
 const deleteReply = require('./routers/delete/reply');
@@ -205,7 +206,7 @@ app.use('/verify/:username/:hash', (req, res, next) => {
     req.hash = req.body.hash;
     req.pool = pool;
     next();
-})
+}, loginVerify);
 
 app.use('/login/signin',
     body('username').trim().isLength({ min: 2 }).escape(),
