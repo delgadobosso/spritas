@@ -5,7 +5,7 @@ router.post('/', (req, res) => {
     const errors = req.validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-    req.pool.query(`SELECT * FROM users WHERE username = ? LIMIT 1`,
+    req.pool.query(`SELECT * FROM users WHERE username = ? AND type != "REGI" LIMIT 1`,
     req.body.username, (error, result, fields) => {
         if (error) return res.status(500).send(error);
 
