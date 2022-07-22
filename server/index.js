@@ -202,8 +202,8 @@ app.use('/login/signup',
     }, loginSignup);
 
 app.use('/verify/:username/:hash', (req, res, next) => {
-    req.username = req.body.username;
-    req.hash = req.body.hash;
+    req.username = req.params.username;
+    req.hash = req.params.hash;
     req.pool = pool;
     next();
 }, loginVerify);

@@ -247,7 +247,7 @@ export default class Login extends React.Component {
                     </div>
                 </form>
 
-                <form onSubmit={this.submit} className="Login-form Login-register" method="POST" autocomplete="off">
+                <form onSubmit={this.submit} className="Login-form Login-register" method="POST" autoComplete="off">
                     <h1 className="Login-title">Register</h1>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="username">Username</label>
@@ -287,7 +287,7 @@ export default class Login extends React.Component {
                     </div>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="pass">Password</label>
-                        <input type="password" name="pass" id="register-pass" minlength="8" required placeholder="Password" onChange={this.handlePassword} onFocus={() => this.tooltipAdd('tip-password')} onBlur={() => this.tooltipRemove('tip-password')}></input>
+                        <input type="password" name="pass" id="register-pass" minLength="8" required placeholder="Password" onChange={this.handlePassword} onFocus={() => this.tooltipAdd('tip-password')} onBlur={() => this.tooltipRemove('tip-password')}></input>
                         <span id="tip-password" className="Tooltip">8 Characters Minimum.<br></br>Longer Password Better.</span>
 
                         <label className="sr-only" htmlFor="pass-confirm">Confirm Password</label>
