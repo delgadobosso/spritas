@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
                     to: req.body.email,
                     subject: "Validate Your Email",
                     text: `Validate your email for account @${username} by going to this link: ${link}`,
-                    html: `Hey ${nickname},<br><br>You have registered an account as @${username} on The Spritas.<br>Please <a href="${link}">click here</a> to verify your email on this account in the next ## minutes.<br><br>See You There,<br>The Spritas`
+                    html: `Hey ${nickname},<br><br>You have registered an account as @${username} on The Spritas.<br>Please <a href="${link}">click here</a> to verify your email on this account <strong>within the hour</strong>.<br><br>See You There,<br>The Spritas`
                 }, (err, info) => {
                     if (err) return res.status(500).send({'status': 'failure', 'message': 'email verification error'});
                     else return res.send({'status': 'success', 'message': 'successfully created account'});
