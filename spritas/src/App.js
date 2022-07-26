@@ -15,6 +15,7 @@ import PostHome from "./posts/PostHome";
 import UserContainer from './user/UserContainer';
 import TopicContainer from './topics/TopicContainer';
 import AdminPortal from "./admin/AdminPortal";
+import Toast from "./toast/Toast";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -138,6 +139,7 @@ export default class App extends React.Component {
             </Route>
           </Switch>
           {this.state.post}
+          <Toast />
         </Router>
       </div>
     );
