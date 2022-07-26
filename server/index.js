@@ -37,6 +37,9 @@ const createUpdate = require('./routers/create/update');
 
 const loginSignup = require('./routers/login/signup');
 const loginSignin = require('./routers/login/signin');
+const loginUsercheck = require('./routers/login/usercheck');
+const loginEmailcheck = require('./routers/login/emailcheck');
+const loginVerify = require('./routers/login/verify');
 
 const deletePost = require('./routers/delete/post');
 const deleteReply = require('./routers/delete/reply');
@@ -100,6 +103,20 @@ app.use(session({
     secret: process.env.SESS_SECRET,
     store: sessionStore
 }))
+
+const nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PW
+    }
+});
+
+transporter.verify((error, success) => {
+    if (error) console.log(error);
+    else console.log("Nodemailer authentication verified");
+})
 
 app.get('/', (req, res) => {
     res.redirect('/home');
@@ -171,8 +188,8 @@ app.use('/home/new/:offset.:limit', (req, res, next) => {
 }, homeNew);
 
 app.use('/login/signup',
-    body('username').trim().isLength({ min: 2 }).escape(),
-    body('nickname').trim().isLength({ min: 2 }).escape(),
+    body('username').trim().isLength({ max: 16 }).matches(/^[\w]+$/).escape(),
+    body('nickname').trim().isLength({ max: 32 }).escape(),
     body('pass').isLength({ min: 8 }),
     body('email').isEmail(),
     (req, res, next) => {
@@ -180,8 +197,16 @@ app.use('/login/signup',
         req.bcrypt = bcrypt;
         req.saltRounds = saltRounds;
         req.pool = pool;
+        req.transporter = transporter;
         next();
     }, loginSignup);
+
+app.use('/verify/:username/:hash', (req, res, next) => {
+    req.username = req.params.username;
+    req.hash = req.params.hash;
+    req.pool = pool;
+    next();
+}, loginVerify);
 
 app.use('/login/signin',
     body('username').trim().isLength({ min: 2 }).escape(),
@@ -192,6 +217,21 @@ app.use('/login/signin',
         req.pool = pool;
         next();
     }, loginSignin);
+
+app.use('/login/usercheck',
+    body('username').trim().escape(),
+    (req, res, next) => {
+        req.pool = pool;
+        next();
+    }, loginUsercheck);
+
+app.use('/login/emailcheck',
+    body('email').trim().isEmail(),
+    (req, res, next) => {
+        req.validationResult = validationResult;
+        req.pool = pool;
+        next();
+    }, loginEmailcheck);
 
 app.get('/logout', (req, res) => {
     if (req.session.user) {

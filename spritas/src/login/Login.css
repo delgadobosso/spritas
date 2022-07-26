@@ -1,7 +1,117 @@
-input:valid {
-    border-color: green;
+.Login-forms input {
+    width: 300px;
+    border: 0;
+    font-size: 18px;
+    padding: 10px 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: solid 5px var(--lightest-grey);
+
+    transition: border, background-color;
+    transition-duration: 0.25s;
 }
 
-input:invalid:focus {
-    border-color: red;
+.Login-forms {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 20px 0;
+
+    transition: margin 0.5s;
+}
+
+.Login-form {
+    width: 600px;
+    background-color: var(--darkest-grey);
+    border-radius: 10px;
+    text-align: center;
+    padding: 15px;
+    box-sizing: border-box;
+
+    transition: width 0.5s, border-radius 0.5s;
+}
+.Login-form:last-child {
+    margin: 0 0 0 20px;
+}
+
+.Login-title {
+    margin: 0 0 15px 0;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.Login-item {
+    position: relative;
+}
+
+.Login-username {
+    position: relative;
+    width: fit-content;
+    margin: auto;
+}
+
+.Login-inputValid {
+    border: solid 5px var(--spritan-gold) !important;
+    background-color: var(--darkest-grey);
+}
+.Login-inputInvalid {
+    border: solid 5px var(--spritan-red) !important;
+}
+
+.Login-at {
+    position: absolute;
+    left: -22px;
+    top: 14px;
+    font-size: 18px;
+    color: white;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.Login-submit {
+    width: 150px !important;
+    margin-top: 15px;
+    padding: 10px !important;
+    border-radius: 10px !important;
+    border: none !important;
+    background-color: var(--mid-grey);
+
+    transition: background-color, color !important;
+    transition-duration: 0.1s !important;
+}
+
+@media screen and (max-width: 1260px) {
+    .Login-forms {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .Login-form:last-child {
+        margin: 20px 0 0 0;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .Login-forms {
+        margin: 0;
+    }
+
+    .Login-form {
+        width: 100%;
+        border-radius: 0;
+    }
+}
+
+@media (hover: hover) {
+    .Login-submit:hover {
+        cursor: pointer;
+        color: black;
+        background-color: var(--spritan-gold);
+    }
 }

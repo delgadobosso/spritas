@@ -35,6 +35,15 @@ a {
     color: var(--spritan-gold);
 }
 
+.sr-only {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 .LoadingCover {
     pointer-events: none;
     position: absolute;
@@ -66,6 +75,35 @@ a {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+.Tooltip {
+    position: absolute;
+    width: 300px;
+    left: 50%;
+    bottom: 0%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    background-color: var(--mid-grey);
+    transform: translateX(-50%);
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+
+    transition: bottom, opacity;
+    transition-duration: 0.25s;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.Tooltip-on {
+    bottom: 100%;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 

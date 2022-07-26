@@ -195,6 +195,8 @@
     background-color: var(--lightest-grey);
     border: solid 5px var(--darkest-grey);
     border-radius: 10px 10px 0 0;
+
+    transition: background-color 0.1s, border 0.1s;
 }
 .CreatePost-title:valid {
     background-color: var(--darkest-grey);
@@ -228,6 +230,7 @@
     border-radius: 10px;
     flex-grow: 1;
 
+    transition: border 0.1s;
     animation: fadeIn 0.5s;
 }
 .CreatePost-body:focus:required:valid {
