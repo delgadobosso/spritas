@@ -44,22 +44,25 @@ export default class Toast extends React.Component {
     }
 
     dismiss(e) {
-        var dismissed = e.target.animate([
-            { opacity: 1 },
-            { opacity: 0 }
-        ], { duration: 120, fill: 'forwards' });
-        dismissed.onfinish = () => {
-            var shrink = e.target.animate([
-                { height: e.target.offsetHeight + 'px',
-                    padding: '15px',
-                    marginBottom: '10px',
-                    border: '5px solid' },
-                { height: '0px',
-                    padding: '0px',
-                    marginBottom: '0px',
-                    border: '0px solid' }
-            ], { duration: 250, fill: 'forwards', easing: 'ease-out' });
-            shrink.onfinish = () => e.target.remove();
+        var animations = e.target.getAnimations().map(animation => animation.cancel());
+        if (animations.length === 0) {
+            var dismissed = e.target.animate([
+                { opacity: 1 },
+                { opacity: 0 }
+            ], { duration: 120, fill: 'forwards' });
+            dismissed.onfinish = () => {
+                var shrink = e.target.animate([
+                    { height: e.target.offsetHeight + 'px',
+                        padding: '15px',
+                        marginBottom: '10px',
+                        border: '5px solid' },
+                    { height: '0px',
+                        padding: '0px',
+                        marginBottom: '0px',
+                        border: '0px solid' }
+                ], { duration: 250, fill: 'forwards', easing: 'ease-out' });
+                shrink.onfinish = () => e.target.remove();
+            }
         }
     }
 
