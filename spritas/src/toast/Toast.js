@@ -13,6 +13,7 @@ export default class Toast extends React.Component {
     componentDidMount() {
         var url = new URL(window.location.href);
         var params = new URLSearchParams(url.search);
+        var notifs = [];
         params.forEach((value, key) => {
             var msg = "";
             var classStatus = "";
@@ -37,15 +38,16 @@ export default class Toast extends React.Component {
                     break;
             }
             var notif = <div className={'Toast-notif' + classStatus} onClick={this.dismiss}>{msg}</div>
-            this.setState(state => ({ notifs: [...state.notifs, notif] }));
+            notifs.push(notif);
         });
+        this.setState(state => ({ notifs: [...state.notifs, notifs] }));
     }
 
     dismiss(e) {
         var dismissed = e.target.animate([
             { opacity: 1 },
             { opacity: 0 }
-        ], { duration: 250, fill: 'forwards' });
+        ], { duration: 120, fill: 'forwards' });
         dismissed.onfinish = () => {
             var shrink = e.target.animate([
                 { height: e.target.offsetHeight + 'px',
