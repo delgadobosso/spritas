@@ -13,10 +13,12 @@ export default class Toast extends React.Component {
     componentDidMount() {
         var url = new URL(window.location.href);
         var params = new URLSearchParams(url.search);
+        var newParams = new URLSearchParams();
         var notifs = [];
         params.forEach((value, key) => {
             var msg = "";
             var classStatus = "";
+            var skip = false;
             switch(key) {
                 case "success":
                     classStatus = " Toast-success";
@@ -35,12 +37,20 @@ export default class Toast extends React.Component {
                     break;
 
                 default:
+                    skip = true;
+                    newParams.append(key, value);
                     break;
             }
-            var notif = <div className={'Toast-notif' + classStatus} onClick={this.dismiss}>{msg}</div>
-            notifs.push(notif);
+            if (!skip) {
+                var notif = <div className={'Toast-notif' + classStatus} onClick={this.dismiss}>{msg}</div>
+                notifs.push(notif);
+            }
         });
         this.setState(state => ({ notifs: [...state.notifs, notifs] }));
+        const historyObj = window.history.state;
+        var resParams = (newParams.toString() !== "") ? '?' + newParams.toString() : '';
+        const newUrl = window.location.pathname + resParams;
+        window.history.replaceState(historyObj, '', newUrl);
     }
 
     dismiss(e) {
