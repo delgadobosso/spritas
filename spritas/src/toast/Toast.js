@@ -28,6 +28,8 @@ export default class Toast extends React.Component {
                             break;
                         
                         default:
+                            skip = true;
+                            newParams.append(key, value);
                             break;
                     }
                     break;
