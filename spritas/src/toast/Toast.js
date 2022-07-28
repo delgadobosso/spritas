@@ -44,7 +44,7 @@ export default class Toast extends React.Component {
                     break;
             }
             if (!skip) {
-                var notif = <div className={'Toast-notif' + classStatus} onClick={this.dismiss}>{msg}</div>
+                var notif = <div className={'Toast-notif' + classStatus} onClick={this.dismiss}>{msg}</div>;
                 notifs.push(notif);
             }
         });
@@ -53,6 +53,40 @@ export default class Toast extends React.Component {
         var resParams = (newParams.toString() !== "") ? '?' + newParams.toString() : '';
         const newUrl = window.location.pathname + resParams;
         window.history.replaceState(historyObj, '', newUrl);
+    }
+
+    componentDidUpdate() {
+        if (this.props.notifs && this.props.notifs.length > 0) {
+            var notifs = [];
+            this.props.notifs.forEach(toast => {
+                var msg = "";
+                var classStatus = "";
+                switch(toast.success) {
+                    case "success":
+                        classStatus = " Toast-success";
+                        switch(toast.event) {
+                            case "dr":
+                                msg = 'Reply Deleted.';
+                                break;
+
+                            default:
+                                break;
+                        }
+                        break;
+
+                    case "failure":
+                        classStatus = " Toast-failure";
+                        break;
+
+                    default:
+                        break;
+                }
+                var notif = <div className={'Toast-notif' + classStatus} onClick={this.dismiss}>{msg}</div>;
+                notifs.push(notif);
+            })
+            this.setState(state => ({ notifs: [...state.notifs, notifs] }));
+            this.props.toastClear();
+        }
     }
 
     dismiss(e) {

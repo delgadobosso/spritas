@@ -5,6 +5,8 @@ import CreateReply from '../create/CreateReply';
 import pfp from '../images/pfp.png';
 import relativeTime from '../functions/relativeTime';
 
+import { AppContext } from '../contexts/AppContext';
+
 export default class Reply extends React.Component {
     constructor(props) {
         super(props);
@@ -260,14 +262,17 @@ export default class Reply extends React.Component {
                         })
                         .then((resp) => {
                             this.setState({ deleting: false }, () => {
-                                if (resp.ok) this.props.reload();
-                                else alert('Post deletion error');
+                                if (resp.ok) {
+                                    this.context('success', 'dr');
+                                    this.props.reload();
+                                }
+                                else alert('Reply deletion error');
                             });
                         })
                         .catch(error => this.setState({ deleting: false }));
                     })
                 } else if (reason === '') alert(`You must give a reason to delete this reply.`);
-            } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
+            } else if (answer !== null) alert(`Value incorrect. Reply not deleted.`);
         }
     }
 
@@ -510,3 +515,5 @@ export default class Reply extends React.Component {
         );
     }
 }
+
+Reply.contextType = AppContext;

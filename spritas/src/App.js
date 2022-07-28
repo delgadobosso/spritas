@@ -17,16 +17,21 @@ import TopicContainer from './topics/TopicContainer';
 import AdminPortal from "./admin/AdminPortal";
 import Toast from "./toast/Toast";
 
+import { AppContext } from "./contexts/AppContext";
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.postClick = this.postClick.bind(this);
     this.naviHide = this.naviHide.bind(this);
+    this.toastPush = this.toastPush.bind(this);
+    this.toastClear = this.toastClear.bind(this);
     this.state = {
       user: null,
       sessionChecked: false,
       post: null,
-      naviHide: false
+      naviHide: false,
+      toastPush: []
     };
   }
 
@@ -112,35 +117,48 @@ export default class App extends React.Component {
     else if (!down && this.state.naviHide) this.setState({ naviHide: false });
   }
 
+  toastPush(success, event) {
+    this.setState(state => ({ toastPush: [...state.toastPush, {
+      success: success,
+      event: event
+    }]}));
+  }
+
+  toastClear() {
+    this.setState({ toastPush: null });
+  }
+
   render() {
     return (
       <div className="App">
-        <Router>
-          <Navi user={this.state.user} sessionChecked={this.state.sessionChecked} hide={this.state.naviHide} />
-          <Header />
-          <Switch>
-            <Route exact path='/'>
-              <Redirect to='/home' />
-            </Route>
-            <Route path='/admin'>
-              <AdminPortal postClick={this.postClick} user={this.state.user} />
-            </Route>
-            <Route path='/create/post'
-              render={props => <CreatePost user={this.state.user} {...props} />} />
-            <Route path='/login' component={Login} />
-            <Route path='/p/:id/r/:idReply'
-              render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
-            <Route path='/p/:id'
-              render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
-            <Route path='/u/:name'
-              render={props => <UserContainer postClick={this.postClick} user={this.state.user} {...props} />} />
-            <Route path='/home'>
-              <TopicContainer postClick={this.postClick} user={this.state.user} />
-            </Route>
-          </Switch>
-          {this.state.post}
-          <Toast />
-        </Router>
+        <AppContext.Provider value={this.toastPush}>
+          <Router>
+            <Navi user={this.state.user} sessionChecked={this.state.sessionChecked} hide={this.state.naviHide} />
+            <Header />
+            <Switch>
+              <Route exact path='/'>
+                <Redirect to='/home' />
+              </Route>
+              <Route path='/admin'>
+                <AdminPortal postClick={this.postClick} user={this.state.user} />
+              </Route>
+              <Route path='/create/post'
+                render={props => <CreatePost user={this.state.user} {...props} />} />
+              <Route path='/login' component={Login} />
+              <Route path='/p/:id/r/:idReply'
+                render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
+              <Route path='/p/:id'
+                render={props => <PostContainer user={this.state.user} naviHide={this.naviHide} {...props} />} />
+              <Route path='/u/:name'
+                render={props => <UserContainer postClick={this.postClick} user={this.state.user} {...props} />} />
+              <Route path='/home'>
+                <TopicContainer postClick={this.postClick} user={this.state.user} />
+              </Route>
+            </Switch>
+            {this.state.post}
+            <Toast notifs={this.state.toastPush} toastClear={this.toastClear} />
+          </Router>
+        </AppContext.Provider>
       </div>
     );
   }
