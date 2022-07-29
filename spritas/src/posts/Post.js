@@ -8,6 +8,8 @@ import relativeTime from '../functions/relativeTime';
 import PureIframe from '../other/PureIframe';
 import CreatePost from '../create/CreatePost';
 
+import { AppContext } from '../contexts/AppContext';
+
 export default class Post extends React.Component {
     constructor(props) {
         super(props);
@@ -172,11 +174,14 @@ export default class Post extends React.Component {
                         })
                         .then((resp) => {
                             this.setState({ deleting: false }, () => {
-                                if (resp.ok) window.location.href = '/';
-                                else console.error('Post deletion error');
+                                if (resp.ok) window.location.href = '/home?success=dp';
+                                else this.context.toastPush('failure', 'dp');
                             });
                         })
-                        .catch(error => this.setState({ deleting: false }));
+                        .catch(error => {
+                            this.context.toastPush('failure', 'dp');
+                            this.setState({ deleting: false });
+                        });
                     });
                 } else if (reason === '') alert(`You must give a reason to delete this post.`);
             } else if (answer !== null) alert(`Value incorrect. Post not deleted.`);
@@ -195,9 +200,10 @@ export default class Post extends React.Component {
                 body: myBody
             })
             .then((resp) => {
-                if (resp.ok) alert('This post has been reported to the Admins.');
-                else alert('Error reporting post. Please try again or reach out directly to an Admin.');
-            });
+                if (resp.ok) this.context.toastPush('success', 'rp');
+                else this.context.toastPush('failure', 'rp');
+            })
+            .catch(error => this.context.toastPush('failure', 'rp'));
         } else if (answer === '') alert(`You must give a reason to report this post.`);
     }
 
@@ -581,3 +587,5 @@ export default class Post extends React.Component {
         )
     }
 }
+
+Post.contextType = AppContext;

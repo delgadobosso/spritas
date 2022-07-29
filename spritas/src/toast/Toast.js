@@ -34,6 +34,10 @@ export default class Toast extends React.Component {
                         case "pu":
                             msg = "Post updated.";
                             break;
+
+                        case "dp":
+                            msg = 'Post deleted.';
+                            break;
                         
                         default:
                             skip = true;
@@ -73,6 +77,10 @@ export default class Toast extends React.Component {
                     case "success":
                         classStatus = " Toast-success";
                         switch(toast.event) {
+                            case "rp":
+                                msg = 'Post reported to the Admins.';
+                                break;
+
                             case "rr":
                                 msg = 'Reply reported to the Admins.';
                                 break;
@@ -97,12 +105,20 @@ export default class Toast extends React.Component {
                                 msg = 'Failed to update post. Try again.';
                                 break;
 
+                            case 'rp':
+                                msg = 'Failed to report post. Try again or contact an Admin directly.';
+                                break;
+
                             case 'rr':
                                 msg = 'Failed to report reply. Try again or contact an Admin directly.';
                                 break;
 
+                            case 'dp':
+                                msg = 'Failed to delete post. Try again.';
+                                break;
+
                             case 'dr':
-                                msg = 'Failed to delete reply.';
+                                msg = 'Failed to delete reply. Try again.';
                                 break;
 
                             default:
