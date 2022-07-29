@@ -19,7 +19,7 @@ router.post('/', (req, res) => {
                     return res.sendStatus(400);
                 } else return res.sendStatus(500);
             } else {
-                const link = `http://localhost:3000/verify/${username}/${verifyHash}`;
+                const link = `http://192.168.0.32:8080/verify/${username}/${verifyHash}`;
                 req.transporter.sendMail({
                     from: '"The Spritas"',
                     to: req.body.email,

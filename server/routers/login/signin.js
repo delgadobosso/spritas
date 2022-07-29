@@ -21,17 +21,15 @@ router.post('/', (req, res) => {
                                 else {
                                     const user = (({id, username, nickname, avatar, type}) => ({id, username, nickname, avatar, type}))(userRes);
                                     req.session.user = user;
-                                    res.redirect('/');
+                                    return res.sendStatus(200);
                                 }
                             })
                         })
                     })
                 }
-                else res.send({'status': 'failure', 'message': 'wrong username or password'});
+                else return res.sendStatus(400);
             })
-        } else {
-            res.send({'status': 'failure', 'message': 'wrong username or password'});
-        }
+        } else return res.sendStatus(400);
     })
 })
 

@@ -236,7 +236,7 @@ app.use('/login/emailcheck',
 app.get('/logout', (req, res) => {
     if (req.session.user) {
         req.session.destroy(() => {
-            res.redirect('/');
+            res.redirect('/home?success=logout');
         })
     } else res.redirect('/');
 })

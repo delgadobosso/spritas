@@ -31,6 +31,14 @@ export default class Toast extends React.Component {
                             msg = "Email verification complete. You may now log in to your account.";
                             break;
 
+                        case "login":
+                            msg = "Successfully logged in. Welcome!";
+                            break;
+
+                        case "logout":
+                            msg = "Logged out. Bye!";
+                            break;
+
                         case "pc":
                             msg = "Post created.";
                             break;
@@ -113,32 +121,39 @@ export default class Toast extends React.Component {
                     case "failure":
                         classStatus = " Toast-failure";
                         switch(toast.event) {
+                            case 'login':
+                                msg = 'Wrong username or password. Please try again.';
+                                break;
+
+                            case 'login-error':
+                                msg = 'An error has occurred. Please try again.';
+
                             case 'pc':
-                                msg = 'Failed to create post. Try again.';
+                                msg = 'Failed to create post. Please try again.';
                                 break;
 
                             case 'pu':
-                                msg = 'Failed to update post. Try again.';
+                                msg = 'Failed to update post. Please try again.';
                                 break;
 
                             case 'cr':
-                                msg = 'Failed to reply. Try again.';
+                                msg = 'Failed to reply. Please try again.';
                                 break;
 
                             case 'rp':
-                                msg = 'Failed to report post. Try again or contact an Admin directly.';
+                                msg = 'Failed to report post. Please try again or contact an Admin directly.';
                                 break;
 
                             case 'rr':
-                                msg = 'Failed to report reply. Try again or contact an Admin directly.';
+                                msg = 'Failed to report reply. Please try again or contact an Admin directly.';
                                 break;
 
                             case 'dp':
-                                msg = 'Failed to delete post. Try again.';
+                                msg = 'Failed to delete post. Please try again.';
                                 break;
 
                             case 'dr':
-                                msg = 'Failed to delete reply. Try again.';
+                                msg = 'Failed to delete reply. Please try again.';
                                 break;
 
                             default:

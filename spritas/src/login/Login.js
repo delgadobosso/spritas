@@ -15,6 +15,7 @@ export default class Login extends React.Component {
         this.handleEmail = this.handleEmail.bind(this);
         this.usernameCheck = this.usernameCheck.bind(this);
         this.inputCompare = this.inputCompare.bind(this);
+        this.login = this.login.bind(this);
         this.state = {
             userAvail: "",
             userChecking: false,
@@ -22,7 +23,8 @@ export default class Login extends React.Component {
             emailAvail: "",
             emailChecking: false,
             emailCheckId: null,
-            registering: false
+            registering: false,
+            logginIn: false
         }
     }
     
@@ -150,7 +152,7 @@ export default class Login extends React.Component {
 
     submit(e) {
         e.preventDefault();
-        if (this.state.userAvail === "free" && this.state.emailAvail === "free" && !this.state.registering) {
+        if (this.state.userAvail === "free" && this.state.emailAvail === "free" && !this.state.registering && !this.state.logginIn) {
             this.setState({
                 registering: true
             }, () => {
@@ -175,6 +177,37 @@ export default class Login extends React.Component {
                     });
                 });
             })
+        }
+    }
+
+    login(e) {
+        e.preventDefault();
+        if (!this.state.logginIn && !this.state.registering) {
+            this.setState({
+                logginIn: true
+            }, () => {
+                var myBody = new URLSearchParams();
+                const username = document.getElementById('login-username');
+                const pass = document.getElementById('login-pass');
+                myBody.append('username', username.value);
+                myBody.append('pass', pass.value);
+
+                fetch('/login/signin', {
+                    method: "POST",
+                    body: myBody
+                })
+                .then(resp => {
+                    this.setState({ logginIn: false }, () => {
+                        if (resp.ok) window.location.href = '/home?success=login';
+                        else if (resp.status === 400) this.context.toastPush('failure', 'login');
+                        else this.context.toastPush('failure', 'login-error');
+                    })
+                })
+                .catch(error => {
+                    this.context.toastPush('failure', 'login-error');
+                    this.setState({ logginIn: false });
+                });
+            });
         }
     }
 
@@ -227,9 +260,13 @@ export default class Login extends React.Component {
             emailCover = " LoadingCover-anim";
         }
 
+        const regiCover = (this.state.registering) ? " LoadingCover-anim" : "";
+        const loginCover = (this.state.logginIn) ? " LoadingCover-anim" : "";
+
         return(
             <div className="Login-forms">
-                <form action="/login/signin" className="Login-form" method="POST">
+                <form onSubmit={this.login} className="Login-form" method="POST">
+                    <div className={'LoadingCover Login-cover' + loginCover}></div>
                     <h1 className="Login-title">Login</h1>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="username">Username</label>
@@ -248,6 +285,7 @@ export default class Login extends React.Component {
                 </form>
 
                 <form onSubmit={this.submit} className="Login-form Login-register" method="POST" autoComplete="off">
+                    <div className={'LoadingCover Login-cover' + regiCover}></div>
                     <h1 className="Login-title">Register</h1>
                     <div className="Login-item">
                         <label className="sr-only" htmlFor="username">Username</label>
