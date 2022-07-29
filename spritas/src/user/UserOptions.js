@@ -1,6 +1,11 @@
+import { useContext } from 'react';
 import './UserOptions.css';
 
+import { AppContext } from '../contexts/AppContext';
+
 export default function UserOptions(props) {
+    const context = useContext(AppContext);
+
     var edit;
     var report;
     var block;
@@ -12,24 +17,24 @@ export default function UserOptions(props) {
     if (!props.editMode) {
         // If this user is you
         if (props.user.id === parseInt(props.thisId)) {
-            edit = <div className='UserOptions-option' onClick={() => editTimeCheck(props)}>Edit Profile</div>;
+            edit = <div className='UserOptions-option' onClick={() => editTimeCheck(props, context)}>Edit Profile</div>;
         // If this user isn't you
         } else if (props.user.id !== parseInt(props.thisId)) {
             // And you're not admin
             if (props.user.type !== 'ADMN') {
-                report = <div className='UserOptions-option' onClick={() => reportUser(props)}>Report User</div>;
+                report = <div className='UserOptions-option' onClick={() => reportUser(props, context)}>Report User</div>;
             // You ARE admin
             } else {
                 ban = (props.thisUser && props.thisUser.type !== "BAN") ?
-                    <div className='UserOptions-option' onClick={() => banUser(props)}>Ban User</div> :
-                    <div className='UserOptions-option' onClick={() => unbanUser(props)}>Unban User</div>;
+                    <div className='UserOptions-option' onClick={() => banUser(props, context)}>Ban User</div> :
+                    <div className='UserOptions-option' onClick={() => unbanUser(props, context)}>Unban User</div>;
             }
 
-            block = (props.thisUser.blocking) ? <div className='UserOptions-option' onClick={() => unblockUser(props)}>Unblock User</div>
-            : <div className='UserOptions-option' onClick={() => blockUser(props)}>Block User</div>;
+            block = (props.thisUser.blocking) ? <div className='UserOptions-option' onClick={() => unblockUser(props, context)}>Unblock User</div>
+            : <div className='UserOptions-option' onClick={() => blockUser(props, context)}>Block User</div>;
         }
     } else {
-        submit = <div className='UserOptions-option' onClick={() => editCheck(props)}>Save Changes</div>;
+        submit = <div className='UserOptions-option' onClick={() => editCheck(props, context)}>Save Changes</div>;
         cancel = <div className='UserOptions-option' onClick={() => props.userEdit(false)}>Cancel</div>;
     }
 
@@ -45,7 +50,7 @@ export default function UserOptions(props) {
     );
 }
 
-function editCheck(props) {
+function editCheck(props, context) {
     var formData = new FormData();
     const avatar = document.getElementById('UserEdit-avatar').files[0];
     const nickname = document.getElementById('UserEdit-nickname').value;
@@ -53,7 +58,10 @@ function editCheck(props) {
 
     const ogBio = (props.thisUser) ? props.thisUser.bio : '';
     
-    if (!avatar && nickname === '' && bio === ogBio) alert('No changes made.');
+    if (!avatar && nickname === '' && bio === ogBio) {
+        context.toastPush('failure', 'user-change');
+        props.userEdit(false);
+    }
     else {
         var choice = window.confirm("You won't be able to update your profile again for 5 minutes. Are you sure you wish to save these changes?");
         if (choice) {
@@ -68,25 +76,25 @@ function editCheck(props) {
             })
             .then(resp => resp.text())
             .then(data => {
-                if (data === 'time') alert('You must wait 5 minutes from when you last updated your profile.');
+                if (data === 'time') context.toastPush('failure', 'user-time');
                 else if (data === 'updated') {
-                    window.location.reload();
+                    window.location.href = '/u/' + props.thisUser.username + '?success=user-edit';
                 }
             })
         }
     }
 }
 
-function editTimeCheck(props) {
+function editTimeCheck(props, context) {
     var last = new Date(props.thisUser.lastTs);
     var current = new Date();
     var elapsed = (current - last) / 60000;
 
     if (elapsed >= 5) props.userEdit(true);
-    else alert('You must wait 5 minutes from when you last updated your profile.');
+    else context.toastPush('failure', 'user-time');
 }
 
-function banUser(props) {
+function banUser(props, context) {
     if (props.thisId && props.thisUser) {
         var answer = prompt(`Are you sure you want to ban ${props.thisUser.nickname} (@${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
@@ -100,15 +108,16 @@ function banUser(props) {
                     body: myBody
                 })
                 .then((resp) => {
-                    if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
-                    else alert('User ban error');
-                });
+                    if (resp.ok) window.location.href = '/u/' + props.thisUser.username + '?success=user-ban';
+                    else context.toastPush('failure', 'user-ban');
+                })
+                .catch(error => context.toastPush('failure', 'user-ban'));
             } else if (reason === "") alert(`You must give a reason to ban this user.`);
         } else if (answer !== null) alert(`Value incorrect. User not banned.`);
     }
 }
 
-function unbanUser(props) {
+function unbanUser(props, context) {
     if (props.thisId && props.thisUser) {
         var answer = prompt(`Are you sure you want to unban ${props.thisUser.nickname} (@${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
@@ -122,15 +131,16 @@ function unbanUser(props) {
                         body: myBody
                     })
                     .then((resp) => {
-                        if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
-                        else alert('User ban error');
-                    });
+                        if (resp.ok) window.location.href = '/u/' + props.thisUser.username + '?success=user-unban';
+                        else context.toastPush('failure', 'user-unban');
+                    })
+                    .catch(error => context.toastPush('failure', 'user-unban'));
             } else if (reason === "") alert(`You must give a reason to unban this user.`);
         } else if (answer !== null) alert(`Value incorrect. User will stay banned.`);
     }
 }
 
-function blockUser(props) {
+function blockUser(props, context) {
     if (props.thisId && props.thisUser) {
         var answer = prompt(`Are you sure you want to block ${props.thisUser.nickname} (@${props.thisUser.username})? They won't be able to reply to your posts.\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
@@ -138,14 +148,15 @@ function blockUser(props) {
                 method: "POST"
             })
             .then((resp) => {
-                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
-                else alert('User block error');
-            });
+                if (resp.ok) window.location.href = '/u/' + props.thisUser.username + '?success=user-block';
+                else context.toastPush('failure', 'user-block');
+            })
+            .catch(error => context.toastPush('failure', 'user-block'));
         } else if (answer !== null) alert(`Value incorrect. User not blocked.`);
     }
 }
 
-function unblockUser(props) {
+function unblockUser(props, context) {
     if (props.thisId && props.thisUser) {
         var answer = prompt(`Are you sure you want to unblock ${props.thisUser.nickname} (@${props.thisUser.username})?\nType "${props.thisUser.username}" to confirm:`, '');
         if (answer === props.thisUser.username) {
@@ -153,14 +164,15 @@ function unblockUser(props) {
                 method: "POST"
             })
             .then((resp) => {
-                if (resp.ok) window.location.href = '/u/' + props.thisUser.username;
-                else alert('User unblock error');
-            });
+                if (resp.ok) window.location.href = '/u/' + props.thisUser.username + '?success=user-unblock';
+                else context.toastPush('failure', 'user-unblock');
+            })
+            .catch(error => context.toastPush('failure', 'user-unblock'));
         } else if (answer !== null) alert(`Value incorrect. User still blocked.`);
     }
 }
 
-function reportUser(props) {
+function reportUser(props, context) {
     if (props.thisId && props.thisUser) {
         var answer = prompt(`Why are you reporting ${props.thisUser.nickname} (@${props.thisUser.username})?`, '');
         if (answer) {
@@ -173,9 +185,10 @@ function reportUser(props) {
                 body: myBody
             })
             .then(resp => {
-                if (resp.ok) alert('This user has been reported to the Admins.');
-                else alert('Error reporting post. Please try again or reach out directly to an Admin.');
+                if (resp.ok) context.toastPush('success', 'user-report');
+                else context.toastPush('failure', 'user-report');
             })
+            .catch(error => context.toastPush('failure', 'user-report'));
         } else if (answer === '') alert(`You must give a reason to report this user.`);
     }
 }

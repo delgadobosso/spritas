@@ -50,6 +50,26 @@ export default class Toast extends React.Component {
                         case "dp":
                             msg = 'Post deleted.';
                             break;
+
+                        case 'user-edit':
+                            msg = 'Successfully updated your profile.';
+                            break;
+
+                        case 'user-ban':
+                            msg = 'User successfully banned.';
+                            break;
+
+                        case 'user-unban':
+                            msg = 'User successfully unbanned.';
+                            break;
+
+                        case 'user-block':
+                            msg = 'User successfully blocked.';
+                            break;
+
+                        case 'user-unblock':
+                            msg = 'User successfully unblocked.';
+                            break;
                         
                         default:
                             skip = true;
@@ -113,6 +133,10 @@ export default class Toast extends React.Component {
                                 msg = 'Reply deleted.';
                                 break;
 
+                            case 'user-report':
+                                msg = 'User reported to the Admins.';
+                                break;
+
                             default:
                                 break;
                         }
@@ -158,6 +182,34 @@ export default class Toast extends React.Component {
 
                             case 'dr':
                                 msg = 'Failed to delete reply. Please try again.';
+                                break;
+
+                            case 'user-change':
+                                msg = 'No changes made.';
+                                break;
+
+                            case 'user-time':
+                                msg = 'You must wait 5 minutes from when you last updated your profile.';
+                                break;
+
+                            case 'user-ban':
+                                msg = 'Failed to ban user. Please try again.';
+                                break;
+
+                            case 'user-unban':
+                                msg = 'Failed to unban user. Please try again.';
+                                break;
+
+                            case 'user-block':
+                                msg = 'Failed to block user. Please try again.';
+                                break;
+
+                            case 'user-unblock':
+                                msg = 'Failed to unblock user. Please try again.';
+                                break;
+
+                            case 'user-report':
+                                msg = 'Failed to report user. Please try again or contact an Admin directly.';
                                 break;
 
                             default:
