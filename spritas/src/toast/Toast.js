@@ -30,6 +30,10 @@ export default class Toast extends React.Component {
                         case "pc":
                             msg = "Post created.";
                             break;
+
+                        case "pu":
+                            msg = "Post updated.";
+                            break;
                         
                         default:
                             skip = true;
@@ -87,6 +91,10 @@ export default class Toast extends React.Component {
                         switch(toast.event) {
                             case 'pc':
                                 msg = 'Failed to create post. Try again.';
+                                break;
+
+                            case 'pu':
+                                msg = 'Failed to update post. Try again.';
                                 break;
 
                             case 'rr':

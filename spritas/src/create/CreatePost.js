@@ -291,7 +291,8 @@ export default class CreatePost extends React.Component {
                 .then(resp => {
                     if (resp.ok) return resp.text();
                     else {
-                        this.context.toastPush('failure', 'pc');
+                        if (!this.props.ogPost) this.context.toastPush('failure', 'pc');
+                        else this.context.toastPush('failure', 'pu');
                         this.setState({ submitting: false });
                     }
                 })
@@ -303,14 +304,19 @@ export default class CreatePost extends React.Component {
                                 submitting: false
                             }, () => {
                                 window.removeEventListener('beforeunload', this.handleBeforeUnload);
-                                window.location.href = "/p/" + id + "?success=pc";
+                                if (!this.props.ogPost) window.location.href = "/p/" + id + "?success=pc";
+                                else window.location.href = "/p/" + id + "?success=pu";
                             });
                         }, 5000);
                     }
                 })
                 .catch(error => this.setState({
                     submitting: false
-                }, () => window.removeEventListener('beforeunload', this.handleBeforeUnload)));
+                }, () => {
+                    if (!this.props.ogPost) this.context.toastPush('failure', 'pc');
+                    else this.context.toastPush('failure', 'pu');
+                    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+                }));
             });
         }
     }
