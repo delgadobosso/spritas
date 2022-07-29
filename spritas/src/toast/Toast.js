@@ -24,7 +24,11 @@ export default class Toast extends React.Component {
                     classStatus = " Toast-success";
                     switch(value) {
                         case "register":
-                            msg = "Account registered. You may now login to your account."
+                            msg = "Email verification sent. Please click the link in that email to complete the registration process.";
+                            break;
+
+                        case "email-verify":
+                            msg = "Email verification complete. You may now log in to your account.";
                             break;
 
                         case "pc":
@@ -48,6 +52,14 @@ export default class Toast extends React.Component {
 
                 case "failure":
                     classStatus = " Toast-failure";
+                    switch(value) {
+                        case 'email-verify':
+                            msg = 'Failed to verify email. Please start the registration process again.';
+                            break;
+
+                        default:
+                            break;
+                    }
                     break;
 
                 default:

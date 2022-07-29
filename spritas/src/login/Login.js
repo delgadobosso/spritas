@@ -1,6 +1,8 @@
 import React from 'react';
 import './Login.css';
 
+import { AppContext } from '../contexts/AppContext';
+
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -167,13 +169,11 @@ export default class Login extends React.Component {
                     body: myBody
                 })
                 .then(resp => {
-                    if (resp.ok) return resp.text();
-                    else this.setState({ registering: false });
-                })
-                .then(data => {
-                    console.log(data);
-                    this.setState({ registering: false });
-                })
+                    this.setState({ registering: false }, () => {
+                        if (resp.ok) window.location.href = '/login?success=register';
+                        else this.context.toastPush('failure', 'register');
+                    });
+                });
             })
         }
     }
@@ -340,3 +340,5 @@ export default class Login extends React.Component {
         );
     }
 }
+
+Login.contextType = AppContext;

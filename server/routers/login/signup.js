@@ -16,10 +16,8 @@ router.post('/', (req, res) => {
         (error, result, fields) => {
             if (error) {
                 if (error.errno == 1062) {
-                    var errType = error.sqlMessage.split(' ').pop();
-                    if (errType === "'users.username'") res.send({'status': 'failure', 'message': 'this username is already in use'});
-                    else res.send({'status': 'failure', 'message': 'this email is already in use'});
-                } else res.sendStatus(500);
+                    return res.sendStatus(400);
+                } else return res.sendStatus(500);
             } else {
                 const link = `http://localhost:3000/verify/${username}/${verifyHash}`;
                 req.transporter.sendMail({
@@ -30,7 +28,7 @@ router.post('/', (req, res) => {
                     html: `Hey ${nickname},<br><br>You have registered an account as @${username} on The Spritas.<br>Please <a href="${link}">click here</a> to verify your email on this account <strong>within the hour</strong>.<br><br>See You There,<br>The Spritas`
                 }, (err, info) => {
                     if (err) return res.status(500).send({'status': 'failure', 'message': 'email verification error'});
-                    else return res.send({'status': 'success', 'message': 'successfully created account'});
+                    else return res.sendStatus(200);
                 });
             }
         })

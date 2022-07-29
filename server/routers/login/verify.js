@@ -18,17 +18,17 @@ router.get('/', (req, res) => {
                 result[0].id, (error, result, fields) => {
                     if (error) return res.status(500).send(error);
 
-                    return res.status(200).redirect('/');
+                    return res.status(200).redirect('/login?success=email-verify');
                 })
             } else if (req.hash === result[0].hash) {
                 req.pool.query(`DELETE FROM users WHERE id = ?`,
                 result[0].id, (error, result, fields) => {
                     if (error) return res.status(500).send(error);
 
-                    return res.status(408).redirect('/');
+                    return res.status(408).redirect('/login?failure=email-verify');
                 })
             }
-        } else return res.status(401).redirect('/');
+        } else return res.status(401).redirect('/login?failure=email-verify');
     })
 })
 
