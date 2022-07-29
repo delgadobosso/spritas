@@ -65,8 +65,12 @@ export default class Toast extends React.Component {
                     case "success":
                         classStatus = " Toast-success";
                         switch(toast.event) {
+                            case "rr":
+                                msg = 'Reply reported to the Admins.';
+                                break;
+
                             case "dr":
-                                msg = 'Reply Deleted.';
+                                msg = 'Reply deleted.';
                                 break;
 
                             default:
@@ -76,6 +80,18 @@ export default class Toast extends React.Component {
 
                     case "failure":
                         classStatus = " Toast-failure";
+                        switch(toast.event) {
+                            case 'rr':
+                                msg = 'Failed to report reply. Try again or contact an Admin directly.';
+                                break;
+
+                            case 'dr':
+                                msg = 'Failed to delete reply.';
+                                break;
+
+                            default:
+                                break;
+                        }
                         break;
 
                     default:

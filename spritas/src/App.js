@@ -125,7 +125,7 @@ export default class App extends React.Component {
   }
 
   toastClear() {
-    this.setState({ toastPush: null });
+    this.setState({ toastPush: [] });
   }
 
   render() {

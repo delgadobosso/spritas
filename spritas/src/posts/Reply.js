@@ -293,8 +293,8 @@ export default class Reply extends React.Component {
                 body: myBody
             })
             .then((resp) => {
-                if (resp.ok) alert('This reply has been reported to the Admins.');
-                else alert('Error reporting reply. Please try again or reach out directly to an Admin.');
+                if (resp.ok) this.context.toastPush('success', 'rr');
+                else this.context.toastPush('failure', 'rr');
             });
         } else if (answer === '') alert(`You must give a reason to report this reply.`);
     }
