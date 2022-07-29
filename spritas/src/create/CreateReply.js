@@ -2,6 +2,8 @@ import React from 'react';
 import './CreateReply.css';
 import pfp from '../images/pfp.png';
 
+import { AppContext } from '../contexts/AppContext';
+
 export default class CreateReply extends React.Component {
     constructor(props) {
         super(props);
@@ -59,18 +61,23 @@ export default class CreateReply extends React.Component {
                 })
                 .then(resp => {
                     if (resp.ok) return resp.text();
+                    else this.context.toastPush('failure', 'cr');
                 })
                 .then(data => {
                     setTimeout(() => {
                         this.setState({
                             submitting: false
                         }, () => {
+                            this.context.toastPush('success', 'cr');
                             document.getElementById(`reply${id}`).value = "";
                             this.props.reload();
                         });
                     }, 1000);
                 })
-                .catch(error => this.setState({ submitting: false }));
+                .catch(error => {
+                    this.context.toastPush('failure', 'cr');
+                    this.setState({ submitting: false });
+                });
             })
         }
     }
@@ -110,3 +117,5 @@ export default class CreateReply extends React.Component {
         )
     }
 }
+
+CreateReply.contextType = AppContext;

@@ -77,6 +77,10 @@ export default class Toast extends React.Component {
                     case "success":
                         classStatus = " Toast-success";
                         switch(toast.event) {
+                            case "cr":
+                                msg = 'Reply posted.';
+                                break;
+
                             case "rp":
                                 msg = 'Post reported to the Admins.';
                                 break;
@@ -103,6 +107,10 @@ export default class Toast extends React.Component {
 
                             case 'pu':
                                 msg = 'Failed to update post. Try again.';
+                                break;
+
+                            case 'cr':
+                                msg = 'Failed to reply. Try again.';
                                 break;
 
                             case 'rp':
