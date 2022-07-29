@@ -156,8 +156,12 @@ export default class Toast extends React.Component {
                                 msg = 'Failed to create post. Please try again.';
                                 break;
 
-                            case 'file-large':
+                            case 'file-large-20':
                                 msg = 'The file you selected is too large. It must be 20 MB or less.';
+                                break;
+
+                            case 'file-large-1':
+                                msg = 'The file you selected is too large. It must be 1 MB or less.';
                                 break;
 
                             case 'pu':

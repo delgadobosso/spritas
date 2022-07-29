@@ -2,6 +2,8 @@ import './UserEdit.css';
 import pfp from '../images/pfp.png';
 import React from 'react';
 
+import { AppContext } from '../contexts/AppContext';
+
 export default class UserEdit extends React.Component {
     constructor(props) {
         super(props);
@@ -15,7 +17,7 @@ export default class UserEdit extends React.Component {
         // Check file size
         if (file.size > 1048576) {
             e.target.value = '';
-            alert('The file you selected is too large. Image must be 1 MB or less.');
+            this.context.toastPush('failure', 'file-large-1');
         } else {
             const reader = new FileReader();
     
@@ -61,3 +63,5 @@ export default class UserEdit extends React.Component {
         );
     }
 }
+
+UserEdit.contextType = AppContext;
