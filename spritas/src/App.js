@@ -131,7 +131,9 @@ export default class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <AppContext.Provider value={this.toastPush}>
+        <AppContext.Provider value={{
+          toastPush: this.toastPush
+        }}>
           <Router>
             <Navi user={this.state.user} sessionChecked={this.state.sessionChecked} hide={this.state.naviHide} />
             <Header />

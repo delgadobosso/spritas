@@ -263,13 +263,18 @@ export default class Reply extends React.Component {
                         .then((resp) => {
                             this.setState({ deleting: false }, () => {
                                 if (resp.ok) {
-                                    this.context('success', 'dr');
+                                    this.context.toastPush('success', 'dr');
                                     this.props.reload();
                                 }
-                                else alert('Reply deletion error');
+                                else {
+                                    this.context.toastPush('failure', 'dr');
+                                };
                             });
                         })
-                        .catch(error => this.setState({ deleting: false }));
+                        .catch(error => {
+                            this.context.toastPush('failure', 'dr');
+                            this.setState({ deleting: false });
+                        });
                     })
                 } else if (reason === '') alert(`You must give a reason to delete this reply.`);
             } else if (answer !== null) alert(`Value incorrect. Reply not deleted.`);
