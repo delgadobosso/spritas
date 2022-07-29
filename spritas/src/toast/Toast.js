@@ -26,6 +26,10 @@ export default class Toast extends React.Component {
                         case "register":
                             msg = "Account registered. You may now login to your account."
                             break;
+
+                        case "pc":
+                            msg = "Post created.";
+                            break;
                         
                         default:
                             skip = true;
@@ -81,6 +85,10 @@ export default class Toast extends React.Component {
                     case "failure":
                         classStatus = " Toast-failure";
                         switch(toast.event) {
+                            case 'pc':
+                                msg = 'Failed to create post. Try again.';
+                                break;
+
                             case 'rr':
                                 msg = 'Failed to report reply. Try again or contact an Admin directly.';
                                 break;

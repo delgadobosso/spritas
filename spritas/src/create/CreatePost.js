@@ -4,6 +4,8 @@ import React from 'react';
 import he from 'he';
 import CrossIcon from '../icons/cross';
 
+import { AppContext } from '../contexts/AppContext';
+
 export default class CreatePost extends React.Component {
     constructor(props) {
         super(props);
@@ -288,7 +290,10 @@ export default class CreatePost extends React.Component {
                 })
                 .then(resp => {
                     if (resp.ok) return resp.text();
-                    else this.setState({ submitting: false });
+                    else {
+                        this.context.toastPush('failure', 'pc');
+                        this.setState({ submitting: false });
+                    }
                 })
                 .then(data => {
                     var id = parseInt(data);
@@ -298,7 +303,7 @@ export default class CreatePost extends React.Component {
                                 submitting: false
                             }, () => {
                                 window.removeEventListener('beforeunload', this.handleBeforeUnload);
-                                window.location.href = "/p/" + id;
+                                window.location.href = "/p/" + id + "?success=pc";
                             });
                         }, 5000);
                     }
@@ -468,3 +473,5 @@ export default class CreatePost extends React.Component {
         )
     }
 }
+
+CreatePost.contextType = AppContext;
