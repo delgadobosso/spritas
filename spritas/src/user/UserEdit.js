@@ -48,10 +48,10 @@ export default class UserEdit extends React.Component {
         return (
             <div className='UserCard'>
                 <div className='UserCard-avatarContainer'>
-                    <label className="sr-only" htmlFor='UserEdit-avatar'>Avatar</label>
-                    <input type='file' name='avatar' id='UserEdit-avatar'
+                    <label htmlFor='UserEdit-avatarFile'><img className='UserCard-avatar UserEdit-avatar' src={avatar} alt='Avatar' /></label>
+                    <input type='file' name='avatar' id='UserEdit-avatarFile'
                     onChange={this.handleImg} accept="image/png, image/jpeg, image/gif" />
-                    <img className='UserCard-avatar' src={avatar} alt='Avatar' />
+                    
                 </div>
                 <label className="sr-only" htmlFor='UserEdit-nickname'>Nickname</label>
                 <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} autoComplete='off' autoCapitalize='off' />

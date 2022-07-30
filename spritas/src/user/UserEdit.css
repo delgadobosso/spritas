@@ -1,3 +1,14 @@
+.UserEdit-avatar {
+    cursor: pointer;
+}
+
+#UserEdit-avatarFile {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
 .UserEdit-nickname {
     width: 100%;
     text-align: center;
@@ -20,4 +31,10 @@
     border-radius: 10px;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@media (hover: hover) {
+    .UserEdit-avatar:hover {
+        
+    }
 }
