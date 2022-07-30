@@ -84,6 +84,11 @@ const avatarStore = multer.diskStorage({
 });
 const avatarUpload = multer({
     storage: avatarStore,
+    fileFilter: (req, file, cb) => {
+        var valid = ["image/png", "image/jpeg", "image/gif"];
+        if (valid.includes(file.mimetype)) cb(null, true);
+        else cb(null, false);
+    },
     limits: {
         fileSize: 1048576
     }
