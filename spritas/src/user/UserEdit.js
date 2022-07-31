@@ -15,6 +15,17 @@ export default class UserEdit extends React.Component {
         };
     }
 
+    componentDidMount() {
+        if (this.props.cardHeight) {
+            const card = document.getElementById('UserEdit-Card');
+            console.log(this.props.cardHeight, card.scrollHeight);
+            card.animate([
+                { height: `${this.props.cardHeight}px` },
+                { height: `${card.scrollHeight}px` }
+            ], { duration: 500, easing: 'ease' });
+        }
+    }
+
     handleImg(e) {
         const file = e.target.files[0];
 
@@ -66,7 +77,7 @@ export default class UserEdit extends React.Component {
         var avatarClass = (this.state.imgPreview) ? " UserEdit-avatarChanged" : "";
 
         return (
-            <div className='UserCard'>
+            <div id='UserEdit-Card' className='UserCard'>
                 <div className='UserCard-avatarContainer'>
                     <label htmlFor='UserEdit-avatarFile'>
                         <img className={'UserCard-avatar UserEdit-avatar' + avatarClass} src={avatar} alt='Avatar' />

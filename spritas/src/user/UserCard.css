@@ -18,6 +18,13 @@
     height: 128px;
     border-radius: 10px;
 }
+.UserCard-avatarUnedit {
+    animation: avatarUnedit 0.5s;
+}
+@keyframes avatarUnedit {
+    from { border: solid 10px var(--lightest-grey); }
+    to { border: solid 0px var(--lightest-grey); }
+}
 
 .UserCard-nickname {
     margin-bottom: 0;
