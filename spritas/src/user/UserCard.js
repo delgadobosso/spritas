@@ -10,10 +10,9 @@ export default class UserCard extends React.Component {
     componentDidMount() {
         if (this.props.cardHeight && this.props.thisUser) {
             const card = document.getElementById('UserCard-' + this.props.thisUser.id);
-            console.log(this.props.cardHeight, card.scrollHeight);
             card.animate([
                 { height: `${this.props.cardHeight}px` },
-                { height: `${card.clientHeight}px` }
+                { height: `${card.scrollHeight}px` }
             ], { duration: 500, easing: 'ease' });
         }
     }

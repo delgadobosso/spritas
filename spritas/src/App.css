@@ -92,6 +92,7 @@ a {
     z-index: 1;
     pointer-events: none;
     overflow: hidden;
+    text-align: center;
 
     transition: bottom, opacity;
     transition-duration: 0.25s;

@@ -10,6 +10,8 @@ export default class UserEdit extends React.Component {
         this.handleImg = this.handleImg.bind(this);
         this.handleNickname = this.handleNickname.bind(this);
         this.handleBio = this.handleBio.bind(this);
+        this.tooltipAdd = this.tooltipAdd.bind(this);
+        this.tooltipRemove = this.tooltipRemove.bind(this);
         this.state = {
             imgPreview: null
         };
@@ -18,7 +20,6 @@ export default class UserEdit extends React.Component {
     componentDidMount() {
         if (this.props.cardHeight) {
             const card = document.getElementById('UserEdit-Card');
-            console.log(this.props.cardHeight, card.scrollHeight);
             card.animate([
                 { height: `${this.props.cardHeight}px` },
                 { height: `${card.scrollHeight}px` }
@@ -64,6 +65,16 @@ export default class UserEdit extends React.Component {
         else e.target.classList.add('UserEdit-textChanged');
     }
 
+    tooltipAdd(tip) {
+        const tooltip = document.getElementById(tip);
+        if (tooltip) tooltip.classList.add('Tooltip-on');
+    }
+    
+    tooltipRemove(tip) {
+        const tooltip = document.getElementById(tip);
+        if (tooltip) tooltip.classList.remove('Tooltip-on');
+    }
+
     render() {
         var ogAvatar = (this.props.user && this.props.user.avatar)  ? `/media/avatars/${this.props.user.avatar}` : pfp;
 
@@ -91,13 +102,19 @@ export default class UserEdit extends React.Component {
                     </label>
                     <input type='file' name='avatar' id='UserEdit-avatarFile'
                     onChange={this.handleImg} accept="image/png, image/jpeg, image/gif" />
-                    
+                    <span id="tip-avatar" className="Tooltip">Avatar Seen Everywhere.<br></br>1 MB Max.<br></br>128x128px PNG, JPEG, or GIF.</span>
                 </div>
-                <label className="sr-only" htmlFor='UserEdit-nickname'>Nickname</label>
-                <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} maxLength='32' autoComplete='off' autoCapitalize='off' onChange={this.handleNickname} />
+                <div className='UserEdit-item'>
+                    <label className="sr-only" htmlFor='UserEdit-nickname'>Display Name</label>
+                    <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} maxLength='32' autoComplete='off' autoCapitalize='off' onChange={this.handleNickname} onFocus={() => this.tooltipAdd('tip-displayname')} onBlur={() => this.tooltipRemove('tip-displayname')} />
+                    <span id="tip-displayname" className="Tooltip">Name Seen Everywhere.<br></br>32 Characters Max.</span>
+                </div>
                 <p className='UserCard-username'>@{username}</p>
-                <label className="sr-only" htmlFor='UserEdit-bio'>About You</label>
-                <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='256' onChange={this.handleBio} />
+                <div className='UserEdit-item'>
+                    <label className="sr-only" htmlFor='UserEdit-bio'>About You</label>
+                    <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} rows='8' maxLength='256' onChange={this.handleBio} onFocus={() => this.tooltipAdd('tip-bio')} onBlur={() => this.tooltipRemove('tip-bio')} />
+                    <span id="tip-bio" className="Tooltip">Describe yourself.<br></br>256 Characters Max.</span>
+                </div>
                 <p className='UserCard-ts'>{ts}</p>
             </div>
         );
