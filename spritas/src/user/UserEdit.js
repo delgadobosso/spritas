@@ -45,6 +45,7 @@ export default class UserEdit extends React.Component {
 
     handleNickname(e) {
         const nickname = e.target.value;
+        e.target.value = nickname.trimStart().slice(0, 32).replace(/[\s]{2,}/g, " ");
 
         if (nickname === "" || nickname === this.props.thisUser.nickname) e.target.classList.remove('UserEdit-textChanged');
         else e.target.classList.add('UserEdit-textChanged');
@@ -52,6 +53,12 @@ export default class UserEdit extends React.Component {
 
     handleBio(e) {
         const bio = e.target.value;
+
+        var newLines = bio.match(/(\r\n|\n|\r)/g);
+        var trueCount = bio.length;
+        if (newLines) trueCount += newLines.length;
+        if (trueCount > 255 && newLines) e.target.value = bio.slice(0, 255 - newLines.length);
+        else if (trueCount > 255) e.target.value = bio.slice(0, 255);
 
         if (bio === this.props.thisUser.bio) e.target.classList.remove('UserEdit-textChanged');
         else e.target.classList.add('UserEdit-textChanged');
@@ -87,10 +94,10 @@ export default class UserEdit extends React.Component {
                     
                 </div>
                 <label className="sr-only" htmlFor='UserEdit-nickname'>Nickname</label>
-                <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} autoComplete='off' autoCapitalize='off' onChange={this.handleNickname} />
+                <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} maxLength='32' autoComplete='off' autoCapitalize='off' onChange={this.handleNickname} />
                 <p className='UserCard-username'>@{username}</p>
                 <label className="sr-only" htmlFor='UserEdit-bio'>About You</label>
-                <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='300' onChange={this.handleBio} />
+                <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='256' onChange={this.handleBio} />
                 <p className='UserCard-ts'>{ts}</p>
             </div>
         );
