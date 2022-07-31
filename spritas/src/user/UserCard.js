@@ -7,16 +7,6 @@ export default class UserCard extends React.Component {
         super(props);
     }
 
-    componentDidMount() {
-        if (this.props.cardHeight && this.props.thisUser) {
-            const card = document.getElementById('UserCard-' + this.props.thisUser.id);
-            card.animate([
-                { height: `${this.props.cardHeight}px` },
-                { height: `${card.scrollHeight}px` }
-            ], { duration: 500, easing: 'ease' });
-        }
-    }
-
     render() {
         var id;
         var avatar;
@@ -46,11 +36,11 @@ export default class UserCard extends React.Component {
                 <div className='UserCard-avatarContainer'>
                     <img className={'UserCard-avatar' + this.props.uneditClass} src={avatar} alt='Avatar' />
                 </div>
-                <h2 className='UserCard-nickname'>{nickname}</h2>
+                <h2 className={'UserCard-nickname' + this.props.uneditText}>{nickname}</h2>
                 <p className='UserCard-username'>@{username}</p>
                 {blocked}
                 {blocking}
-                <p className='UserCard-bio'>{bio}</p>
+                <p className={'UserCard-bio' + this.props.uneditText}>{bio}</p>
                 <p className='UserCard-ts'>{ts}</p>
             </div>
         );

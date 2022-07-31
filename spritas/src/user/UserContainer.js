@@ -21,8 +21,8 @@ export default class UserContainer extends React.Component {
             more: false,
             edit: false,
             loadingMore: false,
-            cardHeight: null,
-            uneditClass: ''
+            uneditClass: '',
+            uneditText: ''
         }
     }
 
@@ -98,15 +98,10 @@ export default class UserContainer extends React.Component {
     }
 
     userEdit(yes) {
-        const userCard = document.getElementById('UserCard-' + this.state.thisUser.id);
-        const editCard = document.getElementById('UserEdit-Card');
-        var cardHeight;
-        if (userCard) cardHeight = userCard.scrollHeight;
-        else if (editCard) cardHeight = editCard.scrollHeight;
         this.setState({
             edit: yes,
-            cardHeight: cardHeight,
-            uneditClass: ' UserCard-avatarUnedit'
+            uneditClass: ' UserCard-avatarUnedit',
+            uneditText: ' UserCard-textUnedit'
         });
     }
 
@@ -118,12 +113,12 @@ export default class UserContainer extends React.Component {
 
         const cards = (!this.state.edit) ? (
             <div className='UserContainer-cards'>
-                <UserCard user={this.props.user} thisUser={this.state.thisUser} cardHeight={this.state.cardHeight} uneditClass={this.state.uneditClass} />
+                <UserCard user={this.props.user} thisUser={this.state.thisUser} uneditClass={this.state.uneditClass} uneditText={this.state.uneditText} />
                 {options}
             </div>
         ) : (
             <div className='UserContainer-cards'>
-                <UserEdit user={this.props.user} thisUser={this.state.thisUser} cardHeight={this.state.cardHeight} />
+                <UserEdit user={this.props.user} thisUser={this.state.thisUser} />
                 {options}
             </div>
         );
