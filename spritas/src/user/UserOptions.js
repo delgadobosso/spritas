@@ -56,9 +56,10 @@ function editCheck(props, context) {
     const nickname = document.getElementById('UserEdit-nickname').value;
     const bio = document.getElementById('UserEdit-bio').value;
 
+    const ogNickname = (props.thisUser) ? props.thisUser.nickname : '';
     const ogBio = (props.thisUser) ? props.thisUser.bio : '';
     
-    if (!avatar && nickname === '' && bio === ogBio) {
+    if (!avatar && (nickname === '' || nickname === ogNickname) && bio === ogBio) {
         context.toastPush('failure', 'user-change');
         props.userEdit(false);
     }

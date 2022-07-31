@@ -8,7 +8,11 @@ export default class UserEdit extends React.Component {
     constructor(props) {
         super(props);
         this.handleImg = this.handleImg.bind(this);
-        this.state = { imgPreview: null };
+        this.handleNickname = this.handleNickname.bind(this);
+        this.handleBio = this.handleBio.bind(this);
+        this.state = {
+            imgPreview: null
+        };
     }
 
     handleImg(e) {
@@ -28,6 +32,20 @@ export default class UserEdit extends React.Component {
         }
     }
 
+    handleNickname(e) {
+        const nickname = e.target.value;
+
+        if (nickname === "" || nickname === this.props.thisUser.nickname) e.target.classList.remove('UserEdit-textChanged');
+        else e.target.classList.add('UserEdit-textChanged');
+    }
+
+    handleBio(e) {
+        const bio = e.target.value;
+
+        if (bio === this.props.thisUser.bio) e.target.classList.remove('UserEdit-textChanged');
+        else e.target.classList.add('UserEdit-textChanged');
+    }
+
     render() {
         var ogAvatar = (this.props.user && this.props.user.avatar)  ? `/media/avatars/${this.props.user.avatar}` : pfp;
 
@@ -45,21 +63,23 @@ export default class UserEdit extends React.Component {
             ts = `Joined ${ts.toDateString()}`;
         }
 
+        var avatarClass = (this.state.imgPreview) ? " UserEdit-avatarChanged" : "";
+
         return (
             <div className='UserCard'>
                 <div className='UserCard-avatarContainer'>
                     <label htmlFor='UserEdit-avatarFile'>
-                        <img className='UserCard-avatar UserEdit-avatar' src={avatar} alt='Avatar' />
+                        <img className={'UserCard-avatar UserEdit-avatar' + avatarClass} src={avatar} alt='Avatar' />
                     </label>
                     <input type='file' name='avatar' id='UserEdit-avatarFile'
                     onChange={this.handleImg} accept="image/png, image/jpeg, image/gif" />
                     
                 </div>
                 <label className="sr-only" htmlFor='UserEdit-nickname'>Nickname</label>
-                <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} autoComplete='off' autoCapitalize='off' />
+                <input className='UserEdit-nickname' id='UserEdit-nickname' type='text' name='nickname' placeholder={nickname} autoComplete='off' autoCapitalize='off' onChange={this.handleNickname} />
                 <p className='UserCard-username'>@{username}</p>
                 <label className="sr-only" htmlFor='UserEdit-bio'>About You</label>
-                <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='300' />
+                <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='300' onChange={this.handleBio} />
                 <p className='UserCard-ts'>{ts}</p>
             </div>
         );
