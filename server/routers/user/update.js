@@ -20,7 +20,8 @@ router.post('/', (req, res) => {
             if (elapsed >= 5) {
                 var avatar = (req.file) ? req.file.filename : null;
                 var ogAvatar = result[0].avatar;
-                var nickname = (req.body.nickname !== "") ? req.body.nickname : null;
+                var nickname = req.body.nickname.replace(/[\s]{2,}/g, " ");
+                nickname = (req.body.nickname !== "") ? nickname : null;
                 var bio = req.body.bio;
                 req.pool.query(`
                 UPDATE users
