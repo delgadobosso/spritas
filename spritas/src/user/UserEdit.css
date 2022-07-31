@@ -62,12 +62,14 @@
 
 @keyframes textEdit {
     from {
-        border: solid 0px var(--lightest-grey);
+        border: solid 0px var(--darkest-grey);
         padding: 0px;
+        background-color: var(--darkest-grey);
     }
     to {
         border: solid 5px var(--lightest-grey);
         padding: 5px;
+        background-color: var(--lightest-grey);
     }
 }
 

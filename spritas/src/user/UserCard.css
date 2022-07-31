@@ -30,6 +30,7 @@
 .UserCard-nickname {
     margin-bottom: 0;
     color: white;
+    border-radius: 10px;
 }
 
 .UserCard-username {
@@ -38,17 +39,23 @@
     font-size: 18px;
 }
 
+.UserCard-bio {
+    border-radius: 10px;
+}
+
 .UserCard-textUnedit {
     animation: textUnedit 0.5s;
 }
 @keyframes textUnedit {
     from {
-        border: solid 10px var(--darkest-grey);
+        border: solid 5px var(--lightest-grey);
         padding: 5px;
+        background-color: var(--lightest-grey);
     }
     to {
         border: solid 0px var(--darkest-grey);
         padding: 0px;
+        background-color: var(--darkest-grey);
     }
 }
 
