@@ -394,7 +394,7 @@ app.use('/user/posts/:id.:offset.:limit',
 app.use('/user/update',
     avatarUpload.single('avatar'),
     body('id').isInt(),
-    body('nickname').optional({ checkFalsy: true }).trim().isLength({ min: 2 }).escape(),
+    body('nickname').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
     body('bio').optional({ checkFalsy: true }).isLength({ max: 256 }),
     (req, res, next) => {
         req.validationResult = validationResult;
