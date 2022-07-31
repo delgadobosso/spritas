@@ -48,7 +48,9 @@ export default class UserEdit extends React.Component {
         return (
             <div className='UserCard'>
                 <div className='UserCard-avatarContainer'>
-                    <label htmlFor='UserEdit-avatarFile'><img className='UserCard-avatar UserEdit-avatar' src={avatar} alt='Avatar' /></label>
+                    <label htmlFor='UserEdit-avatarFile'>
+                        <img className='UserCard-avatar UserEdit-avatar' src={avatar} alt='Avatar' />
+                    </label>
                     <input type='file' name='avatar' id='UserEdit-avatarFile'
                     onChange={this.handleImg} accept="image/png, image/jpeg, image/gif" />
                     

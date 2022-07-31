@@ -1,5 +1,14 @@
 .UserEdit-avatar {
     cursor: pointer;
+    border: solid 10px var(--lightest-grey);
+    border-radius: 20px;
+
+    transition: border 0.2s;
+    animation: avatarEdit 0.5s;
+}
+@keyframes avatarEdit {
+    from { border: solid 0px var(--lightest-grey); }
+    to { border: solid 10px var(--lightest-grey); }
 }
 
 #UserEdit-avatarFile {
@@ -35,6 +44,6 @@
 
 @media (hover: hover) {
     .UserEdit-avatar:hover {
-        
+
     }
 }

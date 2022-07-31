@@ -52,7 +52,7 @@ export default function UserOptions(props) {
 
 function editCheck(props, context) {
     var formData = new FormData();
-    const avatar = document.getElementById('UserEdit-avatar').files[0];
+    const avatar = document.getElementById('UserEdit-avatarFile').files[0];
     const nickname = document.getElementById('UserEdit-nickname').value;
     const bio = document.getElementById('UserEdit-bio').value;
 
