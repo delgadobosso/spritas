@@ -26,6 +26,7 @@ export default class UserEdit extends React.Component {
                 { height: bioField.scrollHeight + 20 + "px" }
             ], { duration: 500, easing: 'ease', fill: 'forwards' });
         }
+        this.tooltipAdd('tip-avatar');
     }
 
     handleImg(e) {

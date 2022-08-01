@@ -77,10 +77,4 @@
     .UserEdit-avatar:hover {
         border: solid 10px var(--info-grey);
     }
-
-    .UserCard-avatarContainer:hover #tip-avatar {
-        bottom: 100%;
-        opacity: 1;
-        pointer-events: auto;
-    }
 }
