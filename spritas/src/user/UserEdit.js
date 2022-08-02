@@ -63,8 +63,8 @@ export default class UserEdit extends React.Component {
         if (trueCount > 255 && newLines) e.target.value = bio.slice(0, 255 - newLines.length);
         else if (trueCount > 255) e.target.value = bio.slice(0, 255);
 
-        e.target.style.height = "";
-        e.target.style.height = e.target.scrollHeight + 10 + "px";
+        e.target.style.setProperty('height', "0px", 'important');
+        e.target.style.setProperty('height', e.target.scrollHeight + 10 + "px", 'important');
 
         if (bio === this.props.thisUser.bio) e.target.classList.remove('UserEdit-textChanged');
         else e.target.classList.add('UserEdit-textChanged');

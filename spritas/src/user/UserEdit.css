@@ -51,6 +51,7 @@
     border-radius: 10px;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
 
     transition: border 0.2s;
     animation: textEdit 0.5s;
