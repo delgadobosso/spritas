@@ -21,10 +21,10 @@ export default class UserEdit extends React.Component {
         const bioField = document.getElementById('UserEdit-bio');
         if (bioField) {
             bioField.style.height = bioField.scrollHeight + 20 + "px";
-            // bioField.animate([
-            //     { height: bioField.scrollHeight + 20 + "px" },
-            //     { height: bioField.scrollHeight + 20 + "px" }
-            // ], { duration: 500, easing: 'ease', fill: 'forwards' });
+            bioField.animate([
+                { height: bioField.scrollHeight + 20 + "px" },
+                { height: bioField.scrollHeight + 20 + "px" }
+            ], { duration: 500, easing: 'ease', fill: 'forwards' });
         }
         this.tooltipAdd('tip-avatar');
     }
