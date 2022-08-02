@@ -41,6 +41,7 @@
 
 .UserCard-bio {
     border-radius: 10px;
+    white-space: pre-wrap;
 }
 
 .UserCard-textUnedit {

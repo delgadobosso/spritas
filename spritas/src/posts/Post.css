@@ -147,6 +147,7 @@
 .PostMain-body {
     color: white;
     margin: 10px 10px 15px 10px;
+    white-space: pre-wrap;
 
     animation: fadeIn 0.5s;
 }

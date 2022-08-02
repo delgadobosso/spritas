@@ -90,6 +90,7 @@
 
 .Post-body {
     margin: 5px 10px 10px 10px;
+    white-space: pre-wrap;
 }
 .Post-bodyDel {
     font-style: italic;
