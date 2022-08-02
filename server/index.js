@@ -395,7 +395,7 @@ app.use('/user/update',
     avatarUpload.single('avatar'),
     body('id').isInt(),
     body('nickname').optional({ checkFalsy: true }).trim().isLength({ max: 32 }).escape(),
-    body('bio').optional({ checkFalsy: true }).isLength({ max: 256 }),
+    body('bio').optional({ checkFalsy: true }).trim().isLength({ max: 256 }),
     (req, res, next) => {
         req.validationResult = validationResult;
         req.pool = pool;
