@@ -20,11 +20,11 @@ export default class UserEdit extends React.Component {
     componentDidMount() {
         const bioField = document.getElementById('UserEdit-bio');
         if (bioField) {
-            bioField.style.height = "";
-            bioField.animate([
-                { height: bioField.scrollHeight + "px" },
-                { height: bioField.scrollHeight + 20 + "px" }
-            ], { duration: 500, easing: 'ease', fill: 'forwards' });
+            bioField.style.height = bioField.scrollHeight + 20 + "px";
+            // bioField.animate([
+            //     { height: bioField.scrollHeight + 20 + "px" },
+            //     { height: bioField.scrollHeight + 20 + "px" }
+            // ], { duration: 500, easing: 'ease', fill: 'forwards' });
         }
         this.tooltipAdd('tip-avatar');
     }
@@ -118,7 +118,7 @@ export default class UserEdit extends React.Component {
                 <div className='UserEdit-item'>
                     <label className="sr-only" htmlFor='UserEdit-bio'>About You</label>
                     <textarea className='UserEdit-bio' id='UserEdit-bio' name='bio' placeholder='About You' defaultValue={bio} maxLength='256' onChange={this.handleBio} onFocus={() => this.tooltipAdd('tip-bio')} onBlur={() => this.tooltipRemove('tip-bio')} />
-                    <span id="tip-bio" className="Tooltip">Describe yourself.<br></br>256 Characters Max.</span>
+                    <span id="tip-bio" className="Tooltip">Describe Yourself.<br></br>256 Characters Max.</span>
                 </div>
                 <p className='UserCard-ts'>{ts}</p>
             </div>
