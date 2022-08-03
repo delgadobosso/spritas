@@ -1,6 +1,7 @@
 import './UserEdit.css';
 import pfp from '../images/pfp.png';
 import React from 'react';
+import CrossIcon from '../icons/cross';
 
 import { AppContext } from '../contexts/AppContext';
 
@@ -12,8 +13,10 @@ export default class UserEdit extends React.Component {
         this.handleBio = this.handleBio.bind(this);
         this.tooltipAdd = this.tooltipAdd.bind(this);
         this.tooltipRemove = this.tooltipRemove.bind(this);
+        this.removeUpload = this.removeUpload.bind(this);
         this.state = {
-            imgPreview: null
+            imgPreview: null,
+            removeable: false
         };
     }
 
@@ -41,7 +44,10 @@ export default class UserEdit extends React.Component {
     
             if (!file.type.startsWith('image/')) return;
         
-            reader.onload = ((e) => { this.setState({ imgPreview: e.target.result }); });
+            reader.onload = ((e) => { this.setState({
+                imgPreview: e.target.result,
+                removeable: true
+            }); });
             reader.readAsDataURL(file);
         }
     }
@@ -80,6 +86,15 @@ export default class UserEdit extends React.Component {
         if (tooltip) tooltip.classList.remove('Tooltip-on');
     }
 
+    removeUpload() {
+        var avatar = document.getElementById('UserEdit-avatarFile');
+        if (avatar) avatar.value = "";
+        this.setState({
+            imgPreview: null,
+            removeable: false
+        });
+    }
+
     render() {
         var ogAvatar = (this.props.user && this.props.user.avatar)  ? `/media/avatars/${this.props.user.avatar}` : pfp;
 
@@ -99,6 +114,14 @@ export default class UserEdit extends React.Component {
 
         var avatarClass = (this.state.imgPreview) ? " UserEdit-avatarChanged" : "";
 
+        var crossClass = '';
+        var pathClass = 'CreatePost-pathClass';
+        var crossColor = 'var(--darkest-grey)';
+        if (this.state.removeable) {
+            crossClass = ' UserEdit-remove';
+            crossColor = 'var(--spritan-red)';
+        }
+
         return (
             <div id='UserEdit-Card' className='UserCard'>
                 <div className='UserCard-avatarContainer'>
@@ -107,6 +130,9 @@ export default class UserEdit extends React.Component {
                     </label>
                     <input type='file' name='avatar' id='UserEdit-avatarFile'
                     onChange={this.handleImg} accept="image/png, image/jpeg, image/gif" />
+                    <div className={'UserEdit-iconWrapper' + crossClass} onClick={this.removeUpload}>
+                        <CrossIcon title='Remove File' stroke={crossColor} pathClass={pathClass} />
+                    </div>
                     <span id="tip-avatar" className="Tooltip">Avatar Seen Everywhere.<br></br>1 MB Max.<br></br>128x128px PNG, JPEG, or GIF.</span>
                 </div>
                 <div className='UserEdit-item'>

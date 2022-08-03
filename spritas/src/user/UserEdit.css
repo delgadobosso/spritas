@@ -22,6 +22,18 @@
     opacity: 0;
 }
 
+.UserEdit-iconWrapper {
+    position: absolute;
+    left: calc(50% + 99px);
+    top: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 80px;
+    transform: translateX(-50%);
+
+    transition: background-color 0.1s;
+}
+
 .UserEdit-item {
     position: relative;
     margin: 20px 0 0 0;
@@ -76,5 +88,10 @@
 @media (hover: hover) {
     .UserEdit-avatar:hover {
         border: solid 10px var(--info-grey);
+    }
+
+    .UserEdit-remove:hover {
+        cursor: pointer;
+        background-color: var(--lightest-grey);
     }
 }
