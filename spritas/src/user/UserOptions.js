@@ -38,8 +38,11 @@ export default function UserOptions(props) {
         cancel = <div className='UserOptions-option' onClick={() => props.userEdit(false)}>Cancel</div>;
     }
 
+    var coverClass = (props.submitting) ? " LoadingCover-anim" : "";
+
     return (
         <div className='UserCard'>
+            <div className={'LoadingCover Login-cover' + coverClass}></div>
             {edit}
             {report}
             {block}
@@ -63,26 +66,30 @@ function editCheck(props, context) {
         context.toastPush('failure', 'user-change');
         props.userEdit(false);
     }
-    else {
-        var choice = window.confirm("You won't be able to update your profile again for 5 minutes. Are you sure you wish to save these changes?");
-        if (choice) {
-            if (avatar) formData.append('avatar', avatar, props.user.id);
-            formData.append('id', props.user.id);
-            formData.append('nickname', nickname);
-            formData.append('bio', bio);
-
-            fetch('/user/update', {
-                method: 'POST',
-                body: formData
-            })
-            .then(resp => resp.text())
-            .then(data => {
-                if (data === 'time') context.toastPush('failure', 'user-time');
-                else if (data === 'updated') {
-                    window.location.href = '/u/' + props.thisUser.username + '?success=user-edit';
-                }
-            })
-        }
+    else if (!props.submitting) {
+        props.setSubmitting(true, () => {
+            var choice = window.confirm("You won't be able to update your profile again for 5 minutes. Are you sure you wish to save these changes?");
+            if (choice) {
+                if (avatar) formData.append('avatar', avatar, props.user.id);
+                formData.append('id', props.user.id);
+                formData.append('nickname', nickname);
+                formData.append('bio', bio);
+    
+                fetch('/user/update', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(resp => resp.text())
+                .then(data => {
+                    if (data === 'time') context.toastPush('failure', 'user-time');
+                    else if (data === 'updated') {
+                        window.location.href = '/u/' + props.thisUser.username + '?success=user-edit';
+                    }
+                    props.setSubmitting(false);
+                })
+                .catch(error => props.setSubmitting(false));
+            }
+        });
     }
 }
 

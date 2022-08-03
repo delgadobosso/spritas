@@ -13,6 +13,7 @@ export default class UserContainer extends React.Component {
         this.extendPosts = this.extendPosts.bind(this);
         this.scrollTo = this.scrollTo.bind(this);
         this.userEdit = this.userEdit.bind(this);
+        this.setSubmitting = this.setSubmitting.bind(this);
         this.state = {
             thisUser: null,
             posts: [],
@@ -22,7 +23,8 @@ export default class UserContainer extends React.Component {
             edit: false,
             loadingMore: false,
             uneditClass: '',
-            uneditText: ''
+            uneditText: '',
+            submitting: false
         }
     }
 
@@ -105,11 +107,19 @@ export default class UserContainer extends React.Component {
         });
     }
 
+    setSubmitting(yes, cb) {
+        this.setState({
+            submitting: yes
+        }, () => {
+            if (cb) cb();
+        });
+    }
+
     render() {
         const id = (this.state.thisUser) ? this.state.thisUser.id : null;
         const posts = (this.state.posts) ? this.state.posts : null;
 
-        const options = (this.props.user && id && this.props.user.type !== "BAN") ? <UserOptions user={this.props.user} thisUser={this.state.thisUser} thisId={id} userEdit={this.userEdit} editMode={this.state.edit} /> : null;
+        const options = (this.props.user && id && this.props.user.type !== "BAN") ? <UserOptions user={this.props.user} thisUser={this.state.thisUser} thisId={id} userEdit={this.userEdit} editMode={this.state.edit} submitting={this.state.submitting} setSubmitting={this.setSubmitting} /> : null;
 
         const cards = (!this.state.edit) ? (
             <div className='UserContainer-cards'>
@@ -118,7 +128,7 @@ export default class UserContainer extends React.Component {
             </div>
         ) : (
             <div className='UserContainer-cards'>
-                <UserEdit user={this.props.user} thisUser={this.state.thisUser} />
+                <UserEdit user={this.props.user} thisUser={this.state.thisUser} submitting={this.state.submitting} />
                 {options}
             </div>
         );

@@ -1,4 +1,5 @@
 .UserCard {
+    position: relative;
     width: 300px;
     background-color: var(--darkest-grey);
     padding: 15px;

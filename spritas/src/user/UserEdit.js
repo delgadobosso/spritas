@@ -122,8 +122,11 @@ export default class UserEdit extends React.Component {
             crossColor = 'var(--spritan-red)';
         }
 
+        var coverClass = (this.props.submitting) ? " LoadingCover-anim" : "";
+
         return (
             <div id='UserEdit-Card' className='UserCard'>
+                <div className={'LoadingCover Login-cover' + coverClass}></div>
                 <div className='UserCard-avatarContainer'>
                     <label htmlFor='UserEdit-avatarFile'>
                         <img className={'UserCard-avatar UserEdit-avatar' + avatarClass} src={avatar} alt='Avatar' />
