@@ -88,7 +88,7 @@ function editCheck(props, context) {
                     props.setSubmitting(false);
                 })
                 .catch(error => props.setSubmitting(false));
-            }
+            } else props.setSubmitting(false);
         });
     }
 }
